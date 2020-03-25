@@ -1,4 +1,9 @@
 #### Setup for 02_ggplot in learnr ####
+
+### Require packages ----
+library(fontawesome)
+library(ggplot2)
+
 ### Data Download ----
 confirmed <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv')
 deaths <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv')
