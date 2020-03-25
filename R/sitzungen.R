@@ -6,6 +6,7 @@
 
 #### Kernfunktionen: Aufruf der einzelnen Sitzungen ####
 Sitzung_2 <- function() {
+  library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
   }
