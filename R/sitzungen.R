@@ -6,8 +6,8 @@
 
 #### Kernfunktionen: Aufruf der einzelnen Sitzungen ####
 Sitzung_2 <- function() {
-  if (!require(fontawesome)) {
-    devtools::install_github("rstudio/fontawesome")
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
   }
   learnr::run_tutorial('ggplot', package = 'PsyBSc7')
 }
