@@ -1,0 +1,558 @@
+---
+title: "Grafiken mit ggplot2"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
+---
+
+```{r setup, include = FALSE}
+library(learnr)
+library(fontawesome)
+source('setup.R')
+```
+
+Das Paket `ggplot2` ist das umfangreichste und am weitesten verbreitete Paket zur Grafikerstellung in R. Allein in der vergangenen Woche wurde es `r format(sum(cranlogs::cran_downloads('ggplot2', 'last-week')$count), scientific = FALSE)` mal heruntergeladen. Seine Beliebtheit liegt vor allem an zwei Dingen: Es ist sehr eng mit der kommerziellen Seite von RStudio verwoben (Autor ist auch hier Hadley Wickham) und es folgt stringent einer "Grammatik der Grafikerstellung". Aus dem zweiten Punkt leitet sich auch sein Name ab: das "gg" steht für "Grammar of Graphics" und geht auf das gleichnamige Buch von Leland Wilkinson zurück, in dem auf 700 kurzen Seiten eine grammatikalische Grundstruktur für das Erstellen von Grafiken zur Datendarstellung hergeleitet und detailliert erklärt wird.
+
+Weil `ggplot2` so beliebt ist, gibt es online tausende von Quellen mit Tutorials, Beispielen und innovativen Ansätzen zur Datenvisualisierung. Vom Autor des Pakets selbst gibt es ein [Überblickswerk über Data-Science als e-Book](https://r4ds.had.co.nz/), in dem sich auch [ein Kapitel](https://r4ds.had.co.nz/data-visualisation.html) mit `ggplot2` befasst.
+
+# Beispieldaten
+
+Welches Beispiel wäre zur Zeit naheliegender als die Ausbreitung von COVID-19? Auf [GitHub](https://github.com/) stellen viele Nutzer und Organisationen tagesaktuelle Daten zu Infektionsraten, bestätigten Fällen und vielen anderen Aspekten zur Verfügung. Diese Daten können wir aus R mit einfachen Funktionen wie `read.table` oder `read.csv` abrufen.
+
+Dafür nutzen wir die Daten, die [von der Johns Hopkins Universität auf GitHub](https://github.com/CSSEGISandData/COVID-19) bereitgestellt werden. Für uns sind dabei die drei Datensätze zu [bestätigten Fällen](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv), [Todesopfern](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv) und [genesenen Patienten und Patientinnen](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv) zentral.
+
+Das erste Video zu dieser Sitzung befasst sich mit dem herunterladen und dem umstrukturieren der Daten. Am Ende sollte ein Datensatz entstanden sein, anhand dessen wir uns angucken können wie `ggplot2` funktioniert.
+
+### Erstes Video `r fa('youtube')`
+![](https://youtu.be/dQw4w9WgXcQ)
+
+
+## Daten herunterladen
+
+Die erste Möglichkeit die Daten zu beziehen, ist es sie als .csv Dateien herunterzuladen und lokal zu speichern. Dafür reichen diese drei Links aus: [`r fa('download')` Bestätigte Fälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv), [`r fa('download')` Todesfälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv) und [`r fa('download')` genesene Fälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv).
+
+Statt den Umweg über externe Dateien zu gehen, können wir aber auch direkt aus R heraus die entsprechenden .csv öffnen und als Objekte anlegen. Das hat den Vorteil, dass die Datei jedes mal, wenn das R-Skript ausgeführt wird, auf den aktuellen Stand gebracht wird.
+
+
+In R können wir dafür einfach die normalen Befehle zum Einlesen von Dateien nutzen. Diese sind auch dafür ausgelegt, dass der Dateipfad sich nicht auf lokale Daten, sondern auf URLs bezieht. Für die erste Datei:
+
+```{r}
+confirmed <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv')
+```
+
+Im *Environment*-Tab sieht man in RStudio die Eigenschaften dieses Datensatzes:
+
+```{r}
+ncol(confirmed)
+nrow(confirmed)
+```
+
+Das Gleiche sollten wir jetzt noch für die anderen beiden Dateien machen, bevor wir uns gleich mit dem Format der Daten befassen.
+
+```{r}
+deaths <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv')
+recovered <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv')
+```
+
+## Daten aufbereiten (`reshape`)
+
+Die Datensätze sind als Zeitreihen aufbereitet. Das bedeutet, dass jede Zeile des Datensatzes eine Region oder ein Land darstellt und jede Spalte des Datensatzes ein Tag ist. Was wir für unsere Visualisierung in `ggplot2` benötigen ist ein Datensatz, der alle drei Kennzahlen enthält und dabei für jede Kombination aus Tag und Land eine Zeile enthält. Prinzipiell sollte der resultierende Datensatz also folgende Struktur haben:
+
+| Provinz | Land | Tag | Bestätigt | Verstorben | Genesen |
+|:-------:|:----:|:---:|:---------:|:----------:|:-------:|
+| Ohio | USA  | 21.3. | 248 | 3 | 0 |
+| Ohio | USA  | 22.3. | 355 | 3 | 0 |
+| ... | ... | ... | ... | ... | ... |
+|    | Germany | 21.3. | 22213 | 84 | 233 |
+|    | Germany | 22.3. | 24873 | 94 | 266 |
+|  ... | ... | ... | ... | ... | ... |
+
+Für genau solche Umstellungen gibt es in R die Funktion `reshape`. Wagen Sie ruhig einen Blick in die Hilfestellung zu der Funktion mit `?reshape`. Die Bezeichnungen sind zunächst nicht besonders eingängig, also nutzen wir den Abschnitt mit Beispielen um uns zu orientieren.
+
+Bei der Formatierung von sozialwissenschaftlichen Datensätzen können zwei generelle Typen unterschieden werden: das Long-Format und das Wide-Format. Die Bezeichnung bezieht sich dabei (meistens) auf die Anordnung von Messwiederholungen der gleichen Personen - in unserem Fall sind es keine Personen, sondern Regionen.
+
+
+Was wir haben ist also ein Datensatz im "breiten" Format (eine Spalte pro Tag) und wir möchten ihn in einen Datensatz im "langen" Format (eine Zeile pro Tag) übertragen. Um die vorliegenden Daten ins lange Format zu überführen, benötigt die Funktion mindestens fünf Argumente:
+
+  - `data`: Der Datensatz
+  - `varying`: Die Variablen die wiederholt gemessen wurden
+  - `v.names`: Der Name unter dem die Variablen zusammengefasst werden sollen
+  - `timevar`: Die Variable, die Wiederholungen kennzeichnet
+  - `idvar`: Die Variablen, die sich über Wiederholungen nicht ändern
+  - `direction`: Das Zielformat des neuen Datensatzes
+
+Für den ersten Datensatz sollte die Syntax also wie folgt aussehen:
+
+```{r}
+confirmed_long <- reshape(confirmed,
+  varying = names(confirmed)[-c(1:4)],
+  v.names = 'Confirmed',
+  timevar = 'Day',
+  idvar = names(confirmed)[1:4],
+  direction = 'long')
+```
+
+Wir nutzen den Datensatz `confirmed`. Wiederholt gemessen wurden alle Variablen außer die ersten 4 (Provinz, Land, Länge- und Breitengrad). Die neue Variable nennen wir `Confirmed`, damit wir gleich Verwirrung umgehen, wenn wir die drei Datensätze zusammenführen. Unsere Zeitvariable ist der Tag, also benennen wir sie mit `Day`. Als Identifikatoren halten unsere ersten 4 Variablen her (weil diese den Ort eindeutig bestimmen und sich nicht über die Zeit ändern) und die Zielausrichtung des Datensatzes ist "lang". Der Datensatz sollte also jetzt wie folgt aussehen:
+
+```{r}
+head(confirmed_long)
+```
+
+Die Zeilennamen bewirken, dass der Datensatz etwas unübersichlich wirkt. Wir können diese ganz einfach entfernen:
+
+```{r}
+rownames(confirmed_long) <- NULL
+head(confirmed_long)
+```
+
+Bevor jetzt die drei Arten von Fallzahlen zusammenführen können, müssen auch `deaths` und `recovered` ins Long-Format übertragen werden. Sie können unten probieren, ob das Vorgehen zum gewünschten Ergebnis führt. Sie können auch Änderungen vornehmen, um zu sehen, wie sich das Ergebnis verändert.
+
+```{r reshape_deaths, exercise=TRUE}
+deaths_long <- reshape(deaths,
+  varying = names(deaths)[-c(1:4)],
+  v.names = 'Deaths',
+  timevar = 'Day',
+  idvar = names(deaths)[1:4],
+  direction = 'long')
+
+rownames(deaths_long) <- NULL
+head(deaths_long)
+```
+
+Das Gleiche benötigen wir dann noch einmal für den Datensatz der genesenen Fälle:
+
+```{r}
+recovered_long <- reshape(recovered,
+  varying = names(recovered)[-c(1:4)],
+  v.names = 'Recovered',
+  timevar = 'Day',
+  idvar = names(recovered)[1:4],
+  direction = 'long')
+```
+
+
+## Daten zusammenführen (`merge`)
+
+Die drei Datensätze, die wir jetzt erzeugt haben bestehen jeweils aus vier Variablen zur Region (`Province.State`, `Country.Region`, `Lat` und `Long`) einer Variable zur Zeit (`Day`) und der Anzahl der entsprechenden Fälle (`Confirmed`, `Deaths` bzw. `Recovered`). Um die letzten drei in einem Datensatz zusammenzuführen können wir die ersten fünf nutzen um eindeutig festzulegen, welche Daten zusammengehören. Daten vom gleichen Ort zur gleichen Zeit gehören zusammen. Für das Zusammenführen von zwei Datensätzen gibt es in R den `merge` Befehl, der drei zentrale Argumente entgegennimmt:
+
+  - `x`: Der erste Datensatz
+  - `y`: Der zweite Datensatz
+  - `by`: Die Variablen, anhand derer gleiche Fälle identifiziert werden können
+
+In der Hilfe zur Funktion finden sich auch noch viele zusätzliche Argumente, aber diese Drei sind für uns zentral. Leider lassen sich immer nur zwei Datensätze (`x` und `y`) zusammenführen, sodass wir `merge` zwei mal ausführen müssen, um aus unseren drei Datensätzen einen zu machen:
+
+```{r}
+long <- merge(confirmed_long, deaths_long,
+  by = c('Province.State', 'Country.Region', 'Lat', 'Long', 'Day'))
+long <- merge(long, recovered_long,
+  by = c('Province.State', 'Country.Region', 'Lat', 'Long', 'Day'))
+head(long)
+```
+
+
+## Daten zusammenfassen (`aggregate`)
+
+Leider ist die Auflösung mit der die unterschiedlichen Länder erhoben werden nicht einheitlich. Für Australien liegen beispielsweise Daten aus 9 Bundesstaaten vor, für die USA sogar aus 247 Provinzen. Um die Daten einheitlich auf der Ebene von Nationen betrachten zu können, müssen sie aggregiert werden. In unserem Fall möchten wir also die Summe über z.B. die 9 Australischen Bundesstaaten bilden. Dafür gibt es in R sehr viele verschiedene Lösungsansätze. Einer davon ist der `aggregate` Befehl, den wir hier nutzen werden.
+
+Um nun aggregieren zu können, können wir `aggregate` eine Formel geben, wie wir sie schon für Regressionen im letzten Semester verwendet haben. Die generelle Struktur solcher Formeln ist immer `AV ~ UV`, wobei mehrere UVs durch `+` vebunden werden können. In unserem Fall behandeln wir die drei Spalten `Confirmed`, `Deaths` und `Recovered` als AVs und `Contry.Region` plus `Day` als UV. Zusätzlich benötigt der Befehl dann eine Auskunft darüber, auf welchen Datensatz wir uns beziehen und mit welcher Funktion wir aggregieren wollen:
+
+```{r}
+covid <- aggregate(cbind(Confirmed, Deaths, Recovered) ~ Country.Region + Day, data = long, FUN = 'sum')
+head(covid)
+```
+
+Der Datensatz enthält jetzt bestätigte Fälle, Todesfälle und genesene Fälle pro Land und für jeden Tag und ist damit bereit für die Visualisierung.
+
+# `ggplot2` Grundprinzipien {#Grundprinzipien}
+
+In `ggplot2` werden immer Daten aus einem `data.frame` dargestellt. Das heißt, dass wir nicht, wie bei `plot` oder `hist` aus R selbst, Vektoren oder Matrizen nutzen können. Daten müssen immer so aufbereitet sein, dass der grundlegende Datensatz sinnvoll benannte Variablen enthält und in dem Format vorliegt, in dem wir die Daten visualisieren wollen. Das hat zwar den Nachteil, dass wir Datensätze umbauen müssen, wenn wir Dinge anders darstellen wollen, aber hat auch den Vorteil, dass wir alle Kenntnisse über Datenmanagement im Allgemeinen auf den Umgang mit `ggplot2` übertragen können. Deswegen haben wir auch im vergangenen Abschnitt so viel Zeit damit verbracht die Daten in das korrekte Format zu überführen.
+
+Bevor wir loslegen können, muss natürlich `ggplot2` installiert sein und geladen werden:
+
+```{r}
+library(ggplot2)
+```
+
+Im Kern bestehen Abbildungen in der Grammatik von `ggplot2` immer aus drei Komponenten:
+
+  - Daten, die angezeigt werden sollen
+  - Geometrie, die vorgibt welche Arten von Grafiken (Säulendiagramme, Punktediagramme, usw.) genutzt werden
+  - Ästhetik, die vorgibt, wie die Geometrie und Daten aufbereitet werden (z.B. Farben)
+
+In den folgenden Abschnitten werden wir versuchen diese drei Komponenten so zu nutzen, dass wir informative und eventuell auch ansehnliche Abbildungen generieren.
+
+Das zweite Video der Sitzung befasst sich mit den Grundprinzipien der Visualisierung in `ggplot2`.
+
+### Zweites Video `r fa('vimeo')`
+![](https://vimeo.com/148751763)
+
+## Schichten
+
+In `ggplot2` werden Grafiken nicht auf einmal mit einem Befehl erstellt, sondern bestehen aus verschiedenen Schichten. Diese Schichten werden meistens mit unterschiedlichen Befehlen erzeugt und dann so übereinandergelegt, dass sich am Ende eine Abbildung ergibt.
+
+Die Grundschicht sind die Daten. Dafür haben wir im vorherigen Abschnitt `covid` als Datensatz aufbereitet. Benutzen wir zunächst nur die Daten für Deutschland um nicht unnötig die Perspektive zu verzerren:
+
+```{r}
+covid_de <- covid[covid$Country.Region == 'Germany', ]
+```
+
+
+```{r, fig=TRUE}
+ggplot(covid_de)
+```
+
+Was entsteht ist eine leere Fläche. Wie bereits beschrieben, besteht eine Abbildung in `ggplot2` immer aus den drei Komponenten Daten, Geometrie und Ästhetik. Bisher haben wir nur eine festgelegt. Als erste Ästhetik sollten wir festlegen, welche Variablen auf x- und y-Achse dargestellt werden sollen. Nehmen wir naheliegenderweise die Zeit (x-Achse) und die Zahl der bestätigten Fälle:
+
+```{r, fig=TRUE}
+ggplot(covid_de, aes(x = Day, y = Confirmed))
+```
+
+Ästhetik wird in `ggplot2` über den `aes`-Befehl erzeugt. Jetzt fehlt uns noch die geometrische Form, mit der die Daten abgebildet werden sollen. Für die Geometrie-Komponente stehen in `ggplot2` sehr viele Funktionen zur Verfügung, die allesamt mit `geom_` beginnen. Eine Übersicht über die Möglichkeiten finden Sie z.B. [hier](https://ggplot2.tidyverse.org/reference/#section-layer-geoms). Naheliegende Möglichkeiten für den Zeitverlauf sind eine Linie (`geom_line`) und mehrere Punkte (`geom_point`). Neue Schichten werden in ihrer eigenen Funktion erzeugt und mit dem einfachen `+` zu einem bestehenden Plot hinzugefügt.
+
+Im Folgenden ist eine Linie die genutzte Geometrie - probieren Sie aus, wie das Punktediagramm aussieht oder eine andere Geometrie funktioniert, die Ihnen gefällt!
+
+```{r simple_timeline, fig=TRUE, exercise=TRUE}
+ggplot(covid_de, aes(x = Day, y = Confirmed)) + geom_line()
+```
+
+Der immense Vorteil des Schichtens besteht darin, dass wir gleichzeitig mehrere Visualisierungsformen nutzen können. Das Prinizp bleibt das gleiche wie vorher: wir fügen Schichten mit dem `+` hinzu. Probieren Sie die Kombination aus Punkten und Linie im Beispiel oben aus!
+
+## Plots als Objekte
+
+Einer der Vorteile, die sich durch das Schichten der Abbildungen ergibt ist, dass wir Teile der Abbildung als Objekte definieren können und sie in verschiedenen Varianten wieder benutzen können. Das hilft besonders dann, wenn wir unterschiedliche Geometrie in einer gemeinsamen Abbildung darstellen wollen oder z.B. erst einmal eine Abbildung definieren wollen, bevor wir Feinheiten adjustieren.
+
+```{r basic_plot}
+basic <- ggplot(covid_de, aes(x = Day, y = Confirmed))
+```
+
+In `basic` wird jetzt die *Anleitung* für die Erstellung der Grafik gespeichert. Erstellt wird die Grafik aber erst, wenn wir das Objekt aufrufen. Dabei können wir das Objekt auch mit beliebigen anderen Komponenten über `+` kombinieren. Probieren Sie es unten aus, mit Objekt-Kombinationen zu arbeiten!
+
+```{r object_combos, exercise=TRUE, exercise.setup='basic_plot'}
+basic + geom_point()
+```
+
+Damit die Beispiele im weiteren Verlauf auch selbstständig funktionieren, wird unten immer der gesamte Plot aufgeschrieben. Aber für Ihre eigenen Übungen oder Notizen ist es durchaus praktischer mit dieser Objekt Funktionalität zu arbeiten, um so zu umgehen, dass man immer wieder die gleichen Abschnitte aufschreiben muss.
+
+## Farben und Ästhetik {#Farben}
+
+Oben wurde erwähnt, dass Ästhetik die dritte Komponente ist und als Beispiel Farbe genannt. Das stimmt nicht immer: die Farbe der Darstellung muss nicht zwingend eine Ästhetik sein. Gucken wir uns zunächst an, wie es aussieht, wenn wir die Farbe der Darstellung ändern wollen:
+
+```{r, fig=TRUE}
+ggplot(covid_de, aes(x = Day, y = Confirmed)) + geom_point(color = 'blue')
+```
+
+Alle Punkte haben die Farbe geändert. Eine Ästhetik im Sinne der `ggplot`-Grammatik ist immer abhängig von den Daten. Die globale Vergabe von Farbe ist also keine Ästhetik. Sie ist es nur, wenn wir sie von Ausprägungen der Daten abhängig machen. Das funktioniert z.B. so:
+
+```{r}
+ggplot(covid_de, aes(x = Day, y = Confirmed)) + geom_point(aes(color = Confirmed))
+```
+
+Über den Befehl `aes` definieren wir eine Ästhetik und sagen `ggplot`, dass die Farbe der Punkte von der Ausprägung auf der Variable `Confirmed` abhängen soll. Die Farbe kann aber natürlich auch von jeder anderen Variable im Datensatz abhängen. Wie das aussehen kann gucken wir uns im kommenden Abschnitt an.
+
+## Gruppierte Abbildungen
+
+Im letzten Abschnitt hatten wir die Daten auf Fälle aus Deutschland reduziert. In diesem Abschnitt wollen wir gleichzeitig mehrere Länder betrachten können. Dafür müssen wir wieder zunächst die Daten auswählen, die relevant sind. Wir beschränken uns in diesem Fall auf Deutschland, Italien, Frankreich, das Vereinigte Königreich und Spanien.
+
+```{r}
+covid_sel <- covid[covid$Country.Region %in% c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom'), ]
+```
+
+Wenn wir jetzt mit dem gleichen Vorgehen wie oben die Abbildung erstellen, wird es etwas chaotischer, weil unklar ist, welche Punkte sich auf welches Land beziehen:
+
+```{r, fig=TRUE}
+ggplot(covid_sel, aes(x = Day, y = Confirmed)) + geom_point()
+```
+
+Um das zu umgehen, können wir natürlich die Ästhetik der Farben benutzen:
+
+```{r, fig=TRUE}
+ggplot(covid_sel, aes(x = Day, y = Confirmed)) + geom_point(aes(color = Country.Region))
+```
+
+Wie Sie sehen ergibt sich automatisch eine Legende auf der rechten Seite, die jedem Land eine Farbe zuweist. Wir können auch hier wieder eine Kombination aus Punkten und Linien nutzen:
+
+```{r, fig=TRUE}
+ggplot(covid_sel, aes(x = Day, y = Confirmed)) + 
+  geom_point(aes(color = Country.Region)) +
+  geom_line(aes(color = Country.Region))
+```
+
+Das Problem ist hier, dass wir die Ästhetik für jede Geomtrie wiederholen müssen. Stattdessen können wir in `ggplot` auch allgemein eine Gruppierung vornehmen, die für alle Geometrien übernommen wird:
+
+```{r, fig=TRUE}
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+  geom_point() + geom_line()
+```
+
+
+## Faceting
+
+Alle Länder in der gleichen Abbildung darzustellen kann mitunter sehr unübersichtlich werden. Eine Möglichkeit, Übersichtlichkeit zu bewahren ist das sogenannte Faceting. Dabei wird eine Abbildung anhand von Ausprägungen auf einer oder mehr Variablen in verschiedene Abbildungen unterteilt. Mit dem gleichen Datensatz aus Deutschland, Italien, Frankreich, dem Vereinigten Königreich und Spanien können wir die Abbildung anhand des Landes einteilen:
+
+```{r, fig=TRUE}
+ggplot(covid_sel, aes(x = Day, y = Confirmed)) + 
+  geom_point() + geom_line() +
+  facet_wrap(~ Country.Region)
+```
+
+In `facet_wrap` wird wieder mit der R Gleichungsnotation gearbeitet: hier wird der Plot anhand der unabhängigen Variablen hinter der Tilde in Gruppen eingeteilt. Das gibt auch wieder die Möglichkeit mit `+` mehrere Variablen zu definieren, die zum Faceting benutzt werden sollen. Wenn Sie Gruppen anhand von zwei Variablen bilden bietet es sich außerdem an `facet_grid` zu benutzen.
+
+Per Voreinstellung wird beim Faceting eine gemeinsame Skalierung der x- und y-Achsen für alle Teilabbildungen festgelegt. Das kann mit dem Argument `scales` in der `facet_wrap` Funktion umgangen werden. Bei `?facet_wrap` finden Sie dafür genauere Informationen.
+
+## Mehrere Variablen
+
+Bisher haben wir auf der x-Achse nur die Zeit und auf der y-Achse nur die bestätigten Fälle betrachtet. Durch das Schicht-System können wir auf unsere bisherigen Abbildungen aber auch zusätzliche Variablen - oder sogar komplett andere Datensätze - abbilden. Wenn wir uns z.B. die bestätigten und die genesenen Fälle in Deutschland angucken wollen, können wir wie folgt vorgehen:
+
+```{r, fig=TRUE}
+ggplot(covid_de, aes(x = Day)) + 
+  geom_line(aes(y = Confirmed), color = 'darkblue') + 
+  geom_line(aes(y = Recovered), color = 'darkgreen')
+```
+
+# Abbildungen anpassen {#Anpassen}
+
+Die Abbildungen, die wir bisher erstellt haben nutzen alle das in `ggplot2` voreingestellt Design. Auch wenn es sicherlich einen theoretisch sehr gut fundierten Grund gibt, dass der Hintergrund der Abbildung in einem demotivierenden Grauton gehalten sein sollte, gibt es Designs, die man schöner finden kann. Im folgenden gucken wir uns an, wie man seine Abbildungen nach seinen eigenen Vorlieben anpassen kann.
+
+Das dritte Video der Sitzung gibt einen Überblick über die Möglichkeiten, die Abbildungen anzupassen.
+
+### Drittes Video `r fa('youtube')`
+![](https://youtu.be/IdkCEioCp24?t=73)
+
+## Themes {#Themes}
+
+In `ggplot2` werden die Grundeigenschaften von Abbildungen in "Themes" zusammengefasst. Mit `?theme_test` erhalten Sie eine Auflistung aller Themes, die von `ggplot2` direkt zur Verfügung gestellt werden. Noch mehr Themes gibt es im Paket `ggthemes`, welches Sie zusätzlich installieren können.
+
+Um das Theme einer Abbildung zu verändern, können Sie es - wie Geometrie - mit dem `+` hinzufügen. Probieren Sie unten ein paar Themes aus und finden Sie Ihren Liebling!
+
+```{r theme, exercise = TRUE, exercise.eval = TRUE}
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+  geom_line() + geom_point() +
+  theme_light()
+```
+
+Sie können natürlich nicht nur vordefinierte Themes nutzen, sondern über `theme` jeden Aspekt der Aufbereitung der Abbildung selbst steuern. Mit `?theme` sehen Sie die ausufernde Breite an Möglichkeiten, die Ihnen hier gegeben wird.
+
+## Beschriftung
+
+Eine der wichtigsten Komponenten jeder Abbildung ist die Beschriftung. Nur wenn ausreichend gut gekennzeichnet ist, was wir darstellen, können wir darauf hoffen, dass die Information vermittelt wird, die wir vermitteln wollen. Die folgenden Befehle von `ggplot2` beziehen sich spezifisch auf Beschriftungen, Sie können diese Änderungen aber auch allesamt mit der oben erwähnten `theme`-Funktion erreichen.
+
+Zunächst ist es sinnvoll die Achsen ordentlich zu beschriften. Per Voreinstellung werden hierzu die Namen der Variablen genutzt. Wir können also eine nützliche Beschriftung schon früh dadurch erzwingen, dass wir die Variablen im Datensatz ordentlich benennen. Besonders wenn die Achsen aber Zusatzinformationen (wie z.B. "(in %)") enthalten sollen, ist es aber unumgänglich die Benennung hinterher zu ergänzen. Darüber hinaus kann es sinnvoll sein, einer Grafik Titel und Untertitel zu geben.
+
+```{r}
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+  geom_line() + geom_point() +
+  theme_light() +
+  labs(x = 'Tage seit dem 22.1.', y = 'Bestätigte Fälle') + 
+  ggtitle('COVID-19 Infektionen', paste('Stand:', Sys.Date()))
+```
+
+Im Untertitel ist dargestellt, dass wir auch für Beschriftungen wieder Objekte und Werte aus Objekten nutzen können, die in R vorliegen. Hier wird über `Sys.Date()` das aktuelle Datum abgefragt und durch `paste` mit "Stand:" zusammengeklebt.
+
+Der Befehl `labs` bezieht sich auf die Beschriftung von jeder Ästhetik in der Abbildung. In der aktuellen Variante ist die Legende der Länder mit `Country.Region` nicht sonderlich schön benannt. Versuchen Sie unten diese Beschriftung über den `labs` Befehl in etwas Sinnvolleres zu ändern!
+
+```{r labs, exercise = TRUE, exercise.eval = FALSE}
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+  geom_line() + geom_point() +
+  theme_light() +
+  labs(x = 'Tage seit dem 22.1.', y = 'Bestätigte Fälle') + 
+  ggtitle('COVID-19 Infektionen', paste('Stand:', Sys.Date()))
+```
+
+## Farbpaletten
+
+In `ggplot2` wird die Vergabe von Farben in der Ästhetik anhand von zwei Dingen unterschieden: der Geometrie und dem Skalenniveau der Variable, die die Färbung vorgibt. 
+
+In den bisherigen Beispielen im Abschnitt [Farben und Ästhetik](#Farben) haben wir die Unterschiede bezüglich des Skalenniveaus schon gesehen: Kontinuierliche Variablen (Variablen, die in R als `numeric` definiert sind) werden anhand eines Blau-Farbverlaufs dargestellt, diskrete Variablen (Variablen, die in R als `factor` definiert sind) anhand eines vordefinierten Schemas unterschiedlicher Farben. Dieses Schema ist das [Brewer Farbschema](http://colorbrewer2.org/), welches usprünglich für Kartendarstellungen entwickelt wurde. 
+
+Bezüglich Geometrie wird bei der Färbung zwischen `fill` und `color` unterschieden - also ob eine Geometrie mit einer Farbe gefüllt wird oder ihr Rand mit dieser Farbe gezeichnet wird. In den bisherigen Abbildungen haben wir noch kein Beispiel gehabt, in dem etwas gefüllt werden könnte, aber in den Aufgaben zu dieser Sitzung könnte das noch relevant werden.
+
+Nehmen wir an, dass wir unsere Abbildung irgendwo drucken möchten - Farbdruck ist wahnsinnig teuer. Um mit Grautönen zu arbeiten, können wir z.B. `scale_color_grey` benutzen:
+
+```{r}
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+  geom_line() + geom_point() +
+  theme_light() +
+  scale_color_grey()
+```
+
+Das bei den [Themes](#Themes) erwähnte Paket `ggthemes` enthält auch weitere Farbpaletten, die Sie nutzen können, um Ihren Plot nach Ihren Vorlieben zu gestalten. Darüber hinaus gibt es für Fans der Filme von Wes Anderson z.B. das Paket `wesanderson`, welches für jeden seiner Filme die Farbpalette parat hat. Darüber hinaus können wir aber natürlich auch unsere ganz eigene Farbpalette definieren - z.B. die offizielle Farbpalette des Corporate Designs der Goethe Universität, die Sie auf den Folien von PsyBSc 1 und 2 im letzten Semester kennen (und lieben!) gelernt haben. 
+
+Für diese Palette können wir zunächst in einem Objekt die Farben festhalten, die wir benötigen. In `ggplot2` ist es dabei am gängigsten, Farben entweder [über Worte auszuwählen](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf) oder via [hexadezimaler Farbdefinition](https://www.color-hex.com/) zu bestimmen. Für die fünf Farben, die von der Corporate Design Abteilung der Goethe Uni definiert werden ergibt sich folgendes Objekt:
+
+```{r}
+gu_colors <- c('#00618f', '#e3ba0f', '#ad3b76', '#737c45', '#c96215')
+```
+
+Dieses Objekt können wir dann nutzen um mit `scale_color_manual` selbstständig Farben zuzuweisen:
+
+```{r}
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+  geom_line() + geom_point() +
+  theme_light() +
+  scale_color_manual(values = gu_colors)
+```
+
+Die Zuordnung der Farben erfolgt anhand der Reihenfolge in `gu_colors` und der Reihenfolge der Ausprägungen von `Country.Region`. Letztere ist - wie sie bestimmt festgestellt haben - alphabetisch. Wie häufig in `ggplot2` können Sie die Daten ändern (also mit `relevel` die Reihenfolge der Ausprägungen ändern) um Veränderungen in der Darstellung zu bewirken. 
+
+
+# Verschiedene Plots
+
+Bisher haben wir ausschließlich Punkte- und Liniendiagramme benutzt, um die Daten darzustellen. Im letzten Semester haben Sie darüber hinaus noch einige Arten von Diagrammen kennengelernt, die in der psychologischen Forschung extrem verbreitet sind. Ein paar davon werden auch in diesem Abschnitt erstellt.
+
+### Viertes Video `r fa('youtube')`
+![](https://youtu.be/1_Z5q152GSQ)
+
+## Balkendiagramme
+
+Häufigkeiten von nominalskalierten Variablen werden typischerweise in Balkendiagrammen dargestellt. Dazu benutzen wir in diesem Beispiel die Anzahl bestätigter Fälle zum jetzigen Zeitpunkt. Zunächst müssen wir also wieder den Datensatz so umstellen, dass er nur die heutigen Fallzahlen enthält. Weil in der bisherigen Variante von `covid_sel` die Tage fortlaufend nummeriert sind, können wir die heutigen Zahlen einfach anhand des Maximalwertes des Tages extrahieren:
+
+```{r}
+covid_today <- covid_sel[covid_sel$Day == max(covid_sel$Day), ]
+covid_today
+```
+
+Um diese Daten abzubilden könnten wir jetzt theoretisch wie bisher vorgehen, lediglich die Variable auf x-Achse und die genutzte Geometrie ändern sich:
+
+```{r, error = TRUE}
+ggplot(covid_today, aes(x = Country.Region, y = Confirmed)) + 
+  geom_bar()
+```
+
+Der Fehler verrät uns, dass `ggplot2` davon ausgeht, dass wir die Häufigkeit einer nominalskalierten Variablen (`stat_count`) auszählen lassen wollen. Das wäre dann z.B. der Fall, wenn wir einen Datensatz hätten, der Personen enthält und auf einer Variable das Geschlecht kodiert wird. In dem Fall würde `ggplot2` die Häufigkeit der verschiedenen Ausprägungen auszählen und uns diese Plotten.
+
+In unserem Fall haben wir allerdings eine Variable, die die Häufigkeiten enthält, sodass wir dieses Verhalten unterdrücken müssen. Das erreichen wir dadurch, dass wir als "zu berechnende Statistik" statt dem Auszählen (`stat = 'count'`) die schon vorliegende Statistik (`stat = 'identity'`) benutzen.
+
+```{r}
+ggplot(covid_today, aes(x = Country.Region, y = Confirmed)) + 
+  geom_bar(stat = 'identity')
+```
+
+Diese Art der Abbildung kann natürlich auch wieder den Möglichkeiten verbunden werden, die wir im Abschnitt [Abbildungen Anpassen](#Anpassen) besprochen hatten. Probieren Sie es doch direkt aus! Sie können z.B. ein Theme mit einem weißen Hintergrund wählen und die Balken nach Land farbig füllen lassen.
+
+```{r barplot, exercise = TRUE, exercise.eval = FALSE}
+ggplot(covid_today, aes(x = Country.Region, y = Confirmed)) + 
+  geom_bar(stat = 'identity')
+```
+
+## Histogramme
+
+Die Übertragung der Balkendiagramme auf mindestens intervallskalierte Variablen hatten wir letztes Semester in Form von Histogrammen behandelt. Dafür wird eine intervallskalierte Variable in verschiedene Intervalle eingeteilt und die Häufigkeit angezeigt, mit der Ausprägungen auf der Variable in ein Intervall fallen. Wir können uns dafür die Anzahl der bis heute bestätigten Fälle über alle Länder hinweg ansehen. Wie üblich, müssen wir dafür zunächst die geeigneten Daten auswählen:
+
+```{r}
+covid_global <- covid[covid$Day == max(covid$Day), ]
+```
+
+Dann können wir die Daten mit `geom_histogram` ganz einfach darstellen. Der einzige Unterschied ist, dass jetzt die uns interessierende Variable auf der x- und nicht mehr auf der y-Achse abgebildet wird.
+
+```{r}
+ggplot(covid_global, aes(x = Confirmed)) + 
+  geom_histogram()
+```
+
+`ggplot2` macht uns darauf aufmerksam, dass wir keine Breite der Intervalle (`binwidth`) bzw. keine Anzahl der Intervalle (`bins`) angegeben haben und daher 30 Intervalle genutzt werden. Mit den Argumenten `binwidth` bzw. `bins` können wir hier händische Einstellungen vornehmen.
+
+## Boxplots
+
+Um die Verteilung von Variablen zu untersuchen, werden in den Sozialwissenschaften häufig Boxplots genutzt. In `ggplot2` werden diese entsprechend über `geom_boxplot` erstellt. Wir können also die gleichen Informationen wie im letzten Abschnitt auch in Form eines Boxplots darstellen:
+
+```{r}
+ggplot(covid_global, aes(y = Confirmed)) + 
+  geom_boxplot()
+```
+
+## Plots mit Trendlinien
+
+In den Abschnitten [`ggplot2` Grundprinzipien](#Grundprinzipien) und [Abbildungen anpassen](#Anpassen) haben wir uns mit dem sehr verbreiteten Scatterplot befasst. In diesen Plots werden zwei Variablen zueinander ins Verhältnis gestellt - bei uns war das die Zeit auf der x-Achse und die Anzahl bestätigter Fälle auf der y-Achse. Typischerweise wollen wir aus solchen Plots auch einen Trend erkennen können. Im Fall von COVID-19 ist dieser Trend auch in den Rohdaten sehr leicht erkennbar, aber das ist nicht immer der Fall. Mit `geom_smooth` können wir uns eine "Glättung" der Datenlagen anschauen, die den generellen Trend verdeutlicht. Per Voreinstellung wird hierzu die sogenannte LOESS-Glättung genutzt.
+
+```{r}
+ggplot(covid_sel, aes(x = Day, y = Confirmed)) + 
+  geom_point() +
+  geom_smooth()
+```
+
+Was eingezeichnet wird ist die *globale* Trendlinie. Die schattierte Region um diese Linie herum stellt den Standardschätzfehler dieser Kurve dar. Um die Trends länderspezifisch einzuzeichnen, können wir erneut mit der Ästhetik `color` arbeiten, um die Länder in allen Geometrien farblich voneinander abzugrenzen:
+
+```{r}
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+  geom_point() +
+  geom_smooth()
+```
+
+
+# Aufgaben
+
+In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem europäische Länder, Süd-Korea, China und die USA im Zentrum. Um mal eine andere Gegend der Erde in den Fokus zu Rücken, betrachten wir in den Aufgaben Südostasien. Untenstehende Tabelle stellt ein paar Informationen über die 11 Südostasiatischen Länder zusammen ([Quelle](https://en.wikipedia.org/wiki/Southeast_Asia#Sovereign_states)):
+
+| Land | Bevölkerung (in 100 000) | Human Development Index |
+|:----:|:------------------------:|:-----------------------:|
+| Brunei | 4 | .845 |
+| Indonesien | 2677 | .707 |
+| Kambodscha | 167 | .581 |
+| Laos | 71 | .604 |
+| Malaysia | 315 | .804 |
+| Myanmar | 537 | .578 |
+| Osttimor | 12 | .626 |
+| Philippinen | 1067 | .712 |
+| Singapur | 58 | .935 |
+| Thailand | 694 | .765 |
+| Vietnam | 955 | .693 |
+
+  1. Erstellen Sie einen Datensatz mit dem Namen `covid_se`, der nur die Daten dieser Länder enthält (Daten aus Laos und Myanmar stehen nicht zur Verfügung).
+  2. Die Darstellung absoluter Fallzahlen wird häufig als irreführend angesehen, weil Länder mit größerer Bevölkerung mehr mögliche Fälle habe. Nutzen Sie obenstehende Tabelle um die Anzahl bestätigter Fälle an der Bevölkerung zu relativieren und so die bestätigten Fälle pro 100 000 Einwohner zu erhalten. Nennen sie diese Variable `Per100k`.
+  3. Stellen Sie die Bestätigten Fälle pro 100 000 Einwohner in Abhängigkeit von der Zeit in einer Abbildung dar. Nutzen Sie Farben um zwischen den Ländern zu unterscheiden.
+  4. Stellen Sie für jedes Land in einer Teilabbildung die bestätigten Fälle (`Confirmed`), die Todesfälle (`Deaths`) und die genesenen Fälle (`Recovered`) dar. Nutzen sie für die drei Linien unterschiedliche Farben (aber über alle Länder hinweg die gleichen). Weil sich die Bevölkerungszahlen so drastisch unterscheiden, lassen sie die y-Achse über die Länder hinweg frei variieren.
+  5. Nutzen Sie ein Balkendiagramm, um die relative Häufigkeit genesener Personen (`Recovered`) and der Gesamtzahl besätigter Fälle (`Confirmed`) pro Land bis zum heutigen Tag darzustellen. Denken Sie daran, dass Sie dafür Daten aggregieren müssen. Füllen Sie die Balken dabei mit länderspezifischen Farben.
+  
+<!-- ## Lösungen -->
+
+<!-- ### 1. -->
+<!-- ```{r} -->
+<!-- covid_se <- covid[covid$Country.Region %in% c( -->
+<!--   'Brunei', 'Indonesia', 'Cambodia', 'Malaysia',  -->
+<!--   'East Timor', 'Philippines', 'Singapore', 'Thailand', -->
+<!--   'Vietnam'), ] -->
+<!-- ``` -->
+
+<!-- ### 2.  -->
+<!-- ```{r} -->
+<!-- covid_se$Per100k <- NA -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'Brunei'] <- covid_se$Confirmed[covid_se$Country.Region == 'Brunei'] / 4 -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'Indonesia'] <- covid_se$Confirmed[covid_se$Country.Region == 'Indonesia'] / 2677 -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'Cambodia'] <- covid_se$Confirmed[covid_se$Country.Region == 'Cambodia'] / 167 -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'Malaysia'] <- covid_se$Confirmed[covid_se$Country.Region == 'Malaysia'] / 315 -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'East Timor'] <- covid_se$Confirmed[covid_se$Country.Region == 'East Timor'] / 12 -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'Philippines'] <- covid_se$Confirmed[covid_se$Country.Region == 'Philippines'] / 1067 -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'Singapore'] <- covid_se$Confirmed[covid_se$Country.Region == 'Singapore'] / 58 -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'Thailand'] <- covid_se$Confirmed[covid_se$Country.Region == 'Thailand'] / 694 -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'Vietnam'] <- covid_se$Confirmed[covid_se$Country.Region == 'Vietnam'] / 955 -->
+<!-- ``` -->
+
+<!-- ### 3. -->
+<!-- ```{r} -->
+<!-- ggplot(covid_se, aes(x = Day, y = Per100k, color = Country.Region)) +  -->
+<!--   geom_point() + geom_line() -->
+<!-- ``` -->
+
+<!-- ### 4. -->
+<!-- ```{r} -->
+<!-- ggplot(covid_se, aes(x = Day)) +  -->
+<!--   geom_line(aes(y = Confirmed), color = 'blue') + -->
+<!--   geom_line(aes(y = Recovered), color = 'green') + -->
+<!--   geom_line(aes(y = Deaths), color = 'red') + -->
+<!--   facet_wrap( ~ Country.Region, scales = 'free_y') -->
+<!-- ``` -->
+
+
+<!-- ### 5. -->
+<!-- ```{r} -->
+<!-- covid_recover <- aggregate(cbind(Confirmed, Deaths, Recovered) ~ Country.Region, data = covid_se, FUN = 'sum') -->
+<!-- covid_recover$RelRecovery <- covid_recover$Recovered / covid_recover$Confirmed -->
+<!-- ggplot(covid_recover, aes(x = Country.Region, y = RelRecovery, fill = Country.Region)) +  -->
+<!--   geom_bar(stat = 'identity') -->
+<!-- ``` -->
