@@ -1,7 +1,7 @@
 ---
 title: "Grafiken mit ggplot2"
 output: 
-  html_document:
+  learnr::tutorial:
     toc: true
     toc_float: true
     toc_depth: 2
