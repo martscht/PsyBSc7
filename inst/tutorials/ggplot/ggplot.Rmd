@@ -2,9 +2,8 @@
 title: "Grafiken mit ggplot2"
 output: 
   learnr::tutorial:
-    toc: true
-    toc_float: true
-    toc_depth: 2
+    progressive: true
+    allow_skip: true
     includes:
       after_body: footer.html
       in_header: header.html
