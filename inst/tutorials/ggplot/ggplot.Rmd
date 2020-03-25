@@ -12,6 +12,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include = FALSE}
 library(fontawesome)
+library(ggplot2)
 source('setup.R')
 ```
 
