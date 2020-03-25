@@ -23,7 +23,6 @@ deaths_long <- reshape(deaths,
   idvar = names(deaths)[1:4],
   direction = 'long')
 
-
 ### Merged data ----
 long <- merge(confirmed_long, deaths_long,
   by = c('Province.State', 'Country.Region', 'Lat', 'Long', 'Day'))
@@ -39,3 +38,6 @@ covid_global <- covid[covid$Day == max(covid$Day), ]
 
 ### Colors ----
 gu_colors <- c('#00618f', '#e3ba0f', '#ad3b76', '#737c45', '#c96215')
+
+### Basic Plot ----
+basic <- ggplot(covid_de, aes(x = Day, y = Confirmed))

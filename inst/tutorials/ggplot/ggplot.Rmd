@@ -216,7 +216,7 @@ basic <- ggplot(covid_de, aes(x = Day, y = Confirmed))
 
 In `basic` wird jetzt die *Anleitung* für die Erstellung der Grafik gespeichert. Erstellt wird die Grafik aber erst, wenn wir das Objekt aufrufen. Dabei können wir das Objekt auch mit beliebigen anderen Komponenten über `+` kombinieren. Probieren Sie es unten aus, mit Objekt-Kombinationen zu arbeiten!
 
-```{r object_combos, exercise=TRUE, exercise.setup='basic_plot'}
+```{r object_combos, exercise=TRUE}
 basic + geom_point()
 ```
 
