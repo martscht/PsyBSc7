@@ -24,7 +24,7 @@ Weil `ggplot2` so beliebt ist, gibt es online tausende von Quellen mit Tutorials
 
 Welches Beispiel wäre zur Zeit naheliegender als die Ausbreitung von COVID-19? Auf [GitHub](https://github.com/) stellen viele Nutzer und Organisationen tagesaktuelle Daten zu Infektionsraten, bestätigten Fällen und vielen anderen Aspekten zur Verfügung. Diese Daten können wir aus R mit einfachen Funktionen wie `read.table` oder `read.csv` abrufen.
 
-Dafür nutzen wir die Daten, die [von der Johns Hopkins Universität auf GitHub](https://github.com/CSSEGISandData/COVID-19) bereitgestellt werden. Für uns sind dabei die drei Datensätze zu [bestätigten Fällen](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv), [Todesopfern](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv) und [genesenen Patienten und Patientinnen](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv) zentral.
+Dafür nutzen wir die Daten, die [von der Johns Hopkins Universität auf GitHub](https://github.com/CSSEGISandData/COVID-19) bereitgestellt werden. Für uns sind dabei die zwei Datensätze zu [bestätigten Fällen](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv) und [Todesopfern](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv) zentral.
 
 Das erste Video zu dieser Sitzung befasst sich mit dem herunterladen und dem umstrukturieren der Daten. Am Ende sollte ein Datensatz entstanden sein, anhand dessen wir uns angucken können wie `ggplot2` funktioniert.
 
@@ -34,15 +34,14 @@ Das erste Video zu dieser Sitzung befasst sich mit dem herunterladen und dem ums
 
 ### Daten herunterladen
 
-Die erste Möglichkeit die Daten zu beziehen, ist es sie als .csv Dateien herunterzuladen und lokal zu speichern. Dafür reichen diese drei Links aus: [`r fa('download')` Bestätigte Fälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv), [`r fa('download')` Todesfälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv) und [`r fa('download')` genesene Fälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv).
+Die erste Möglichkeit die Daten zu beziehen, ist es sie als .csv Dateien herunterzuladen und lokal zu speichern. Dafür reichen diese beiden Links aus: [`r fa('download')` Bestätigte Fälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv) und [`r fa('download')` Todesfälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv).
 
 Statt den Umweg über externe Dateien zu gehen, können wir aber auch direkt aus R heraus die entsprechenden .csv öffnen und als Objekte anlegen. Das hat den Vorteil, dass die Datei jedes mal, wenn das R-Skript ausgeführt wird, auf den aktuellen Stand gebracht wird.
-
 
 In R können wir dafür einfach die normalen Befehle zum Einlesen von Dateien nutzen. Diese sind auch dafür ausgelegt, dass der Dateipfad sich nicht auf lokale Daten, sondern auf URLs bezieht. Für die erste Datei:
 
 ```{r}
-confirmed <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv')
+confirmed <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
 ```
 
 Im *Environment*-Tab sieht man in RStudio die Eigenschaften dieses Datensatzes:
@@ -55,8 +54,7 @@ nrow(confirmed)
 Das Gleiche sollten wir jetzt noch für die anderen beiden Dateien machen, bevor wir uns gleich mit dem Format der Daten befassen.
 
 ```{r}
-deaths <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv')
-recovered <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv')
+deaths <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
 ```
 
 ### Daten aufbereiten (`reshape`)
@@ -110,7 +108,7 @@ rownames(confirmed_long) <- NULL
 head(confirmed_long)
 ```
 
-Bevor jetzt die drei Arten von Fallzahlen zusammenführen können, müssen auch `deaths` und `recovered` ins Long-Format übertragen werden. Sie können unten probieren, ob das Vorgehen zum gewünschten Ergebnis führt. Sie können auch Änderungen vornehmen, um zu sehen, wie sich das Ergebnis verändert.
+Bevor jetzt die beiden Datensätze zusammenführen können, muss auch `deaths` ins Long-Format übertragen werden. Sie können unten probieren, ob das Vorgehen zum gewünschten Ergebnis führt. Sie können auch Änderungen vornehmen, um zu sehen, wie sich das Ergebnis verändert.
 
 ```{r reshape_deaths, exercise=TRUE}
 deaths_long <- reshape(deaths,
@@ -124,32 +122,18 @@ rownames(deaths_long) <- NULL
 head(deaths_long)
 ```
 
-Das Gleiche benötigen wir dann noch einmal für den Datensatz der genesenen Fälle:
-
-```{r}
-recovered_long <- reshape(recovered,
-  varying = names(recovered)[-c(1:4)],
-  v.names = 'Recovered',
-  timevar = 'Day',
-  idvar = names(recovered)[1:4],
-  direction = 'long')
-```
-
-
 ### Daten zusammenführen (`merge`)
 
-Die drei Datensätze, die wir jetzt erzeugt haben bestehen jeweils aus vier Variablen zur Region (`Province.State`, `Country.Region`, `Lat` und `Long`) einer Variable zur Zeit (`Day`) und der Anzahl der entsprechenden Fälle (`Confirmed`, `Deaths` bzw. `Recovered`). Um die letzten drei in einem Datensatz zusammenzuführen können wir die ersten fünf nutzen um eindeutig festzulegen, welche Daten zusammengehören. Daten vom gleichen Ort zur gleichen Zeit gehören zusammen. Für das Zusammenführen von zwei Datensätzen gibt es in R den `merge` Befehl, der drei zentrale Argumente entgegennimmt:
+Die beiden Datensätze, die wir jetzt erzeugt haben bestehen jeweils aus vier Variablen zur Region (`Province.State`, `Country.Region`, `Lat` und `Long`) einer Variable zur Zeit (`Day`) und der Anzahl der entsprechenden Fälle (`Confirmed` bzw. `Deaths`). Um die letzten beiden in einem Datensatz zusammenzuführen können wir die ersten fünf nutzen um eindeutig festzulegen, welche Daten zusammengehören. Daten vom gleichen Ort zur gleichen Zeit beziehen sich üblicherweise auf das Gleiche. Für das Zusammenführen von zwei Datensätzen gibt es in R den `merge` Befehl, der drei zentrale Argumente entgegennimmt:
 
   - `x`: Der erste Datensatz
   - `y`: Der zweite Datensatz
   - `by`: Die Variablen, anhand derer gleiche Fälle identifiziert werden können
 
-In der Hilfe zur Funktion finden sich auch noch viele zusätzliche Argumente, aber diese Drei sind für uns zentral. Leider lassen sich immer nur zwei Datensätze (`x` und `y`) zusammenführen, sodass wir `merge` zwei mal ausführen müssen, um aus unseren drei Datensätzen einen zu machen:
+In der Hilfe zur Funktion finden sich auch noch viele zusätzliche Argumente, aber diese Drei sind für uns zentral.
 
 ```{r}
 long <- merge(confirmed_long, deaths_long,
-  by = c('Province.State', 'Country.Region', 'Lat', 'Long', 'Day'))
-long <- merge(long, recovered_long,
   by = c('Province.State', 'Country.Region', 'Lat', 'Long', 'Day'))
 head(long)
 ```
@@ -159,10 +143,10 @@ head(long)
 
 Leider ist die Auflösung mit der die unterschiedlichen Länder erhoben werden nicht einheitlich. Für Australien liegen beispielsweise Daten aus 9 Bundesstaaten vor, für die USA sogar aus 247 Provinzen. Um die Daten einheitlich auf der Ebene von Nationen betrachten zu können, müssen sie aggregiert werden. In unserem Fall möchten wir also die Summe über z.B. die 9 Australischen Bundesstaaten bilden. Dafür gibt es in R sehr viele verschiedene Lösungsansätze. Einer davon ist der `aggregate` Befehl, den wir hier nutzen werden.
 
-Um nun aggregieren zu können, können wir `aggregate` eine Formel geben, wie wir sie schon für Regressionen im letzten Semester verwendet haben. Die generelle Struktur solcher Formeln ist immer `AV ~ UV`, wobei mehrere UVs durch `+` vebunden werden können. In unserem Fall behandeln wir die drei Spalten `Confirmed`, `Deaths` und `Recovered` als AVs und `Contry.Region` plus `Day` als UV. Zusätzlich benötigt der Befehl dann eine Auskunft darüber, auf welchen Datensatz wir uns beziehen und mit welcher Funktion wir aggregieren wollen:
+Um nun aggregieren zu können, können wir `aggregate` eine Formel geben, wie wir sie schon für Regressionen im letzten Semester verwendet haben. Die generelle Struktur solcher Formeln ist immer `AV ~ UV`, wobei mehrere UVs durch `+` vebunden werden können. In unserem Fall behandeln wir die zwei Spalten `Confirmed` und `Deaths` als AVs und `Contry.Region` plus `Day` als UVs. Zusätzlich benötigt der Befehl dann eine Auskunft darüber, auf welchen Datensatz wir uns beziehen und mit welcher Funktion wir aggregieren wollen:
 
 ```{r}
-covid <- aggregate(cbind(Confirmed, Deaths, Recovered) ~ Country.Region + Day, data = long, FUN = 'sum')
+covid <- aggregate(cbind(Confirmed, Deaths) ~ Country.Region + Day, data = long, FUN = 'sum')
 head(covid)
 ```
 
@@ -306,12 +290,12 @@ Per Voreinstellung wird beim Faceting eine gemeinsame Skalierung der x- und y-Ac
 
 ### Mehrere Variablen
 
-Bisher haben wir auf der x-Achse nur die Zeit und auf der y-Achse nur die bestätigten Fälle betrachtet. Durch das Schicht-System können wir auf unsere bisherigen Abbildungen aber auch zusätzliche Variablen - oder sogar komplett andere Datensätze - abbilden. Wenn wir uns z.B. die bestätigten und die genesenen Fälle in Deutschland angucken wollen, können wir wie folgt vorgehen:
+Bisher haben wir auf der x-Achse nur die Zeit und auf der y-Achse nur die bestätigten Fälle betrachtet. Durch das Schicht-System können wir auf unsere bisherigen Abbildungen aber auch zusätzliche Variablen - oder sogar komplett andere Datensätze - abbilden. Wenn wir uns z.B. die bestätigten und die Todesfälle in Deutschland angucken wollen, können wir wie folgt vorgehen:
 
 ```{r, fig=TRUE}
 ggplot(covid_de, aes(x = Day)) + 
   geom_line(aes(y = Confirmed), color = 'darkblue') + 
-  geom_line(aes(y = Recovered), color = 'darkgreen')
+  geom_line(aes(y = Deaths), color = 'darkred')
 ```
 
 ## Abbildungen anpassen {#Anpassen}
@@ -505,8 +489,8 @@ In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem eur
   1. Erstellen Sie einen Datensatz mit dem Namen `covid_se`, der nur die Daten dieser Länder enthält (Daten aus Laos und Myanmar stehen nicht zur Verfügung).
   2. Die Darstellung absoluter Fallzahlen wird häufig als irreführend angesehen, weil Länder mit größerer Bevölkerung mehr mögliche Fälle habe. Nutzen Sie obenstehende Tabelle um die Anzahl bestätigter Fälle an der Bevölkerung zu relativieren und so die bestätigten Fälle pro 100 000 Einwohner zu erhalten. Nennen sie diese Variable `Per100k`.
   3. Stellen Sie die Bestätigten Fälle pro 100 000 Einwohner in Abhängigkeit von der Zeit in einer Abbildung dar. Nutzen Sie Farben um zwischen den Ländern zu unterscheiden.
-  4. Stellen Sie für jedes Land in einer Teilabbildung die bestätigten Fälle (`Confirmed`), die Todesfälle (`Deaths`) und die genesenen Fälle (`Recovered`) dar. Nutzen sie für die drei Linien unterschiedliche Farben (aber über alle Länder hinweg die gleichen). Weil sich die Bevölkerungszahlen so drastisch unterscheiden, lassen sie die y-Achse über die Länder hinweg frei variieren.
-  5. Nutzen Sie ein Balkendiagramm, um die relative Häufigkeit genesener Personen (`Recovered`) and der Gesamtzahl besätigter Fälle (`Confirmed`) pro Land bis zum heutigen Tag darzustellen. Denken Sie daran, dass Sie dafür Daten aggregieren müssen. Füllen Sie die Balken dabei mit länderspezifischen Farben.
+  4. Stellen Sie für jedes Land in einer Teilabbildung die bestätigten Fälle (`Confirmed`), und die Todesfälle (`Deaths`) dar. Nutzen sie für die beiden Linien unterschiedliche Farben (aber über alle Länder hinweg die gleichen). Weil sich die Bevölkerungszahlen so drastisch unterscheiden, lassen sie die y-Achse über die Länder hinweg frei variieren.
+  5. Nutzen Sie ein Balkendiagramm, um die relative Häufigkeit verstorbener Personen (`Deaths`) and der Gesamtzahl besätigter Fälle (`Confirmed`) pro Land bis zum heutigen Tag darzustellen. Denken Sie daran, dass Sie dafür Daten aggregieren müssen. Füllen Sie die Balken dabei mit länderspezifischen Farben.
   
 <!-- ## Lösungen -->
 

@@ -5,9 +5,8 @@ library(fontawesome)
 library(ggplot2)
 
 ### Data Download ----
-confirmed <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv')
-deaths <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv')
-recovered <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv')
+confirmed <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
+deaths <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
 
 ### Long format ---
 confirmed_long <- reshape(confirmed,
@@ -24,22 +23,13 @@ deaths_long <- reshape(deaths,
   idvar = names(deaths)[1:4],
   direction = 'long')
 
-recovered_long <- reshape(recovered,
-  varying = names(recovered)[-c(1:4)],
-  v.names = 'Recovered',
-  timevar = 'Day',
-  idvar = names(recovered)[1:4],
-  direction = 'long')
-
 
 ### Merged data ----
 long <- merge(confirmed_long, deaths_long,
   by = c('Province.State', 'Country.Region', 'Lat', 'Long', 'Day'))
-long <- merge(long, recovered_long,
-  by = c('Province.State', 'Country.Region', 'Lat', 'Long', 'Day'))
 
 ### Full data ----
-covid <- aggregate(cbind(Confirmed, Deaths, Recovered) ~ Country.Region + Day, data = long, FUN = 'sum')
+covid <- aggregate(cbind(Confirmed, Deaths) ~ Country.Region + Day, data = long, FUN = 'sum')
 
 ### Subsets ----
 covid_de <- covid[covid$Country.Region == 'Germany', ]
