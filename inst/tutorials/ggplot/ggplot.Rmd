@@ -20,7 +20,7 @@ Das Paket `ggplot2` ist das umfangreichste und am weitesten verbreitete Paket zu
 
 Weil `ggplot2` so beliebt ist, gibt es online tausende von Quellen mit Tutorials, Beispielen und innovativen Ansätzen zur Datenvisualisierung. Vom Autor des Pakets selbst gibt es ein [Überblickswerk über Data-Science als e-Book](https://r4ds.had.co.nz/), in dem sich auch [ein Kapitel](https://r4ds.had.co.nz/data-visualisation.html) mit `ggplot2` befasst.
 
-## Beispieldaten
+## Beispieldaten {#Beispieldaten}
 
 Welches Beispiel wäre zur Zeit naheliegender als die Ausbreitung von COVID-19? Auf [GitHub](https://github.com/) stellen viele Nutzer und Organisationen tagesaktuelle Daten zu Infektionsraten, bestätigten Fällen und vielen anderen Aspekten zur Verfügung. Diese Daten können wir aus R mit einfachen Funktionen wie `read.table` oder `read.csv` abrufen.
 
@@ -469,6 +469,8 @@ ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
 
 
 ## Aufgaben
+
+*Zur Bearbeitung der Aufgaben öffnen Sie bitte ein neues RStudio-Fenster. Es werden die Daten benötigt, wie Sie in [Beispieldaten](#Beispieldaten) erzeugt wurden. Sie können entweder die Syntax von dort kopieren und sie Ihrem Skript hinzufügen, oder den Befehl `PsyBSc7::Aufgaben_2()` ausführen um die Daten direkt im Workspace anlegen zu lassen.*
 
 In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem europäische Länder, Süd-Korea, China und die USA im Zentrum. Um mal eine andere Gegend der Erde in den Fokus zu Rücken, betrachten wir in den Aufgaben Südostasien. Untenstehende Tabelle stellt ein paar Informationen über die 11 Südostasiatischen Länder zusammen ([Quelle](https://en.wikipedia.org/wiki/Southeast_Asia#Sovereign_states)):
 
