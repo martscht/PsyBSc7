@@ -152,7 +152,7 @@ head(covid)
 
 Der Datensatz enthält jetzt bestätigte Fälle, Todesfälle und genesene Fälle pro Land und für jeden Tag und ist damit bereit für die Visualisierung. Sie können das Feld unten nutzen, um sich noch einen besseren Überblick über die Datenlage zu verschaffen. Der Beispielcode zeigt Ihnen die Daten der letzten 10 Tage für Deutschland:
 
-```{r, exercise = TRUE}
+```{r data_investigation, exercise = TRUE}
 covid[covid$Country.Region == 'Germany' & covid$Day > max(covid$Day)-10, ]
 ```
 
