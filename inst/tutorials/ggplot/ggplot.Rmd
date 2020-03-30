@@ -493,7 +493,7 @@ In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem eur
 | Thailand | 694 | .765 |
 | Vietnam | 955 | .693 |
 
-  1. Erstellen Sie einen Datensatz mit dem Namen `covid_se`, der nur die Daten dieser Länder enthält (Daten aus Laos und Myanmar stehen nicht zur Verfügung).
+  1. Erstellen Sie einen Datensatz mit dem Namen `covid_se`, der nur die Daten dieser Länder enthält (Myanmar wird im englischsprachigen Raum weiterhin offiziell als "Burma" geführt).
   2. Die Darstellung absoluter Fallzahlen wird häufig als irreführend angesehen, weil Länder mit größerer Bevölkerung mehr mögliche Fälle habe. Nutzen Sie obenstehende Tabelle um die Anzahl bestätigter Fälle an der Bevölkerung zu relativieren und so die bestätigten Fälle pro 100 000 Einwohner zu erhalten. Nennen sie diese Variable `Per100k`.
   3. Stellen Sie die Bestätigten Fälle pro 100 000 Einwohner in Abhängigkeit von der Zeit in einer Abbildung dar. Nutzen Sie Farben um zwischen den Ländern zu unterscheiden.
   4. Stellen Sie für jedes Land in einer Teilabbildung die bestätigten Fälle (`Confirmed`), und die Todesfälle (`Deaths`) dar. Nutzen sie für die beiden Linien unterschiedliche Farben (aber über alle Länder hinweg die gleichen). Weil sich die Bevölkerungszahlen so drastisch unterscheiden, lassen sie die y-Achse über die Länder hinweg frei variieren.
@@ -504,17 +504,19 @@ In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem eur
 <!-- ### 1. -->
 <!-- ```{r} -->
 <!-- covid_se <- covid[covid$Country.Region %in% c( -->
-<!--   'Brunei', 'Indonesia', 'Cambodia', 'Malaysia',  -->
-<!--   'East Timor', 'Philippines', 'Singapore', 'Thailand', -->
-<!--   'Vietnam'), ] -->
+<!--   'Brunei', 'Burma', 'Cambodia',  'Indonesia',  -->
+<!--   'Laos', 'Malaysia', 'East Timor', 'Philippines', -->
+<!--   'Singapore', 'Thailand', 'Vietnam'), ] -->
 <!-- ``` -->
 
-<!-- ### 2.  -->
+<!-- ### 2. -->
 <!-- ```{r} -->
 <!-- covid_se$Per100k <- NA -->
 <!-- covid_se$Per100k[covid_se$Country.Region == 'Brunei'] <- covid_se$Confirmed[covid_se$Country.Region == 'Brunei'] / 4 -->
-<!-- covid_se$Per100k[covid_se$Country.Region == 'Indonesia'] <- covid_se$Confirmed[covid_se$Country.Region == 'Indonesia'] / 2677 -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'Burma'] <- covid_se$Confirmed[covid_se$Country.Region == 'Burma'] / 537 -->
 <!-- covid_se$Per100k[covid_se$Country.Region == 'Cambodia'] <- covid_se$Confirmed[covid_se$Country.Region == 'Cambodia'] / 167 -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'Indonesia'] <- covid_se$Confirmed[covid_se$Country.Region == 'Indonesia'] / 2677 -->
+<!-- covid_se$Per100k[covid_se$Country.Region == 'Laos'] <- covid_se$Confirmed[covid_se$Country.Region == 'Laos'] / 71 -->
 <!-- covid_se$Per100k[covid_se$Country.Region == 'Malaysia'] <- covid_se$Confirmed[covid_se$Country.Region == 'Malaysia'] / 315 -->
 <!-- covid_se$Per100k[covid_se$Country.Region == 'East Timor'] <- covid_se$Confirmed[covid_se$Country.Region == 'East Timor'] / 12 -->
 <!-- covid_se$Per100k[covid_se$Country.Region == 'Philippines'] <- covid_se$Confirmed[covid_se$Country.Region == 'Philippines'] / 1067 -->
@@ -525,15 +527,14 @@ In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem eur
 
 <!-- ### 3. -->
 <!-- ```{r} -->
-<!-- ggplot(covid_se, aes(x = Day, y = Per100k, color = Country.Region)) +  -->
+<!-- ggplot(covid_se, aes(x = Day, y = Per100k, color = Country.Region)) + -->
 <!--   geom_point() + geom_line() -->
 <!-- ``` -->
 
 <!-- ### 4. -->
 <!-- ```{r} -->
-<!-- ggplot(covid_se, aes(x = Day)) +  -->
+<!-- ggplot(covid_se, aes(x = Day)) + -->
 <!--   geom_line(aes(y = Confirmed), color = 'blue') + -->
-<!--   geom_line(aes(y = Recovered), color = 'green') + -->
 <!--   geom_line(aes(y = Deaths), color = 'red') + -->
 <!--   facet_wrap( ~ Country.Region, scales = 'free_y') -->
 <!-- ``` -->
@@ -541,8 +542,8 @@ In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem eur
 
 <!-- ### 5. -->
 <!-- ```{r} -->
-<!-- covid_recover <- aggregate(cbind(Confirmed, Deaths, Recovered) ~ Country.Region, data = covid_se, FUN = 'sum') -->
-<!-- covid_recover$RelRecovery <- covid_recover$Recovered / covid_recover$Confirmed -->
-<!-- ggplot(covid_recover, aes(x = Country.Region, y = RelRecovery, fill = Country.Region)) +  -->
+<!-- covid_deaths <- aggregate(cbind(Confirmed, Deaths) ~ Country.Region, data = covid_se, FUN = 'sum') -->
+<!-- covid_deaths$DeathRatio <- covid_deaths$Deaths / covid_deaths$Confirmed -->
+<!-- ggplot(covid_deaths, aes(x = Country.Region, y = DeathRatio, fill = Country.Region)) + -->
 <!--   geom_bar(stat = 'identity') -->
 <!-- ``` -->
