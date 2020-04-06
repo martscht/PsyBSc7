@@ -601,7 +601,7 @@ Somit wird in der Animation im Untertitel immer "Day X" stehen, wobei X sich im 
   
 Von den letzten drei sind immer nur zwei nötig, weil die dritte sich dann aus den beiden Angaben ergibt. In unserem Fall mach es Sinn jedem Tag einen eigenen Frame zuzuweisen und 10 Frames pro Sekunde zu benutzen:
 
-```{r}
+```{r, eval = FALSE}
 animate(fluid,
   nframes = max(covid_sel$Day),
   fps = 10)
