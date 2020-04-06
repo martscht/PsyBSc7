@@ -26,11 +26,6 @@ Welches Beispiel wäre zur Zeit naheliegender als die Ausbreitung von COVID-19? 
 
 Dafür nutzen wir die Daten, die [von der Johns Hopkins Universität auf GitHub](https://github.com/CSSEGISandData/COVID-19) bereitgestellt werden. Für uns sind dabei die zwei Datensätze zu [bestätigten Fällen](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv) und [Todesopfern](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv) zentral.
 
-Das erste Video zu dieser Sitzung befasst sich mit dem herunterladen und dem umstrukturieren der Daten. Am Ende sollte ein Datensatz entstanden sein, anhand dessen wir uns angucken können wie `ggplot2` funktioniert.
-
-#### Erstes Video `r fa('youtube')`
-![](https://youtu.be/dQw4w9WgXcQ)
-
 
 ### Daten herunterladen
 
@@ -175,10 +170,6 @@ Im Kern bestehen Abbildungen in der Grammatik von `ggplot2` immer aus drei Kompo
 
 In den folgenden Abschnitten werden wir versuchen diese drei Komponenten so zu nutzen, dass wir informative und eventuell auch ansehnliche Abbildungen generieren.
 
-Das zweite Video der Sitzung befasst sich mit den Grundprinzipien der Visualisierung in `ggplot2`.
-
-#### Zweites Video `r fa('vimeo')`
-![](https://vimeo.com/148751763)
 
 ### Schichten
 
@@ -278,6 +269,26 @@ ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
   geom_point() + geom_line()
 ```
 
+Wenn Sie das Ganze auch mit anderen Ländern ausprobieren möchten, können Sie das folgende Feld nutzen um erst Daten auszuwählen und dann einen Plot zu erstellen. 
+
+*Mit "Hint" können Sie sich ein paar Hinweise ausgeben lassen.*
+
+```{r grouped, exercise = TRUE, exercise.eval = FALSE}
+
+```
+
+```{r grouped-hint-1}
+# Ländernamen ausgeben lassen
+levels(covid$Country.Region)
+```
+
+```{r grouped-hint-2}
+# 10 Länder mit den meisten Fällen auswählen
+today <- covid[covid$Day == max(covid$Day), ]
+filt <- today[rank(1/today$Confirmed) <= 10, 'Country.Region']
+covid_10 <- covid[covid$Country.Region %in% filt, ]
+```
+
 
 ### Faceting
 
@@ -306,11 +317,6 @@ ggplot(covid_de, aes(x = Day)) +
 ## Abbildungen anpassen {#Anpassen}
 
 Die Abbildungen, die wir bisher erstellt haben nutzen alle das in `ggplot2` voreingestellt Design. Auch wenn es sicherlich einen theoretisch sehr gut fundierten Grund gibt, dass der Hintergrund der Abbildung in einem demotivierenden Grauton gehalten sein sollte, gibt es Designs, die man schöner finden kann. Im folgenden gucken wir uns an, wie man seine Abbildungen nach seinen eigenen Vorlieben anpassen kann.
-
-Das dritte Video der Sitzung gibt einen Überblick über die Möglichkeiten, die Abbildungen anzupassen.
-
-#### Drittes Video `r fa('youtube')`
-![](https://youtu.be/IdkCEioCp24?t=73)
 
 ### Themes {#Themes}
 
@@ -386,15 +392,12 @@ ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
   scale_color_manual(values = gu_colors)
 ```
 
-Die Zuordnung der Farben erfolgt anhand der Reihenfolge in `gu_colors` und der Reihenfolge der Ausprägungen von `Country.Region`. Letztere ist - wie sie bestimmt festgestellt haben - alphabetisch. Wie häufig in `ggplot2` können Sie die Daten ändern (also mit `relevel` die Reihenfolge der Ausprägungen ändern) um Veränderungen in der Darstellung zu bewirken. 
+Die Zuordnung der Farben erfolgt anhand der Reihenfolge in `gu_colors` und der Reihenfolge der Ausprägungen von `Country.Region`. Letztere ist - wie sie bestimmt festgestellt haben - alphabetisch. Wie häufig in `ggplot2` können Sie die Daten ändern (also mit `relevel` die Reihenfolge der Ausprägungen ändern) um Veränderungen in der Darstellung zu bewirken.
 
 
 ## Verschiedene Plots
 
 Bisher haben wir ausschließlich Punkte- und Liniendiagramme benutzt, um die Daten darzustellen. Im letzten Semester haben Sie darüber hinaus noch einige Arten von Diagrammen kennengelernt, die in der psychologischen Forschung extrem verbreitet sind. Ein paar davon werden auch in diesem Abschnitt erstellt.
-
-#### Viertes Video `r fa('youtube')`
-![](https://youtu.be/1_Z5q152GSQ)
 
 ### Balkendiagramme
 
@@ -477,7 +480,7 @@ ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
 
 *Zur Bearbeitung der Aufgaben öffnen Sie bitte ein neues RStudio-Fenster. Es werden die Daten benötigt, wie Sie in [Beispieldaten](#Beispieldaten) erzeugt wurden. Sie können entweder die Syntax von dort kopieren und sie Ihrem Skript hinzufügen, oder den Befehl `PsyBSc7::Aufgaben_2()` ausführen um die Daten direkt im Workspace anlegen zu lassen.*
 
-In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem europäische Länder, Süd-Korea, China und die USA im Zentrum. Um mal eine andere Gegend der Erde in den Fokus zu Rücken, betrachten wir in den Aufgaben Südostasien. Untenstehende Tabelle stellt ein paar Informationen über die 11 Südostasiatischen Länder zusammen ([Quelle](https://en.wikipedia.org/wiki/Southeast_Asia#Sovereign_states)):
+In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem europäische Länder, Süd-Korea, China und die USA im Zentrum. Um mal eine andere Gegend der Erde in den Fokus zu Rücken, betrachten wir in den Aufgaben die [Ausbreitung in Südostasien](http://www.tagesschau.de/thailand-corona-103.html). Untenstehende Tabelle stellt ein paar Informationen über die 11 Südostasiatischen Länder zusammen ([Quelle](https://en.wikipedia.org/wiki/Southeast_Asia#Sovereign_states)):
 
 | Land | Bevölkerung (in 100 000) | Human Development Index |
 |:----:|:------------------------:|:-----------------------:|
@@ -547,3 +550,64 @@ In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem eur
 <!-- ggplot(covid_deaths, aes(x = Country.Region, y = DeathRatio, fill = Country.Region)) + -->
 <!--   geom_bar(stat = 'identity') -->
 <!-- ``` -->
+
+## Bonusplots
+
+Weil auch ich mich in dieser Phase der eingeschränkten Möglichkeiten beschäftigen muss, habe ich für Sie im folgenden ein paar zusätzliche Abbildungen erstellt, die auch Sie zum gleichen Datensatz mit `ggplot2` und Erweiterungen erstellen können. Diese gehen über das Ausmaß dessen hinaus, was wir im Rahmen dieses Semesters besprechen, aber falls Sie die grafische Darstellung von Daten interessiert, sollten Sie aber von diesen Möglichkeiten gehört haben.
+
+### Animationen
+
+Was sich bei Verlaufsdaten anbietet ist es, diese auch so zu animieren, dass der Verlauf deutlich wird. Für Animationen gibt es für `ggplot2` das Erweiterungspaket `gganimate`, das Ihnen die Möglichkeit bietet, normale `ggplot`s um eine Achse - die Zeit - zu erweitern. Zuerst aber müssen wir `gganimate` laden:
+
+```{r}
+library(gganimate)
+```
+
+Nehmen wir wieder den Plot der Verläufe der bestätigten Fälle. Dieser stellt jetzt den "statischen" Anteil unserer Abbildung dar, daher können wir ihn einfach `static` nennen:
+
+```{r static}
+static <- ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+  geom_line() + geom_point() +
+  theme_light() + scale_color_discrete('Country')
+```
+
+Im Gegensatz zu den bisherigen Abbildungen ändern wir außerdem den Titel der Legende zu "Country", um das Ganze ein wenig aufzuhübschen. In `static` ist jetzt zunächst der gleiche Plot enthalten, wie bisher:
+
+```{r}
+static
+```
+
+Um Animationen zu generieren, können wir mit den Funktionen von `gganimate` eine neue Schicht - die der Übergänge - erzeugen. Alle Funktionen, mit denen man durch das Pakte Animationen erzeugen kann beginnen mit `transition_` - ähnlich wie im Kern-`ggplot2` alle Geometrien mit `geom_` beginnen.
+
+Um in einer Animation nach und nach die Werte der einzelnen Tage anzuzeigen, können wir die Daten schrittweise "aufdecken" - der dazugehörige Befehl heißt also `transition_reveal`. Um das mit unserem bisher statistischen Plot zu verbinden, benutzen wir in `ggplot` Tradition weiterhin das `+`:
+
+```{r}
+fluid <- static + transition_reveal(Day)
+```
+
+Die Funktion `transition_reveal` möchte als Argument wissen, anhand welche Variable des Datensatzes wir die Zeitachse kodieren. Bei uns ist das der Tag, also `Day`. Wenn Sie jetzt `fluid` aufrufen würden, würde nach ca. 20 Sekunden renderzeit eine Animation in RStudio erscheinen. Wir fügen der Abbildung aber zunächst noch einen Titel und Untertitel hinzu. Dabei soll der Untertitel den jeweiligen Tag angeben, sich also über die Zeit ebenfalls verändern. In der Hilfe zu `transition_reveal` finden Sie den Abschnitt Label variables, der Ihnen verrät, welche Werte von der Animation ausgegeben werden und z.B. in die Benennung mit eingebunden werden können. In diesem Fall heißt diese Variable `frame_along`. Diese können wir in den Untertitel einbinden:
+
+```{r}
+fluid <- static + transition_reveal(Day) +
+  ggtitle('Confirmed COVID-19 Cases', subtitle = 'Day {frame_along}')
+```
+
+Somit wird in der Animation im Untertitel immer "Day X" stehen, wobei X sich im Verlauf der Animation ändert. Um dann die Abbildung zu animieren gibt es den Befehl `animate`, der ein paar, für uns relevante, Argumente entgegennimmt:
+
+  - `plot`: Welche Plot soll animiert werden? Hier `fluid`
+  - `nframes`: Wieviele Frames sollen insgesamt animiert werden?
+  - `fps`: Wieviele Frames per Second soll die finale Animation haben?
+  - `duration`: Wie lang soll die Animation (in Sekunden) sein?
+  
+Von den letzten drei sind immer nur zwei nötig, weil die dritte sich dann aus den beiden Angaben ergibt. In unserem Fall mach es Sinn jedem Tag einen eigenen Frame zuzuweisen und 10 Frames pro Sekunde zu benutzen:
+
+```{r}
+animate(fluid,
+  nframes = max(covid_sel$Day),
+  fps = 10)
+```
+
+Die Animation sollte erneute ca. 20 Sekunden dauern und in folgendem gif resultieren (ich habe die Animation am 6. April durchgeführt, ihre Animation wird sich also dementsprechend unterscheiden):
+
+<img src="https://raw.githubusercontent.com/martscht/PsyBSc7/master/inst/tutorials/ggplot/images/lines.gif" width="80%"/>
+
