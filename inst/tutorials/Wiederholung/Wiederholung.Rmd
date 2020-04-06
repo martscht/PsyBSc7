@@ -1,0 +1,369 @@
+---
+title: "Sitzung 1: R-Grundlagen Auffrischung und Matrixrechnung"
+output: 
+  learnr::tutorial:
+      progressive: true
+      allow_skip: true
+      includes:
+        after_body: footer.html
+        in_header: header.html
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(fontawesome)
+library(psych)
+data(mach)
+```
+
+## Start mit R
+
+R ist eine Open-Source-Software. Dies bedeutet, dass es online eine Vielzahl von Ressourcen gibt, die Sie beim Lernen nutzen können und sollten! Zu einigen Themen wird gezielt auf weiterführende Links zum vertiefenden Verständnis hingewiesen. Grundsätzlich gibt es online eine Vielzahl an kostenlosen Informationsangeboten (z.B. das `R-Cookbook`: http://www.cookbook-r.com, das Buch `R for Data Science`: https://r4ds.had.co.nz,  oder hier eine Einführung in R für Psychologie-Studierende: https://r-intro.tadaa-data.de/book/was-ist-r.html), sowie teilweise kostenlosen Übungsplattformen (z.B. https://www.datacamp.com, https://www.codecademy.com etc.). 
+
+Für den Verlauf dieses Modul benötigen Sie die Statistiksoftware R und die Benutzeroberfläche R Studio auf ihrem Rechner. Beide können kostenlos heruntergeladen werden. 
+
+**Downloadlinks:**
+
+R für das Windows-Betriebssystem: https://cran.r-project.org/bin/windows/base/
+
+R für das Mac-Betriebssystem: https://cran.r-project.org/bin/macosx/
+
+R-Studio:  https://rstudio.com/products/rstudio/download/ (Herunterscrollen um Version für Windows oder Mac zu wählen) 
+
+Hier finden Sie eine ausführliche Anleitung zum Herunterladen und Installieren von R und R-Studio: https://www.uni-kiel.de/medinfo/lehre/medlife/Installation_instructions_for_R_and_RStudio.pdf
+
+Das Video zur ersten Sitzung beinhaltet eine Wiederholung der Grundlagen in R und einfache Anwendungen auf Matrizen und Datensätze: 
+
+<!-- Video --> 
+
+## Objekte und Funktionen
+
+### Objekte
+Objekte werden in R durch den Zuweisungspfeil (`<-`) oder das Gleichzeichen (`=`) angelegt.
+
+```{r}
+zahl <- 100
+zahl = 100
+```
+
+Funktionen oder Rechenoperationen können entweder auf Zahlen oder auf Objekte angewandt werden:
+
+```{r}
+log(100) 
+log(zahl)
+```
+
+Objekte können unter anderem für einfache Rechenoperationen (`+`, `-`, `*`, `/`, `^`) sowie für logische Abfragen (`==`, `!=`, `>`, `>=`, `<`, `<=`) genutzt werden. Weiterführende Informationen und Übersicht zu Rechenoperationen und logischen Abfragen: https://www.statmethods.net/management/operators.html
+
+### Funktionen
+Funktionen in R haben die Grundstruktur `funktionsname(argument1 = ..., argument2 = ..., argument3 = ...)`. Die Argumente, die eine Funktion erwartet, können mit `args()` abgefragt werden:
+
+```{r}
+args(round)
+```
+
+Argumente, auf die in der Darstellung ` = ...` folgt, nutzen diesen Wert als Voreinstellung. Bei `round` wird per default auf 0 Nachkommastellen gerundet, wenn dieser Standard nicht explizit überschrieben wird. 
+
+Argumente können durch die korrekte Reihenfolge oder durch explizite Benennung angesprochen werden. Bearbeiten Sie den untenstehenden Code und testen beide Versionen.
+
+```{r round, exercise = TRUE, exercise.eval = TRUE}
+round(1.2859, 2)
+``` 
+
+Außerdem können Sie mit `?` oder `help()` die Hilfe einer Funktion aufrufen um sich detaillierte Informationen zu einer Funktion ausgeben zu lassen.
+
+## Vektoren und Matrizen 
+
+Mehrere Zahlen werden in R durch `c()` zu Vektoren kombiniert:
+
+```{r}
+zahlen <- c(8, 3, 4)
+```
+
+Vektoren werden elementenweise in Rechenoperationen genutzt:
+
+```{r}
+zahlen * 3
+```
+
+Vektoren können unterschiedlicher Art sein:
+
++--------------------+--------------------+--------------------------------------------------+
+| Klasse             | Abkürzung          | Inhalt                                           |
++====================+====================+==================================================+
+| `logical`          | `logi`             | `TRUE` oder `FALSE`                              |
++--------------------+--------------------+--------------------------------------------------+
+| `numeric`          | `num`              | Nur Zahlen                                       |
++--------------------+--------------------+--------------------------------------------------+
+| `character` *      | `chr`              | Irgendeine Kombination aus Zahlen und Buchstaben |
++--------------------+--------------------+--------------------------------------------------+
+
+* character (engl.) = Zeichen
+
+Für einen vorhandenen Vektor kann die Klasse über die Funktion `str()` ermittelt werden. 
+
+```{r}
+str(zahlen)
+class(zahlen) #alternativer Befehl
+```
+
+Ein logischer Vektor entsteht durch eine elementenweise logische Abfrage. Über die Funktion `as.character()` können die Elemente eines Vektors in Zeichen umgewandelt werden. 
+
+```{r}
+abfrage <- zahlen == 3 #elementenweise logische Abfrage
+str(abfrage)
+zeichen <- as.character(zahlen)
+str(zeichen)
+```
+
+Matrizen sind eine der vier Formen, in der in R mehrere Vektoren in einem gemeinsamen Objekt abgelegt werden können:
+
++--------------------+--------------------------------------------------------+
+| Form               | Inhalt                                                 |
++====================+========================================================+
+| `matrix`           | Vektoren der gleichen Länge und Art (zwei-dimensional) |
++--------------------+--------------------------------------------------------+
+| `array`            | Vektoren der gleichen Länge und Art (n-dimensional)    |
++--------------------+--------------------------------------------------------+
+| `data.frame`       | Vektoren der gleichen Länge                            |
++--------------------+--------------------------------------------------------+
+| `list`             | Beliebige Objekte                                      |
++--------------------+--------------------------------------------------------+
+
+Sie können mit dem `matrix()`-Befehl angelegt werden:
+
+```{r}
+mat <- matrix(c(7, 3, 9, 1, 4, 6), ncol = 2)
+```
+
+Schauen Sie sich die erstellte Matrix an, in dem sie `mat` ausführen. Prüfen sie mit dem Befehl `str()`, welcher Art die erstellte Matrix ist. 
+
+```{r matrix2, exercise = TRUE, exercise.eval = TRUE}
+mat <- matrix(c(7, 3, 9, 1, 4, 6), ncol = 2)
+```
+
+Schauen Sie mit dem Befehls `args()`, welche Argumente die Funktion `matrix` erwartet. Erstellen Sie eine eigene Matrix analog zu oben, und nutzen Sie hierbei die konkrete Benennung der Argumente, die sie verwenden. 
+
+```{r matrix1, exercise = TRUE, exercise.eval = TRUE}
+
+```
+
+Auf die Elemente innerhalb von Matrizen kann man über die sogenannte Indizierung zugreifen, indem man Zeile und Spalte nach der folgenden Form definiert: `[Zeile, Spalte]`. Das Element in der dritten Zeile und der ersten Spalte erreichen wir also über:
+```{r}
+mat[3, 1]
+```
+
+Die Dimensionen einer Matrix lassen sich bestimmen über: 
+```{r}
+nrow(mat)
+ncol(mat)
+dim(mat) #alternativer Befehl
+```
+
+Um Matrizen bzw. Vektoren spaltenweise zusammenzufügen kann `cbind()` genutzt werden (analog, ist `rbind()` dafür da, zeilenweise zusammenzufügen).
+
+```{r}
+mat2 <-  matrix(c(8, 2, 11, 3, 5, 9), ncol = 2)
+
+combined <- cbind(mat, mat2)
+combined
+```
+
+Von besonderer Bedeutung sind in der Statistik quadratische Matrizen, also Matrizen mit so vielen Zeilen wie Spalten. In der Vorlesung wurden verschiedene Matrixoperationen besprochen. Alle diese Operationen sind auch in R implementiert und über einfache Befehle nutzbar. 
+
+Hier ein Überblick über die in der Vorlesung behandelten Matrixoperationen und ihre Umsetzung in R (`m` steht dabei immer für eine beliebige Matrix):
+
++---------------------------+------------------+--------------------------------+
+| Operation                 | Befehl           | Anmerkungen                    |
++===========================+==================+================================+
+| Diagonale                 | `diag(m)`        |                                |
++---------------------------+------------------+--------------------------------+
+| Spur                      | `sum(diag(m))`   |alternativ: tr(), psych-Package |
++---------------------------+------------------+--------------------------------+
+| Transposition             | `t(m)`           |                                |
++---------------------------+------------------+--------------------------------+
+| Symmetrie prüfen          | `isSymmetric(m)` |                                |
++---------------------------+------------------+--------------------------------+
+| Einheitsmatrix            | `diag(1, i)`     | `i`: Anzahl der Zeilen/Spalten |
++---------------------------+------------------+--------------------------------+
+| Addition                  | `m1 + m2`        |                                |
++---------------------------+------------------+--------------------------------+
+| Subtraktion               | `m1 - m2`        |                                |
++---------------------------+------------------+--------------------------------+
+| Multiplikation (Skalar)   | `m * x`          | `x`: Skalar                    |
++---------------------------+------------------+--------------------------------+
+| Multiplikation (Matrizen) | `m1 %*% m2`      |                                |
++---------------------------+------------------+--------------------------------+
+| Inverse                   | `solve(m)`       |                                |
++---------------------------+------------------+--------------------------------+
+| Determinante              | `det(m)`         |                                |
++---------------------------+------------------+--------------------------------+
+
+## Packages 
+
+So genannte Packagee (Pakete) stellen zusätzliche Funktionen zur Verfügung, die in base R nicht verfügbar sind. Aktuell sind in dem offiziellen Repository für R über 15.000 ergänzende Packages verfügbar. Eine Liste dieser können Sie über folgenden Link abrufen: https://cran.r-project.org/web/packages/. Wenn Sie nach einem Package für einen bestimmten Zweck suchen, ist es jedoch leichter, eine konventionelle Suchmaschine zu nutzen.
+
+Einige nützliche Packages für die Anwendung in psychologischer Forschung sind beispielsweise: 
+
++--------------------+----------------------------------------------------------------------------------------+
+| Package            | Inhalt                                                                                 |
++====================+========================================================================================+
+| `psych`            | Funktionen für psychologische Forschung; vorallem multivariate Analysen und            |
+|                    | Testkonstruktion, z.B. Faktorenanalysen, Reliabilitätsanalyse                          |
++--------------------+----------------------------------------------------------------------------------------+
+| `car`              | Funktionen für Regressionsanalysen                                                     |
++--------------------+----------------------------------------------------------------------------------------+
+| `ggplot2`          | Erstellen von Abbildungen (siehe zweite Sitzung)                                       |
++--------------------+----------------------------------------------------------------------------------------+
+| `dplyr`            | Bearbeiten von Datensätzen: Zusammenfassen, Strukturieren, Unterteilen und Neuanordnen | 
+|                    | von Datensätzen                                                                        |
++--------------------+----------------------------------------------------------------------------------------+
+
+Packages müssen vor der ersten Nutzung zunächst einmal heruntergeladen werden:
+```{r, eval = FALSE}
+install.packages("psych")
+```
+
+Danach muss man ein Package aus der library laden. Dies muss nach jedem Neustart von R erneut erfolgen, damit das Package genutzt werden kann. 
+
+```{r}
+library(psych)
+```
+
+## Einlesen von Datensätzen
+
+In der praktischen Nutzung bekommt man es mit Datensätzen in den unterschieldlichsten Dateiformaten zu tun. R kann Daten aus sehr vielen Formaten einlesen (.csv, .sav, .txt, .dat, ...). Teilweise müssen dafür spezielle Packages benutzt werden. Häufig empfiehlt sich die Nutzung von csv-Dateien. 
+Eine Zusammenfassung dazu findet sich beispielsweise hier: https://de.wikibooks.org/wiki/GNU_R:_Datenimport_und_-export
+
+Wenn Daten bereits im R-eigenen .rda-Format vorliegen, können diese über den Befehl `load()` oder über `readRDS()` eingelesen werden.
+
+Wenn die Daten lokal auf dem Rechner gespeichert sind, empfiehlt es sich, den betreffenden Ordner als Working Directory zu definieren und auch das Skript dort abzulegen. Die Daten können dann ohne Angabe eines Dateipfades eingelesen werden.
+
+```{r, eval = FALSE}
+setwd("Ordnerpfad")
+```
+
+```{r, eval = FALSE}
+load("mach.rda")
+```
+
+## Mit Datensätzen arbeiten
+
+Einen Überblick über die Daten verschaffen kann man sich beispielsweise mit Funktionen wie `names()`, `head()` oder `summary`oder der Funktionen `describe()` aus dem psych-Package.
+
+Um auf einzelne Variablen in einem Datensatz zuzugreifen, kann man das `$`-Zeichen nutzen, und dann Funktionen auf die angesprochene Variable anwenden.
+
+```{r}
+mean(mach$TIPI1)
+```
+
+Alternativ kann man analog zu oben auch die Indizierung über eckige Klammern nutzen, um eine oder mehrere Variablen oder Beobachtungen auszuwählen.
+```{r}
+mean(mach[,1])
+```
+
+Um eine Anzahl an Beobachtungen auszuwählen, die einen bestimmten Wert in einer Variable haben, kann ebenfalls die Indizierung in eckigen Klammern verwendet werden, und kann ggf. mit dem `%in%`-Operator kombiniert werden.
+
+```{r, eval = FALSE}
+mach[mach$voted == 1, ] #Alle Beobachtungen, die im Item voted den Wert 1 haben
+mach[mach$religion %in% c(1, 2), ] #Alle Beobachtungen, die im Item religion entweder 1 oder 2 aufweisen
+
+mach[,1:10] #Auswahl der ersten 10 Variablen
+```
+
+## Markdown-Dateien erstellen
+
+Ein Markdown ist ein Dokument, welches im R-Editor erstellt wird, und sowohl Textbestandteile als auch R-Code enthalten kann. Dieses Dokument wird in R erstellt und bearbeitet, und kann danach z.B. als Word-, PDF- oder HTML-Datei ausgegeben werden. Ein Markdown besteht aus freien Textbereichen und aus sogenannten R-Chunks (Absätzen mit R-Code). In Textabsätzen können bestimmte Befehle genutzt werden, um die Formatierung des Textes (Überschriften, Fettdruck, etc.) anzupassen.
+
+### Schritte zur Erstellung eines Markdowns
+
+- File -> New File -> R Markdown 
+- Zielformat festlegen (Word, PDF, HTML...) 
+- Erstelltes Dokument ist eine Schablone mit Vorlagen für Freitext und R-Chunks
+- Knit (Dokument in Zielformat erstellen)
+
+Hier finden Sie ein sogenanntes Cheatsheet für R-Markdown, das viele wichtige Befehle kurz und knapp zusammenfasst:
+https://rstudio.com/wp-content/uploads/2015/06/rmarkdown-german.pdf
+
+Eine sehr ausführliche Anleitung finden sie unter: https://rmarkdown.rstudio.com/lesson-1.html
+
+## Aufgaben zur eigenständigen Bearbeitung
+### Matrixalgebra
+
+Auf den Folien der Vorlesung finden Sie Beispiele zu verschiedenen Matrixoperationen. Nutzen Sie R, um einige von ihnen nachzurechnen! Definieren Sie dafür jeweils die erwähnten Matrizen so wie auf den Vorlesungsfolien angegeben. 
+
+1. Bestimmen Sie die Spur der Matrix auf Folie 14.
+
+2. Prüfen Sie, ob es sich bei der Matrix auf Folie 18 wirklich um eine symmetrische Matrix handelt.
+
+3. FÜhren Sie die Multiplikation der Matrizen auf Folie 29 mit R durch.
+
+### Daten laden
+Der bereitgestellte Datensatz `mach` kommt aus einer Onlineerhebung zum Machiavellismus. Bei diesem Konstrukt handelt es sich um eines der drei Persönlichkeitsmerkmale, welche häufig als "Dunkle Triade" bezeichnet werden: Machiavellismus, Narzissmus und Psychopathie. In Anlehnung an Machiavellis "Der Fürst" ist der Kerngedanke bei diesem Konstrukt, dass Personen ein nutzenorientiertes Verständnis sozialer Beziehungen haben. Den Fragebogen können Sie selbst unter [https://openpsychometrics.org/tests/MACH-IV/](https://openpsychometrics.org/tests/MACH-IV/) ausfüllen.
+
+  1. Laden Sie den Datensatz und verschaffen Sie sich einen Überblick. 
+
+  2. Ermitteln Sie mithilfe von Befehlen die Anzahl der Variablen und die Anzahl der Personen im Datensatz.
+
+  3. Wie lauten die Namen der Variablen, die in diesem Datensatz enthalten sind?
+
+### Korrelationen
+
+Empirisch kann das Konstrukt des Machiavellismus in vier Subdomänen unterteilt werden: negative zwischenmenschliche Taktik (Variable `nit`), positive zwischenmenschliche Taktik (Variable `pit`), zynische Ansicht der menschlichen Natur (Variable `cvhn`) und positive Ansicht der menschlichen Natur (Variable `pvhn`).
+
+  4. Untersuchen Sie mithilfe von Histogrammen die Verteilung dieser vier Subdomänen.
+
+  5. Im Datensatz sind vier Subfacetten enthalten (positiv: `pit` und `pvhn`, negativ: `nit` und `cvhn`). Es sollte erwartet werden, dass die gleichgerichteten Subdomänen positiv miteinander korrelieren, die entgegengerichteten Subdomänen negativ. Nutzen Sie die `corr.test` Funktion aus dem R-Paket `psych`, um diese Erwartungen zu prüfen. Dafür müssen Sie ein Subset des Datensatzes erstellen, welches nur die relevanten Variablen enthält. Nutzen Sie wenn nötig die Hilfe für die Funktion `corr.test`.
+
+### Datenaufbereitung
+
+Neben der Skala zum Machiavellismus enthält der Datensatz auch Daten zum weit verbreiteten Ten-Item-Personality-Inventory (TIPI). Bei diesem Fragebogen sollen sich Personen auf eine Skala von 1 bis 7 (1: trifft überhaupt nicht zu, 7: trifft vollkommen zu) anhand von 10 Adjektivpaaren beschreiben. Die folgende Tabelle stellt diese Paare dar und welche der fünf großen Persönlichkeitsdimensionen sie erheben sollen. Die letzte Spalte kennzeichnet, ob die Antworten invertiert werden müssen, bevor sie in die Skalenberechnung eingehen:
+
++-----+----------------------------------+-----------------------+------------+
+| Nr. | Adjektive                        | Dimension             | Invertiert |
++=====+==================================+=======================+============+
+| 1   | Extraverted, enthusiastic        | Extraversion          |            |
++-----+----------------------------------+-----------------------+------------+
+| 2   | Critical, quarrelsome            | Verträglichkeit       | X          |
++-----+----------------------------------+-----------------------+------------+
+| 3   | Dependable, self-disciplined     | Gewissenhaftigkeit    |            |
++-----+----------------------------------+-----------------------+------------+
+| 4   | Anxious, easily upset            | Emotionale Stabilität | X          |
++-----+----------------------------------+-----------------------+------------+
+| 5   | Open to new experiences, complex | Offenheit             |            |
++-----+----------------------------------+-----------------------+------------+
+| 6   | Reserved, quiet                  | Extraversion          | X          |
++-----+----------------------------------+-----------------------+------------+
+| 7   | Sympathetic, warm                | Verträglichkeit       |            |
++-----+----------------------------------+-----------------------+------------+
+| 8   | Disorganized, careless           | Gewissenhaftigkeit    | X          |
++-----+----------------------------------+-----------------------+------------+
+| 9   | Calm, emotionally stable         | Emotionale Stabilität |            |
++-----+----------------------------------+-----------------------+------------+
+| 10  | Conventional, uncreative         | Offenheit             | X          |
++-----+----------------------------------+-----------------------+------------+
+
+  6. Erstellen Sie die Skalenwerte der fünf erhobenen Persönlichkeitsdimensionen als Mittelwert aus den beiden jeweiligen Items. Bedenken Sie die Invertierung der Items 2, 4, 6, 8 und 10! Legen Sie diese Skalenwerte als neue Variablen im Datensatz `mach` an. Nennen Sie diese fünf Variablen `extra`, `vertr`, `gewis`, `emoti` und `offen`.
+
+
+  7. Lassen Sie sich für die neu erstellten Variablen eine deskriptivstatistische Übersicht ausgeben, um zu prüfen, ob die Erstellung der Skalenwerte erfolgreich war.
+
+  8. Die Variable `hand` kodiert die Händigkeit einer Person. Dabei bedeutet der Wert 1, dass die dominante Hand einer Person die Rechte ist, 2, dass die dominante Hand die Linke ist und 3, dass die Person keine dominante Hand hat (beidhändig). Wandeln Sie diese numerisch Variable in einen Faktor mit den Ausprägungen "rechts", "links" und "beide" um. 
+
+  9. Wie ist die relative Häufigkeitsverteilung der Händigkeit in dieser Stichprobe?
+
+
+### $t$-Test
+
+Aus der überproportionalen Prävalenz von Linkshänder\*innen unter Politker\*innen leiten Sie ab, dass Personen mit einer dominanten linken Hand im Mittel höhere Werte auf der Subdomäne "negative zwischenmenschliche Taktik" (`nit`) aufweisen sollten, als Personen mit einer dominanten rechten Hand. Über beidhändige Personen können Sie kein Aussage ableiten.
+
+  10. Erstellen Sie zunächst einen Datensatz, der nur aus links- und rechtshändigen Personen besteht.
+
+  11. Prüfen Sie die Annahme der Homoskedastizität in der Subdomäne "negative zwischenmenschliche Taktik" (`nit`) für die beiden Gruppen (Linkshänder vs. Rechtshänder).
+
+  12. Prüfen Sie anhand des geeigneten Test die oben genannte Hypothese.
+
+
+
+
