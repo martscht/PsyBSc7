@@ -7,7 +7,7 @@ Date: 2020-03-25
 Authors@R: c(person("Schultze", "Martin", email = "schultze@psych.uni-frankfurt.de",
                     role = c("aut", "cre")),
              person("Irmer", "Julien Patrick",
-                    role = c("aut"))
+                    role = c("aut")),
              person("Schüller", "Johanna", role = c("aut")),
              person("Wallot", "Sebastian", role = c("aut")),
              person("Grützmacher", "Luisa", role = c("aut")))
