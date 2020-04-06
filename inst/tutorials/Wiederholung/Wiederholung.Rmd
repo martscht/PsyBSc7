@@ -14,7 +14,7 @@ runtime: shiny_prerendered
 library(learnr)
 library(fontawesome)
 library(psych)
-data(mach)
+data(mach, package = 'PsyBSc7')
 ```
 
 ## Start mit R
