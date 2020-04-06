@@ -553,7 +553,7 @@ In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem eur
 
 ## Bonusplots
 
-Weil auch ich mich in dieser Phase der eingeschränkten Möglichkeiten beschäftigen muss, habe ich für Sie im folgenden ein paar zusätzliche Abbildungen erstellt, die auch Sie zum gleichen Datensatz mit `ggplot2` und Erweiterungen erstellen können. Diese gehen über das Ausmaß dessen hinaus, was wir im Rahmen dieses Semesters besprechen, aber falls Sie die grafische Darstellung von Daten interessiert, sollten Sie aber von diesen Möglichkeiten gehört haben.
+Weil auch ich mich in dieser Phase der eingeschränkten Freizeitmöglichkeiten beschäftigen muss, habe ich für Sie im Folgenden ein paar zusätzliche Abbildungen erstellt, die auch Sie zum gleichen Datensatz mit `ggplot2` und Erweiterungen erstellen können. Diese gehen über das Ausmaß dessen hinaus, was wir im Rahmen dieses Semesters besprechen, aber falls Sie die grafische Darstellung von Daten interessiert, sollten Sie aber von diesen Möglichkeiten gehört haben.
 
 ### Animationen
 
@@ -609,5 +609,131 @@ animate(fluid,
 
 Die Animation sollte erneute ca. 20 Sekunden dauern und in folgendem gif resultieren (ich habe die Animation am 6. April durchgeführt, ihre Animation wird sich also dementsprechend unterscheiden):
 
-<img src="https://raw.githubusercontent.com/martscht/PsyBSc7/master/inst/tutorials/ggplot/images/lines.gif" width="80%"/>
+<img src="https://raw.githubusercontent.com/martscht/PsyBSc7/master/inst/tutorials/ggplot/images/lines.gif" width="65%"/>
 
+### Karten
+
+Bei psychologischen Daten eher selten, aber mit dem COVID-19 Datensatz natürlich sehr naheliegend, ist die Datenvisualisierung auf Karten. Für komplexere Karten (z.B. mit Google Maps) gibt es das `ggmap` Paket. Für unsere Zwecke reichen allerdings die von `ggplot2` mitgelieferten Karten aus.
+
+Karten benötigen eine sehr eigene Art der Datenaufbereitung, die häufig nicht gerade platzsparend ist. Daher sind die meisten Karten in R nicht als Datensätze vorhanden, sondern müssen erst einmal in solche überführt werden. Dafür gibt es die `map_data` Funktion. Um die Weltkarte in einen Datensatz zu übertragen, z.B.:
+
+```{r}
+welt <- map_data('world')
+head(welt)
+```
+
+Was Sie in den Daten sehen sind Länge- und Breitengrade von Landesgrenzen. Außerdem bestimmt die Variable `group` das Land (anhand dessen die Landesgrenzen gruppiert werden sollten). Damit Linie der Grenzen nicht hin und her springt gibt es außerdem die Variable `order` die angibt, welcher Punkt in der Grenze als nächstes kommt. Anhand dieser Punkte werden in `ggplot2` mit der allgemeinen `geom_polygon` Funktion Karten gezeichnet. Um eine leere Weltkarte zu erzeugen reicht Folgendes aus:
+
+```{r}
+ggplot(welt, aes(x = long, y = lat, group = group)) + 
+  geom_polygon()
+```
+
+Wie Sie sehen, hat dieser Plot die gleichen Eigenschaften wie normale `ggplot`s - weil es ein ganz normaler Plot ist. Um einzelne Länder erkennen zu können, sollten wir z.B. die Länder weiß und nicht schwarz füllen. Außerdem brauchen wir nicht unbedingt x- und y-Achse, sodass wir das komplett leere Theme `theme_void` nutzen können:
+
+```{r}
+ggplot(welt, aes(x = long, y = lat, group = group)) + 
+  geom_polygon(fill = 'white', color = 'black', lwd = .25) +
+  theme_void()
+```
+
+Um die Karten-Daten mit den COVID Daten in Verbindung zu bringen steht uns leider - wie so häufig - im Weg, dass die Daten nicht einheitlich kodiert wurden. In diesem Fall sind es die Benennungen der Länder, die uneinheitlich sind. Um herauszufinden, wo Unterschiede bestehen, können wir die normalen Operatoren der Mengenvergleiche in R nutzen:
+
+```{r}
+setdiff(unique(welt$region), unique(covid$Country.Region))
+setdiff(unique(covid$Country.Region), unique(welt$region))
+```
+
+Im Folgenden werden die Namen der Länder mit dem `recode` Befehl des `car`-Pakets umkodiert. Diesen hatten wir im letzten Semester zum Rekodieren negativ formulierter Items genutzt.
+
+```{r}
+# Recodes
+covid$Country.Region <- car::recode(covid$Country.Region, 
+  "'Burma' = 'Myanmar'; 
+  'Cabo Verde' = 'Cape Verde';
+  'Congo (Brazzaville)' = 'Republic of Congo';
+  'Congo (Kinshasa)' = 'Democratic Republic of the Congo';
+  'Czechia' = 'Czech Republic';
+  'Eswatini' = 'Swaziland';
+  'Holy See' = 'Vatican';
+  'Korea, South' = 'South Korea';
+  'North Macedonia' = 'Macedonia';
+  'Saint Kitts and Nevis' = 'Saint Kitts';
+  'Saint Vincent and the Grenadines' = 'Saint Vincent';
+  'Taiwan*' = 'Taiwan';
+  'United Kingdom' = 'UK';
+  'US' = 'USA';
+  'West Bank and Gaza' = 'Palestine'")
+```
+
+Darüber hinaus brauchen zwei Inselstaaten eine gesonderte Behandlung, weil sie auf der Karte als separate Inseln, im COVID Datensatz aber als ein Land geführt werden:
+
+```{r}
+# Antigua & Barbuda
+covid$Country.Region <- car::recode(covid$Country.Region, "'Antigua and Barbuda'='Antigua'")
+tmp <- covid[covid$Country.Region == 'Antigua', ]
+tmp$Country.Region <- 'Barbuda'
+covid <- rbind(covid, tmp)
+
+# Trinidad & Tobago
+covid$Country.Region <- car::recode(covid$Country.Region, "'Trinidad and Tobago'='Trinidad'")
+tmp <- covid[covid$Country.Region == 'Trinidad', ]
+tmp$Country.Region <- 'Tobago'
+covid <- rbind(covid, tmp)
+```
+
+Zu guter Letzt muss die Elfenbeinküste einzeln umkodiert werden, weil der Apostroph im französischen Namen ein Problem bereitet:
+
+```{r}
+levels(covid$Country.Region) <- c(levels(covid$Country.Region), 'Ivory Coast')
+covid$Country.Region[covid$Country.Region == "Cote d'Ivoire"] <- 'Ivory Coast'
+```
+
+Diese Umkodierung ist nicht auf andere Datensätze übertragbar - Sie müssen immer in den Daten, die Sie vorliegen haben nachgucken, welche Schritte zum Angleichen verschiedener Datensätze notwendig sind.
+
+Um die Daten für heute anzuzeigen, können wir den Datensatz wieder erst einmal auf heute beschränken:
+
+```{r}
+covid_today <- covid[covid$Day == max(covid$Day), ]
+```
+
+Anschließend können wir den Datensatz mit der Weltkarte zusammenführen. Dafür verwenden wir wieder den `merge` Befehl. Damit nach dem `merge` die Grenzen richtig gezeichnet werden, müssen wieder die Reihenfolge der Daten wiederherstellen. Dazu wird mit `order` nach Land (`group`) und dann nach Reihenfolge der Grenzpunkte (`order`) sortiert.
+
+```{r}
+covid_map <- merge(welt, covid_today, by.x = 'region', by.y = 'Country.Region', all.x = TRUE, all.y = FALSE)
+covid_map <- covid_map[order(covid_map$group, covid_map$order), ]
+```
+
+Mit den neuen Daten können wir unsere vorherige Karte jetzt so ergänzen, dass wir die Länder nach der Anzahl der Fälle einfärben:
+
+```{r}
+ggplot(covid_map, aes(x = long, y = lat, group = group)) + 
+  geom_polygon(color = 'black', lwd = .25, aes(fill = Confirmed)) + 
+  theme_void()
+```
+
+Wegen der exponentiellen Art und Weise mit der die Anzahl der Fälle in betroffenen Ländern zunimmt, sind mit dieser Skalierung nur wenige Länder überhaupt unterscheidbar. Das liegt besonders an der exorbitanten Anzahl bestätigter Fälle in den USA. Um solche Situationen zu umgehen wird in der Datenvisualisierung häufig mit logarithmischen Skalen gearbeitet. Das Gleiche können wir hier auch mit dem Argument `trans` für Funktionen tun, die mit `scale_` beginnen. Darüber hinaus gefällt mir die Farbgebung nicht, sodass ich mit `scale_fill_gradient2` drei Farben aussuchen werden, die Untergrenze, Mittelpunkt und Obergrenze der bestätigten Fälle kodieren:
+
+```{r}
+ggplot(covid_map, aes(x = long, y = lat, group = group)) + 
+  geom_polygon(color = 'black', lwd = .25, aes(fill = Confirmed)) + 
+  theme_void() +
+  scale_fill_gradient2(low = '#737c45', mid = '#e3ba0f', high = '#ad3b76',
+    trans = 'log2', 
+    midpoint = log(median(covid_map$Confirmed, na.rm = TRUE), 2))
+```
+
+Per Voreinstellung ist der Mittelpunkt der Skala bei 0 - was in unserem Fall nicht sonderlich sinnvoll ist. Stattdessen wird hier über `midpoint` der aktuelle Median als Mittelpunkt der Skala definiert.
+
+Im letzten Schritt werden die Farbe, die bei fehlenden Werten vergeben wird, etwas angepasst und die Skala wird von der etwas befremdlich wirkenden Beschriftung in 10, 1000 und 100000 überführt. Darüber hinaus wird die Legende nach unten Verschoben, um der Karte genug Platz in die Breite zu geben. Mit `scipen` wird außerdem vorübergehend die wissenschaftliche Notation der Zahlen ausgesetzt:
+
+```{r}
+options(scipen = 3)
+ggplot(covid_map, aes(x = long, y = lat, group = group)) + 
+  geom_polygon(color = 'black', lwd = .25, aes(fill = Confirmed)) + 
+  theme_void() + 
+  scale_fill_gradient2(trans = 'log2', low = '#737c45', mid = '#e3ba0f', high = '#ad3b76', na.value = 'grey95', midpoint = log(median(covid_map$Confirmed, na.rm = TRUE), 2),
+    breaks = c(10, 1000, 100000), name = 'Confirmed\n(Log-Scale)') + 
+  theme(legend.position = 'bottom')
+options(scipen = 1)
+```
