@@ -1,9 +1,13 @@
-#' Aufgaben vorbereiten
+#' @name Aufgaben
+#' @aliases Aufgaben_2
+#' 
+#' @title Aufgaben vorbereiten
 #' 
 #' Mit diesen Funktioenn führen Sie die notwendigen Schritte durch, um die Aufgabenbearbeitung vorzubereiten.
 #' 
-#' @export
 
+#' @rdname Aufgaben
+#' @export
 Aufgaben_2 <- function() {
   
   ### Download ----
