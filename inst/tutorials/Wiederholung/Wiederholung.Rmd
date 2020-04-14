@@ -19,8 +19,6 @@ data(mach, package = 'PsyBSc7')
 
 ## Start mit R
 
-R ist eine Open-Source-Software. Dies bedeutet, dass es online eine Vielzahl von Ressourcen gibt, die Sie beim Lernen nutzen können und sollten! Zu einigen Themen wird gezielt auf weiterführende Links zum vertiefenden Verständnis hingewiesen. Grundsätzlich gibt es online eine Vielzahl an kostenlosen Informationsangeboten (z.B. das `R-Cookbook`: http://www.cookbook-r.com, das Buch `R for Data Science`: https://r4ds.had.co.nz,  oder hier eine Einführung in R für Psychologie-Studierende: https://r-intro.tadaa-data.de/book/was-ist-r.html), sowie teilweise kostenlosen Übungsplattformen (z.B. https://www.datacamp.com, https://www.codecademy.com etc.). 
-
 Für den Verlauf dieses Modul benötigen Sie die Statistiksoftware R und die Benutzeroberfläche R Studio auf ihrem Rechner. Beide können kostenlos heruntergeladen werden. 
 
 **Downloadlinks:**
@@ -33,7 +31,11 @@ R-Studio:  https://rstudio.com/products/rstudio/download/ (Herunterscrollen um V
 
 Hier finden Sie eine ausführliche Anleitung zum Herunterladen und Installieren von R und R-Studio: https://www.uni-kiel.de/medinfo/lehre/medlife/Installation_instructions_for_R_and_RStudio.pdf
 
-Das Video zur ersten Sitzung beinhaltet eine Wiederholung der Grundlagen in R und einfache Anwendungen auf Matrizen und Datensätze: 
+R ist eine Open-Source-Software. Dies bedeutet, dass es online eine Vielzahl von Ressourcen gibt, die Sie beim Lernen nutzen können und sollten! Zu einigen Themen wird gezielt auf weiterführende Links zum vertiefenden Verständnis hingewiesen. Grundsätzlich gibt es online eine Vielzahl an kostenlosen Informationsangeboten (z.B. das `R-Cookbook`: http://www.cookbook-r.com, das Buch `R for Data Science`: https://r4ds.had.co.nz,  oder hier eine Einführung in R für Psychologie-Studierende: https://r-intro.tadaa-data.de/book/was-ist-r.html), sowie teilweise kostenlosen Übungsplattformen (z.B. https://www.datacamp.com, https://www.codecademy.com etc.).
+
+Wenn Sie eine Auffrischung der Inhalte des letzten Semesters benötigen oder sich gerne nochmal auf die Datenanalyse in R einstimmen möchten, sehen Sie gerne unter dem folgenden Link den Inhalt der Einführungssitzung des letzten Semesters an: https://pandar.netlify.com/post/r-crash-kurs/
+
+Das Video zur ersten Sitzung beinhaltet eine Wiederholung der Grundlagen in R und einfache Anwendungen auf Matrizen und Datensätze. Sie finden das Video unter folgendem Link: 
 
 <!-- Video --> 
 
@@ -54,7 +56,7 @@ log(100)
 log(zahl)
 ```
 
-Objekte können unter anderem für einfache Rechenoperationen (`+`, `-`, `*`, `/`, `^`) sowie für logische Abfragen (`==`, `!=`, `>`, `>=`, `<`, `<=`) genutzt werden. Weiterführende Informationen und Übersicht zu Rechenoperationen und logischen Abfragen: https://www.statmethods.net/management/operators.html
+Objekte können unter anderem für einfache Rechenoperationen (`+`, `-`, `*`, `/`, `^`) sowie für logische Abfragen (`==`, `!=`, `>`, `>=`, `<`, `<=`) genutzt werden. Weiterführende Informationen und Übersicht zu Rechenoperationen und logischen Abfragen finden Sie beispielsweise unter https://www.statmethods.net/management/operators.html.
 
 ### Funktionen
 Funktionen in R haben die Grundstruktur `funktionsname(argument1 = ..., argument2 = ..., argument3 = ...)`. Die Argumente, die eine Funktion erwartet, können mit `args()` abgefragt werden:
@@ -248,6 +250,8 @@ setwd("Ordnerpfad")
 load("mach.rda")
 ```
 
+Die hier verwendeten Daten stammen aus dem "Open-Source Psychometrics Project" (https://openpsychometrics.org/_rawdata/), einer Online-Plattform, die eine Sammlung an Daten aus verschiedensten Persönlichkeitstests zur Verfügung stellt. Auf der Seite kann man die Fragebögen selbst ausfüllen, und so zum Datenpool beitragen. Der hier verwendete Datensatz enthält Items aus einem Machiavellismusfragebogen, den Sie bei Interesse online auf https://openpsychometrics.org/tests/MACH-IV/ durchführen können.
+
 ## Mit Datensätzen arbeiten
 
 Einen Überblick über die Daten verschaffen kann man sich beispielsweise mit Funktionen wie `names()`, `head()` oder `summary`oder der Funktionen `describe()` aus dem psych-Package.
@@ -297,7 +301,7 @@ Auf den Folien der Vorlesung finden Sie Beispiele zu verschiedenen Matrixoperati
 
 2. Prüfen Sie, ob es sich bei der Matrix auf Folie 18 wirklich um eine symmetrische Matrix handelt.
 
-3. FÜhren Sie die Multiplikation der Matrizen auf Folie 29 mit R durch.
+3. Führen Sie die Multiplikation der Matrizen auf Folie 29 mit R durch.
 
 ### Daten laden
 Der bereitgestellte Datensatz `mach` kommt aus einer Onlineerhebung zum Machiavellismus. Bei diesem Konstrukt handelt es sich um eines der drei Persönlichkeitsmerkmale, welche häufig als "Dunkle Triade" bezeichnet werden: Machiavellismus, Narzissmus und Psychopathie. In Anlehnung an Machiavellis "Der Fürst" ist der Kerngedanke bei diesem Konstrukt, dass Personen ein nutzenorientiertes Verständnis sozialer Beziehungen haben. Den Fragebogen können Sie selbst unter [https://openpsychometrics.org/tests/MACH-IV/](https://openpsychometrics.org/tests/MACH-IV/) ausfüllen.

@@ -1,0 +1,207 @@
+---
+title: "Sitzung 1: R-Skripte zur den Aufgaben"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(fontawesome)
+source('setup.R')
+library(psych)
+```
+
+
+# Aufgaben zur eigenständigen Bearbeitung
+## Matrixalgebra
+
+Auf den Folien der Vorlesung finden Sie Beispiele zu verschiedenen Matrixoperationen. Nutzen Sie R, um einige von ihnen nachzurechnen! Definieren Sie dafür jeweils die erwähnten Matrizen so wie auf den Vorlesungsfolien angegeben. 
+
+1. Bestimmen Sie die Spur der Matrix auf Folie 14.
+
+```{r}
+m <- matrix(c(5, 3, 6, 6, 8, 1, 4, 0, 2), ncol = 3)
+sum(diag(m))
+```
+
+2. Prüfen Sie, ob es sich bei der Matrix auf Folie 18 wirklich um eine symmetrische Matrix handelt.
+```{r}
+m <- matrix(c(4, 7, 2, 7, 8, 5, 2, 5, 1), ncol = 3)
+isSymmetric(m)
+```
+
+3. FÜhren Sie die Multiplikation der Matrizen auf Folie 29 mit R durch.
+```{r}
+X <- matrix(c(2, 4, 3, 1, 6, 5), ncol = 3)
+Y <- matrix(c(6, 2, 4, 1, 8, 3, 2, 6, 7, 8, 0, -8), ncol = 4)
+Z <- X %*% Y
+Z
+```
+
+
+## Daten laden
+Der bereitgestellte Datensatz `mach` kommt aus einer Onlineerhebung zum Machiavellismus. Bei diesem Konstrukt handelt es sich um eines der drei Persönlichkeitsmerkmale, welche häufig als "Dunkle Triade" bezeichnet werden: Machiavellismus, Narzissmus und Psychopathie. In Anlehnung an Machiavellis "Der Fürst" ist der Kerngedanke bei diesem Konstrukt, dass Personen ein nutzenorientiertes Verständnis sozialer Beziehungen haben. Den Fragebogen können Sie selbst unter [https://openpsychometrics.org/tests/MACH-IV/](https://openpsychometrics.org/tests/MACH-IV/) ausfüllen.
+
+  1. Laden Sie den Datensatz und verschaffen Sie sich einen Überblick. 
+```{r}
+load('mach.rda')
+head(mach) #Beispielsweise 
+```
+
+  2. Ermitteln Sie mithilfe von Befehlen die Anzahl der Variablen und die Anzahl der Personen im Datensatz.
+
+```{r}
+nrow(mach)
+ncol(mach)
+dim(mach)
+```
+
+  3. Wie lauten die Namen der Variablen, die in diesem Datensatz enthalten sind?
+
+```{r}
+names(mach)
+```
+
+## Korrelationen
+
+Empirisch kann das Konstrukt des Machiavellismus in vier Subdomänen unterteilt werden: negative zwischenmenschliche Taktik (Variable `nit`), positive zwischenmenschliche Taktik (Variable `pit`), zynische Ansicht der menschlichen Natur (Variable `cvhn`) und positive Ansicht der menschlichen Natur (Variable `pvhn`).
+
+  4. Untersuchen Sie mithilfe von Histogrammen die Verteilung dieser vier Subdomänen.
+  
+```{r}
+
+# Histogramme
+hist(mach$nit)
+hist(mach$pit)
+hist(mach$cvhn)
+hist(mach$pvhn)
+
+```
+
+
+  5. Im Datensatz sind vier Subfacetten enthalten (positiv: `pit` und `pvhn`, negativ: `nit` und `cvhn`). Es sollte erwartet werden, dass die gleichgerichteten Subdomänen positiv miteinander korrelieren, die entgegengerichteten Subdomänen negativ. Nutzen Sie die `corr.test` Funktion aus dem R-Paket `psych`, um diese Erwartungen zu prüfen. Dafür müssen Sie ein Subset des Datensatzes erstellen, welches nur die relevanten Variablen enthält. Nutzen Sie wenn nötig die Hilfe für die Funktion `corr.test`.
+
+```{r, eval = FALSE}
+install.packages('psych')
+```
+
+```{r}
+# Paket laden
+library(psych)
+
+# Hilfe für corr.test aufrufen
+?corr.test
+
+# Die `corr.test()`-Funktion erwartet als Argument eine `matrix` oder einen `data.frame`, um zwischen den darin enthaltenen Variablen alle paarweisen Korrelationen zu bestimmen. Also muss zunächst ein Teildatensatz erstellt werden, der nur die vier relevanten Variablen enthält.Subdatensatz
+
+subs <- mach[, c('nit', 'pit', 'cvhn', 'pvhn')]
+
+# Korrelationen
+corr.test(subs)
+
+# Interpretation der Ergebnisse: Korrelationen sind zwischen entgegensetzten Subdomänen negativ (zwischen -.60 und -.37) und zwischen gleichgerichten positiv (.44 und .66). Die $p$-Werte, die für die inferenzstatistische Absicherung der Korrelationen mitgeliefert werden, liegen alle weit unter dem typischen $\alpha$-Niveau von .05 - es handelt sich also um statistisch bedeutsame Zusammenhänge.
+
+```
+
+## Datenaufbereitung
+
+Neben der Skala zum Machiavellismus enthält der Datensatz auch Daten zum weit verbreiteten Ten-Item-Personality-Inventory (TIPI). Bei diesem Fragebogen sollen sich Personen auf eine Skala von 1 bis 7 (1: trifft überhaupt nicht zu, 7: trifft vollkommen zu) anhand von 10 Adjektivpaaren beschreiben. Die folgende Tabelle stellt diese Paare dar und welche der fünf großen Persönlichkeitsdimensionen sie erheben sollen. Die letzte Spalte kennzeichnet, ob die Antworten invertiert werden müssen, bevor sie in die Skalenberechnung eingehen:
+
++-----+----------------------------------+-----------------------+------------+
+| Nr. | Adjektive                        | Dimension             | Invertiert |
++=====+==================================+=======================+============+
+| 1   | Extraverted, enthusiastic        | Extraversion          |            |
++-----+----------------------------------+-----------------------+------------+
+| 2   | Critical, quarrelsome            | Verträglichkeit       | X          |
++-----+----------------------------------+-----------------------+------------+
+| 3   | Dependable, self-disciplined     | Gewissenhaftigkeit    |            |
++-----+----------------------------------+-----------------------+------------+
+| 4   | Anxious, easily upset            | Emotionale Stabilität | X          |
++-----+----------------------------------+-----------------------+------------+
+| 5   | Open to new experiences, complex | Offenheit             |            |
++-----+----------------------------------+-----------------------+------------+
+| 6   | Reserved, quiet                  | Extraversion          | X          |
++-----+----------------------------------+-----------------------+------------+
+| 7   | Sympathetic, warm                | Verträglichkeit       |            |
++-----+----------------------------------+-----------------------+------------+
+| 8   | Disorganized, careless           | Gewissenhaftigkeit    | X          |
++-----+----------------------------------+-----------------------+------------+
+| 9   | Calm, emotionally stable         | Emotionale Stabilität |            |
++-----+----------------------------------+-----------------------+------------+
+| 10  | Conventional, uncreative         | Offenheit             | X          |
++-----+----------------------------------+-----------------------+------------+
+
+  6. Erstellen Sie die Skalenwerte der fünf erhobenen Persönlichkeitsdimensionen als Mittelwert aus den beiden jeweiligen Items. Bedenken Sie die Invertierung der Items 2, 4, 6, 8 und 10! Legen Sie diese Skalenwerte als neue Variablen im Datensatz `mach` an. Nennen Sie diese fünf Variablen `extra`, `vertr`, `gewis`, `emoti` und `offen`.
+
+```{r}
+mach$extra <- (mach$TIPI1 + (mach$TIPI6*-1)+8)/2
+mach$vertr <- (mach$TIPI7 + (mach$TIPI2*-1)+8)/2
+mach$gewis <- (mach$TIPI3 + (mach$TIPI8*-1)+8)/2
+mach$emoti <- (mach$TIPI9 + (mach$TIPI4*-1)+8)/2
+mach$offen <- (mach$TIPI5 + (mach$TIPI10*-1)+8)/2
+```
+
+  7. Lassen Sie sich für die neu erstellten Variablen eine deskriptivstatistische Übersicht ausgeben, um zu prüfen, ob die Erstellung der Skalenwerte erfolgreich war.
+  
+
+```{r}
+#Mithilfe der `describe()`-Funktion aus dem `psych` Paket:
+describe(mach[, c('extra', 'vertr', 'gewis', 'emoti', 'offen')])
+
+#Alternative: Mithilfe der `summary()`-Funktion:
+summary(mach$extra)
+summary(mach$vertr)
+summary(mach$gewis)
+summary(mach$emoti)
+summary(mach$offen)
+```
+
+  8. Die Variable `hand` kodiert die Händigkeit einer Person. Dabei bedeutet der Wert 1, dass die dominante Hand einer Person die Rechte ist, 2, dass die dominante Hand die Linke ist und 3, dass die Person keine dominante Hand hat (beidhändig). Wandeln Sie diese numerisch Variable in einen Faktor mit den Ausprägungen "rechts", "links" und "beide" um. 
+  
+```{r}
+mach$hand <- factor(mach$hand, labels = c('rechts', 'links', 'beide'))
+```
+
+  9. Wie ist die relative Häufigkeitsverteilung der Händigkeit in dieser Stichprobe?
+
+```{r}
+prop.table(table(mach$hand))
+```
+
+## $t$-Test
+
+Aus der überproportionalen Prävalenz von Linkshänder\*innen unter Politker\*innen leiten Sie ab, dass Personen mit einer dominanten linken Hand im Mittel höhere Werte auf der Subdomäne "negative zwischenmenschliche Taktik" (`nit`) aufweisen sollten, als Personen mit einer dominanten rechten Hand. Über beidhändige Personen können Sie kein Aussage ableiten.
+
+  10. Erstellen Sie zunächst einen Datensatz, der nur aus links- und rechtshändigen Personen besteht.
+
+```{r}
+# Subdatensatz erstellen
+subs <- mach[mach$hand %in% c('rechts', 'links'), ]
+
+# Verteilung der Händigkeit überprüfen
+table(subs$hand)
+```
+
+  11. Prüfen Sie die Annahme der Homoskedastizität in der Subdomäne "negative zwischenmenschliche Taktik" (`nit`) für die beiden Gruppen (Linkshänder vs. Rechtshänder).
+
+```{r, eval = FALSE}
+# Der Levene-Test ist im `car`-Paket als `leveneTest()` implementiert. Gegebenenfalls muss `car` installiert werden:
+install.packages('car')
+```
+
+```{r}
+car::leveneTest(nit ~ hand, subs)
+```
+
+  12. Prüfen Sie anhand des geeigneten Test die oben genannte Hypothese.
+
+```{r}
+t.test(subs$nit ~ subs$hand, alternative = 'less')
+```
+
