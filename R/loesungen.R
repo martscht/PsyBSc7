@@ -1,6 +1,6 @@
-#' @name Lösungen
-#' @aliases Lösungen_1
-#' @aliases Lösungen_2
+#' @name Loesungen
+#' @aliases Loesungen_1
+#' @aliases Loesungen_2
 #' 
 #' @title R-Skripte zur Lösung der Aufgaben im Praktikum zu PsyBSc 7, Sommersemester 2020
 #'
@@ -8,12 +8,13 @@
 #'
 
 #### Kernfunktionen: Aufruf der einzelnen Sitzungen ####
+#' @rdname Loesungen
 #' @export
 Loesungen_1 <- function(password) {
   if (digest::digest(password) != '92195e95ce62da2d8a449c0739e459ca') {
     stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
-    compile('intro_lo')
+    compile('Wiederholung_lo')
   }
 }
 
