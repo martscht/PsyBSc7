@@ -14,6 +14,7 @@ runtime: shiny_prerendered
 library(learnr)
 library(fontawesome)
 library(psych)
+data(mach, package = 'PsyBSc7')
 ```
 
 
@@ -48,7 +49,7 @@ Z
 Der bereitgestellte Datensatz `mach` kommt aus einer Onlineerhebung zum Machiavellismus. Bei diesem Konstrukt handelt es sich um eines der drei Persönlichkeitsmerkmale, welche häufig als "Dunkle Triade" bezeichnet werden: Machiavellismus, Narzissmus und Psychopathie. In Anlehnung an Machiavellis "Der Fürst" ist der Kerngedanke bei diesem Konstrukt, dass Personen ein nutzenorientiertes Verständnis sozialer Beziehungen haben. Den Fragebogen können Sie selbst unter [https://openpsychometrics.org/tests/MACH-IV/](https://openpsychometrics.org/tests/MACH-IV/) ausfüllen.
 
   1. Laden Sie den Datensatz und verschaffen Sie sich einen Überblick. 
-```{r}
+```{r, eval = FALSE}
 load('mach.rda')
 head(mach) #Beispielsweise 
 ```
