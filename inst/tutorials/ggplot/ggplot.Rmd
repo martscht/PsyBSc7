@@ -607,7 +607,7 @@ animate(fluid,
   fps = 10)
 ```
 
-Die Animation sollte erneute ca. 20 Sekunden dauern und in folgendem gif resultieren (ich habe die Animation am 6. April durchgeführt, ihre Animation wird sich also dementsprechend unterscheiden):
+Die Animation sollte erneute ca. 20 Sekunden dauern und in folgendem gif resultieren (ich habe die Animation am 19. April durchgeführt, ihre Animation wird sich also dementsprechend unterscheiden):
 
 <img src="https://raw.githubusercontent.com/martscht/PsyBSc7/master/inst/tutorials/ggplot/images/lines.gif" width="65%"/>
 

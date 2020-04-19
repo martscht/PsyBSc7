@@ -2,7 +2,7 @@
 title: "Sitzung 1: R-Grundlagen Auffrischung und Matrixrechnung"
 output: 
   learnr::tutorial:
-      progressive: true
+      progressive: false
       allow_skip: true
       includes:
         after_body: footer.html
@@ -23,17 +23,17 @@ Für den Verlauf dieses Modul benötigen Sie die Statistiksoftware R und die Ben
 
 **Downloadlinks:**
 
-R für das Windows-Betriebssystem: https://cran.r-project.org/bin/windows/base/
+[R für das Windows-Betriebssystem](https://cran.r-project.org/bin/windows/base/)
 
-R für das Mac-Betriebssystem: https://cran.r-project.org/bin/macosx/
+[R für das Mac-Betriebssystem](https://cran.r-project.org/bin/macosx/)
 
-R-Studio:  https://rstudio.com/products/rstudio/download/ (Herunterscrollen um Version für Windows oder Mac zu wählen) 
+[R-Studio](https://rstudio.com/products/rstudio/download/) (Herunterscrollen um Version für Windows oder Mac zu wählen) 
 
-Hier finden Sie eine ausführliche Anleitung zum Herunterladen und Installieren von R und R-Studio: https://www.uni-kiel.de/medinfo/lehre/medlife/Installation_instructions_for_R_and_RStudio.pdf
+Hier finden Sie eine ausführliche [Anleitung](https://www.uni-kiel.de/medinfo/lehre/medlife/Installation_instructions_for_R_and_RStudio.pdf) zum Herunterladen und Installieren von R und R-Studio.
 
-R ist eine Open-Source-Software. Dies bedeutet, dass es online eine Vielzahl von Ressourcen gibt, die Sie beim Lernen nutzen können und sollten! Zu einigen Themen wird gezielt auf weiterführende Links zum vertiefenden Verständnis hingewiesen. Grundsätzlich gibt es online eine Vielzahl an kostenlosen Informationsangeboten (z.B. das `R-Cookbook`: http://www.cookbook-r.com, das Buch `R for Data Science`: https://r4ds.had.co.nz,  oder hier eine Einführung in R für Psychologie-Studierende: https://r-intro.tadaa-data.de/book/was-ist-r.html), sowie teilweise kostenlosen Übungsplattformen (z.B. https://www.datacamp.com, https://www.codecademy.com etc.).
+R ist eine Open-Source-Software. Dies bedeutet, dass es online eine Vielzahl von Ressourcen gibt, die Sie beim Lernen nutzen können und sollten! Zu einigen Themen wird gezielt auf weiterführende Links zum vertiefenden Verständnis hingewiesen. Grundsätzlich gibt es online eine Vielzahl an kostenlosen Informationsangeboten (z.B. das [R-Cookbook](http://www.cookbook-r.com), das Buch [R for Data Science](https://r4ds.had.co.nz),  oder hier eine [Einführung in R für Psychologie-Studierende](https://r-intro.tadaa-data.de/book/was-ist-r.html), sowie teilweise kostenlosen Übungsplattformen (z.B. [Datacamp](https://www.datacamp.com), [Codecademy](https://www.codecademy.com etc.)).
 
-Wenn Sie eine Auffrischung der Inhalte des letzten Semesters benötigen oder sich gerne nochmal auf die Datenanalyse in R einstimmen möchten, sehen Sie gerne unter dem folgenden Link den Inhalt der Einführungssitzung des letzten Semesters an: https://pandar.netlify.com/post/r-crash-kurs/
+Wenn Sie eine Auffrischung der Inhalte des letzten Semesters benötigen oder sich gerne auf die Datenanalyse in R einstimmen möchten, sehen Sie sich gerne unter dem folgenden Link den Inhalt der [Einführungssitzung des letzten Semesters](https://pandar.netlify.com/post/r-crash-kurs/) an.  
 
 Das Video zur ersten Sitzung beinhaltet eine Wiederholung der Grundlagen in R und einfache Anwendungen auf Matrizen und Datensätze. Sie finden das Video unter folgendem Link: 
 
@@ -42,21 +42,21 @@ Das Video zur ersten Sitzung beinhaltet eine Wiederholung der Grundlagen in R un
 ## Objekte und Funktionen
 
 ### Objekte
-Objekte werden in R durch den Zuweisungspfeil (`<-`) oder das Gleichzeichen (`=`) angelegt.
+Objekte sind die Elemente, mit denen R arbeiten kann. Das können einzelne Zahlen bis hin zu komplexen Datensätzen sein. Objekte werden in R durch den Zuweisungspfeil (`<-`) oder das Gleichzeichen (`=`) angelegt. 
 
 ```{r}
 zahl <- 100
 zahl = 100
 ```
 
-Funktionen oder Rechenoperationen können entweder auf Zahlen oder auf Objekte angewandt werden:
+Funktionen oder Rechenoperationen können entweder auf ausgeschriebene Zahlen oder auf Objekte angewandt werden.
 
 ```{r}
 log(100) 
 log(zahl)
 ```
 
-Objekte können unter anderem für einfache Rechenoperationen (`+`, `-`, `*`, `/`, `^`) sowie für logische Abfragen (`==`, `!=`, `>`, `>=`, `<`, `<=`) genutzt werden. Weiterführende Informationen und Übersicht zu Rechenoperationen und logischen Abfragen finden Sie beispielsweise unter https://www.statmethods.net/management/operators.html.
+Objekte können unter anderem für einfache Rechenoperationen (`+`, `-`, `*`, `/`, `^`) sowie für logische Abfragen (`==`, `!=`, `>`, `>=`, `<`, `<=`) genutzt werden. [Hier](https://www.statmethods.net/management/operators.html) finden Sie weiterführende Informationen und eine Übersicht zu Rechenoperationen und logischen Abfragen.
 
 ### Funktionen
 Funktionen in R haben die Grundstruktur `funktionsname(argument1 = ..., argument2 = ..., argument3 = ...)`. Die Argumente, die eine Funktion erwartet, können mit `args()` abgefragt werden:
@@ -65,17 +65,23 @@ Funktionen in R haben die Grundstruktur `funktionsname(argument1 = ..., argument
 args(round)
 ```
 
-Argumente, auf die in der Darstellung ` = ...` folgt, nutzen diesen Wert als Voreinstellung. Bei `round` wird per default auf 0 Nachkommastellen gerundet, wenn dieser Standard nicht explizit überschrieben wird. 
+Argumente, auf die in der Darstellung ` = ...` folgt, nutzen diesen Wert als Voreinstellung. Bei `round` wird per default auf 0 Nachkommastellen gerundet, wenn dieser Standard nicht explizit überschrieben wird. Verändern Sie den Code, sodass Sie einmal den Standard nutzen, und dann einmal auf 2 Nachkommastellen runden.
+
+```{r round_1, exercise = TRUE, exercise.eval = FALSE}
+round(1.2859, ...)
+``` 
 
 Argumente können durch die korrekte Reihenfolge oder durch explizite Benennung angesprochen werden. Bearbeiten Sie den untenstehenden Code und testen beide Versionen.
 
-```{r round, exercise = TRUE, exercise.eval = TRUE}
-round(1.2859, 2)
+```{r round, exercise = TRUE, exercise.eval = FALSE}
+round()
 ``` 
 
-Außerdem können Sie mit `?` oder `help()` die Hilfe einer Funktion aufrufen um sich detaillierte Informationen zu einer Funktion ausgeben zu lassen.
+Außerdem können Sie mit `?` oder `help()` die Hilfe einer Funktion aufrufen, um sich detaillierte Informationen zu dieser Funktion ausgeben zu lassen.
 
 ## Vektoren und Matrizen 
+
+### Vektoren 
 
 Mehrere Zahlen werden in R durch `c()` zu Vektoren kombiniert:
 
@@ -83,7 +89,7 @@ Mehrere Zahlen werden in R durch `c()` zu Vektoren kombiniert:
 zahlen <- c(8, 3, 4)
 ```
 
-Vektoren werden elementenweise in Rechenoperationen genutzt:
+Wird eine Rechenoperation auf einen Vektor angewandt, so wird die Operation elementeweise vorgenommen. 
 
 ```{r}
 zahlen * 3
@@ -99,6 +105,8 @@ Vektoren können unterschiedlicher Art sein:
 | `numeric`          | `num`              | Nur Zahlen                                       |
 +--------------------+--------------------+--------------------------------------------------+
 | `character` *      | `chr`              | Irgendeine Kombination aus Zahlen und Buchstaben |
++--------------------+--------------------+--------------------------------------------------+
+| `factor`           |                    | Faktor mit bestimmter Anzahl an Stufen           |
 +--------------------+--------------------+--------------------------------------------------+
 
 * character (engl.) = Zeichen
@@ -118,6 +126,23 @@ str(abfrage)
 zeichen <- as.character(zahlen)
 str(zeichen)
 ```
+
+Faktor-Vektoren werden über `as.factor()` erzeugt. Sie repräsentieren dann einen Faktor mit einer bestimmten Anzahl an Faktorstufen. 
+
+```{r}
+gender <- c(0, 1, 0, 1, 1, 0, 0)
+gender_factor <- as.factor(gender)
+```
+
+Prüfen Sie nach, welche Struktur der erstellte Vektor `gender_factor`hat. 
+
+```{r vektor, exercise = TRUE, exercise.eval = FALSE}
+
+```
+
+Über die Funktion `relevel()` kann die Reihenfolge der Faktorstufen modifiziert werden.  
+
+### Matrizen
 
 Matrizen sind eine der vier Formen, in der in R mehrere Vektoren in einem gemeinsamen Objekt abgelegt werden können:
 
@@ -204,7 +229,7 @@ Hier ein Überblick über die in der Vorlesung behandelten Matrixoperationen und
 
 ## Packages 
 
-So genannte Packagee (Pakete) stellen zusätzliche Funktionen zur Verfügung, die in base R nicht verfügbar sind. Aktuell sind in dem offiziellen Repository für R über 15.000 ergänzende Packages verfügbar. Eine Liste dieser können Sie über folgenden Link abrufen: https://cran.r-project.org/web/packages/. Wenn Sie nach einem Package für einen bestimmten Zweck suchen, ist es jedoch leichter, eine konventionelle Suchmaschine zu nutzen.
+So genannte Packagee (Pakete) stellen zusätzliche Funktionen zur Verfügung, die in base R nicht verfügbar sind. Aktuell sind in dem offiziellen Repository für R über 15.000 ergänzende Packages verfügbar. Sehen Sie sich hier die vollständige [Liste](https://cran.r-project.org/web/packages/) an. Wenn Sie nach einem Package für einen bestimmten Zweck suchen, ist es jedoch leichter, eine konventionelle Suchmaschine zu nutzen.
 
 Einige nützliche Packages für die Anwendung in psychologischer Forschung sind beispielsweise: 
 
@@ -236,7 +261,7 @@ library(psych)
 ## Einlesen von Datensätzen
 
 In der praktischen Nutzung bekommt man es mit Datensätzen in den unterschieldlichsten Dateiformaten zu tun. R kann Daten aus sehr vielen Formaten einlesen (.csv, .sav, .txt, .dat, ...). Teilweise müssen dafür spezielle Packages benutzt werden. Häufig empfiehlt sich die Nutzung von csv-Dateien. 
-Eine Zusammenfassung dazu findet sich beispielsweise hier: https://de.wikibooks.org/wiki/GNU_R:_Datenimport_und_-export
+Hier finden Sie eine [Zusammenfassung](https://de.wikibooks.org/wiki/GNU_R:_Datenimport_und_-export) dazu.
 
 Wenn Daten bereits im R-eigenen .rda-Format vorliegen, können diese über den Befehl `load()` oder über `readRDS()` eingelesen werden.
 
@@ -250,7 +275,7 @@ setwd("Ordnerpfad")
 load("mach.rda")
 ```
 
-Die hier verwendeten Daten stammen aus dem "Open-Source Psychometrics Project" (https://openpsychometrics.org/_rawdata/), einer Online-Plattform, die eine Sammlung an Daten aus verschiedensten Persönlichkeitstests zur Verfügung stellt. Auf der Seite kann man die Fragebögen selbst ausfüllen, und so zum Datenpool beitragen. Der hier verwendete Datensatz enthält Items aus einem Machiavellismusfragebogen, den Sie bei Interesse online auf https://openpsychometrics.org/tests/MACH-IV/ durchführen können.
+Die hier verwendeten Daten stammen aus dem ["Open-Source Psychometrics Project"](https://openpsychometrics.org/_rawdata/), einer Online-Plattform, die eine Sammlung an Daten aus verschiedensten Persönlichkeitstests zur Verfügung stellt. Auf der Seite kann man die Fragebögen selbst ausfüllen, und so zum Datenpool beitragen. Der hier verwendete Datensatz enthält Items aus einem Machiavellismusfragebogen, den Sie bei Interesse [hier](https://openpsychometrics.org/tests/MACH-IV/) selbst ausfüllen können.
 
 ## Mit Datensätzen arbeiten
 
@@ -278,7 +303,11 @@ mach[,1:10] #Auswahl der ersten 10 Variablen
 
 ## Markdown-Dateien erstellen
 
-Ein Markdown ist ein Dokument, welches im R-Editor erstellt wird, und sowohl Textbestandteile als auch R-Code enthalten kann. Dieses Dokument wird in R erstellt und bearbeitet, und kann danach z.B. als Word-, PDF- oder HTML-Datei ausgegeben werden. Ein Markdown besteht aus freien Textbereichen und aus sogenannten R-Chunks (Absätzen mit R-Code). In Textabsätzen können bestimmte Befehle genutzt werden, um die Formatierung des Textes (Überschriften, Fettdruck, etc.) anzupassen.
+Ein Markdown ist ein Dokument, welches im R-Editor erstellt wird, und sowohl Textbestandteile als auch R-Code enthalten kann. Dieses Dokument wird in R erstellt und bearbeitet, und kann danach z.B. als Word-, PDF- oder HTML-Datei ausgegeben werden. Ein Markdown besteht aus freien Textbereichen und aus sogenannten R-Chunks (Absätzen mit R-Code). In Textabsätzen können bestimmte Befehle genutzt werden, um die Formatierung des Textes (Überschriften, Fettdruck, etc.) anzupassen. 
+
+Hier finden Sie eine sehr [ausführliche Anleitung](https://rmarkdown.rstudio.com/lesson-1.html) für die Arbeit mit Markdowns.
+
+Hier finden Sie ein sogenanntes [Cheatsheet](https://rstudio.com/wp-content/uploads/2015/06/rmarkdown-german.pdf) für R-Markdown, das viele wichtige Befehle kurz und knapp zusammenfasst.
 
 ### Schritte zur Erstellung eines Markdowns
 
@@ -287,24 +316,20 @@ Ein Markdown ist ein Dokument, welches im R-Editor erstellt wird, und sowohl Tex
 - Erstelltes Dokument ist eine Schablone mit Vorlagen für Freitext und R-Chunks
 - Knit (Dokument in Zielformat erstellen)
 
-Hier finden Sie ein sogenanntes Cheatsheet für R-Markdown, das viele wichtige Befehle kurz und knapp zusammenfasst:
-https://rstudio.com/wp-content/uploads/2015/06/rmarkdown-german.pdf
-
-Eine sehr ausführliche Anleitung finden sie unter: https://rmarkdown.rstudio.com/lesson-1.html
-
 ## Aufgaben zur eigenständigen Bearbeitung
+
 ### Matrixalgebra
 
-Auf den Folien der Vorlesung finden Sie Beispiele zu verschiedenen Matrixoperationen. Nutzen Sie R, um einige von ihnen nachzurechnen! Definieren Sie dafür jeweils die erwähnten Matrizen so wie auf den Vorlesungsfolien angegeben. 
+Auf den Folien der Vorlesung finden Sie Beispiele zu verschiedenen Matrixoperationen. Nutzen Sie R, um einige von ihnen nachzurechnen! Definieren Sie dafür jeweils die erwähnten Matrizen so wie auf den Vorlesungsfolien zum Thema Matrixalgebra angegeben. 
 
-1. Bestimmen Sie die Spur der Matrix auf Folie 14.
+1. Bestimmen Sie die Spur der Matrix auf der Folie 14.
 
 2. Prüfen Sie, ob es sich bei der Matrix auf Folie 18 wirklich um eine symmetrische Matrix handelt.
 
 3. Führen Sie die Multiplikation der Matrizen auf Folie 29 mit R durch.
 
 ### Daten laden
-Der bereitgestellte Datensatz `mach` kommt aus einer Onlineerhebung zum Machiavellismus. Bei diesem Konstrukt handelt es sich um eines der drei Persönlichkeitsmerkmale, welche häufig als "Dunkle Triade" bezeichnet werden: Machiavellismus, Narzissmus und Psychopathie. In Anlehnung an Machiavellis "Der Fürst" ist der Kerngedanke bei diesem Konstrukt, dass Personen ein nutzenorientiertes Verständnis sozialer Beziehungen haben. Den Fragebogen können Sie selbst unter [https://openpsychometrics.org/tests/MACH-IV/](https://openpsychometrics.org/tests/MACH-IV/) ausfüllen.
+Der bereitgestellte Datensatz `mach` kommt aus einer Onlineerhebung zum Machiavellismus. Bei diesem Konstrukt handelt es sich um eines der drei Persönlichkeitsmerkmale, welche häufig als "Dunkle Triade" bezeichnet werden: Machiavellismus, Narzissmus und Psychopathie. In Anlehnung an Machiavellis "Der Fürst" ist der Kerngedanke bei diesem Konstrukt, dass Personen ein nutzenorientiertes Verständnis sozialer Beziehungen haben. Den Fragebogen können Sie selbst [hier](https://openpsychometrics.org/tests/MACH-IV/) ausfüllen.
 
   1. Laden Sie den Datensatz und verschaffen Sie sich einen Überblick. 
 

@@ -21,7 +21,7 @@ data(mach, package = 'PsyBSc7')
 # Aufgaben zur eigenständigen Bearbeitung
 ## Matrixalgebra
 
-Auf den Folien der Vorlesung finden Sie Beispiele zu verschiedenen Matrixoperationen. Nutzen Sie R, um einige von ihnen nachzurechnen! Definieren Sie dafür jeweils die erwähnten Matrizen so wie auf den Vorlesungsfolien angegeben. 
+Auf den Folien der Vorlesung finden Sie Beispiele zu verschiedenen Matrixoperationen. Nutzen Sie R, um einige von ihnen nachzurechnen! Definieren Sie dafür jeweils die erwähnten Matrizen so wie auf den Vorlesungsfolien zum Thema Matrixalgebra angegeben. 
 
 1. Bestimmen Sie die Spur der Matrix auf Folie 14.
 
@@ -46,7 +46,7 @@ Z
 
 
 ## Daten laden
-Der bereitgestellte Datensatz `mach` kommt aus einer Onlineerhebung zum Machiavellismus. Bei diesem Konstrukt handelt es sich um eines der drei Persönlichkeitsmerkmale, welche häufig als "Dunkle Triade" bezeichnet werden: Machiavellismus, Narzissmus und Psychopathie. In Anlehnung an Machiavellis "Der Fürst" ist der Kerngedanke bei diesem Konstrukt, dass Personen ein nutzenorientiertes Verständnis sozialer Beziehungen haben. Den Fragebogen können Sie selbst unter [https://openpsychometrics.org/tests/MACH-IV/](https://openpsychometrics.org/tests/MACH-IV/) ausfüllen.
+Der bereitgestellte Datensatz `mach` kommt aus einer Onlineerhebung zum Machiavellismus. Bei diesem Konstrukt handelt es sich um eines der drei Persönlichkeitsmerkmale, welche häufig als "Dunkle Triade" bezeichnet werden: Machiavellismus, Narzissmus und Psychopathie. In Anlehnung an Machiavellis "Der Fürst" ist der Kerngedanke bei diesem Konstrukt, dass Personen ein nutzenorientiertes Verständnis sozialer Beziehungen haben. Den Fragebogen können Sie selbst [hier](https://openpsychometrics.org/tests/MACH-IV/) ausfüllen.
 
   1. Laden Sie den Datensatz und verschaffen Sie sich einen Überblick. 
 ```{r, eval = FALSE}
