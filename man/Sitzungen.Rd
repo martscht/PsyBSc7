@@ -4,7 +4,6 @@
 \alias{Sitzungen}
 \alias{Sitzung_1}
 \alias{Sitzung_2}
-\alias{Sitzung_3}
 \title{Übungen für das Praktikum in PsyBSc 7, Sommersemester 2020
 
 Mit diesen Funktionen können Sie die Übungen zu den einzelnen Sitzungen aufrufen. Die Funktionen nehmen keine Argumente entgegen.}
@@ -12,8 +11,6 @@ Mit diesen Funktionen können Sie die Übungen zu den einzelnen Sitzungen aufruf
 Sitzung_1()
 
 Sitzung_2()
-
-Sitzung_3()
 }
 \description{
 Übungen für das Praktikum in PsyBSc 7, Sommersemester 2020
