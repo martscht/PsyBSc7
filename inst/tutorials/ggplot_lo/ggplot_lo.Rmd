@@ -14,6 +14,7 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 library(learnr)
 library(fontawesome)
+library(ggplot2)
 ```
 
 Um die Daten zu laden, können wir die Funktion nutzen, die im Paket eingebaut ist:
@@ -23,6 +24,13 @@ PsyBSc7::Aufgaben_2()
 ```
 
 Alternativ können Sie natürlich auch die Schritte durchlaufen, die in der Übung besprochen wurden.
+
+Außerdem muss natürlich `ggplot2` geladen werden:
+
+```{r}
+library(ggplot2)
+```
+
 
 ## Datenauswahl
 
