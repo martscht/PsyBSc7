@@ -18,6 +18,16 @@ Loesungen_1 <- function(password) {
   }
 }
 
+#' @rdname Loesungen
+#' @export
+Loesungen_2 <- function(password) {
+  if (digest::digest(password) != '7d689a7a901bab794ff188043f8ee47d') {
+    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+  }  else {
+    compile('ggplot_lo')
+  }
+}
+
 
 #### Kompilieren ####
 compile <- function(x) {

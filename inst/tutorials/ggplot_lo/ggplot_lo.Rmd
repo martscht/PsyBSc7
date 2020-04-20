@@ -1,0 +1,105 @@
+---
+title: "Sitzung 2: R-Skripte zu den Aufgaben"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
+---
+
+
+```{r setup, include=FALSE}
+library(learnr)
+library(fontawesome)
+```
+
+Um die Daten zu laden, können wir die Funktion nutzen, die im Paket eingebaut ist:
+
+```{r}
+PsyBSc7::Aufgaben_2()
+```
+
+Alternativ können Sie natürlich auch die Schritte durchlaufen, die in der Übung besprochen wurden.
+
+## Datenauswahl
+
+>  Erstellen Sie einen Datensatz mit dem Namen `covid_se`, der nur die Daten dieser Länder enthält (Myanmar wird im englischsprachigen Raum weiterhin offiziell als "Burma" geführt).
+
+Wie in der Übung für die europäischen Länder vorgeführt, können wir die Selektion z.B. mit den eckigen Klammern machen.
+
+```{r}
+covid_se <- covid[covid$Country.Region %in% c(
+  'Brunei', 'Burma', 'Cambodia',  'Indonesia',
+  'Laos', 'Malaysia', 'East Timor', 'Philippines',
+  'Singapore', 'Thailand', 'Vietnam'), ]
+```
+
+## Relative Fallzahlen
+
+> Die Darstellung absoluter Fallzahlen wird häufig als irreführend angesehen, weil Länder mit größerer Bevölkerung mehr mögliche Fälle habe. Nutzen Sie obenstehende Tabelle um die Anzahl bestätigter Fälle an der Bevölkerung zu relativieren und so die bestätigten Fälle pro 100 000 Einwohner zu erhalten. Nennen sie diese Variable `Per100k`.
+
+In der Tabelle sind die Einwohnerzahlen in 100 000 dargestellt. Hier die ausführliche Variante um die Variable zu erstellen, wobei auch Abkürzungen mit Vektoren möglich sind.
+
+```{r}
+covid_se$Per100k <- NA
+covid_se$Per100k[covid_se$Country.Region == 'Brunei'] <- covid_se$Confirmed[covid_se$Country.Region == 'Brunei'] / 4
+covid_se$Per100k[covid_se$Country.Region == 'Burma'] <- covid_se$Confirmed[covid_se$Country.Region == 'Burma'] / 537
+covid_se$Per100k[covid_se$Country.Region == 'Cambodia'] <- covid_se$Confirmed[covid_se$Country.Region == 'Cambodia'] / 167
+covid_se$Per100k[covid_se$Country.Region == 'Indonesia'] <- covid_se$Confirmed[covid_se$Country.Region == 'Indonesia'] / 2677
+covid_se$Per100k[covid_se$Country.Region == 'Laos'] <- covid_se$Confirmed[covid_se$Country.Region == 'Laos'] / 71
+covid_se$Per100k[covid_se$Country.Region == 'Malaysia'] <- covid_se$Confirmed[covid_se$Country.Region == 'Malaysia'] / 315
+covid_se$Per100k[covid_se$Country.Region == 'East Timor'] <- covid_se$Confirmed[covid_se$Country.Region == 'East Timor'] / 12
+covid_se$Per100k[covid_se$Country.Region == 'Philippines'] <- covid_se$Confirmed[covid_se$Country.Region == 'Philippines'] / 1067
+covid_se$Per100k[covid_se$Country.Region == 'Singapore'] <- covid_se$Confirmed[covid_se$Country.Region == 'Singapore'] / 58
+covid_se$Per100k[covid_se$Country.Region == 'Thailand'] <- covid_se$Confirmed[covid_se$Country.Region == 'Thailand'] / 694
+covid_se$Per100k[covid_se$Country.Region == 'Vietnam'] <- covid_se$Confirmed[covid_se$Country.Region == 'Vietnam'] / 955
+```
+
+## Abbildung relativer Fallzahlen
+
+> Stellen Sie die Bestätigten Fälle pro 100 000 Einwohner in Abhängigkeit von der Zeit in einer Abbildung dar. Nutzen Sie Farben um zwischen den Ländern zu unterscheiden.
+
+```{r}
+ggplot(covid_se, aes(x = Day, y = Per100k, color = Country.Region)) +
+  geom_point() + geom_line()
+```
+
+## Faceting
+
+> Stellen Sie für jedes Land in einer Teilabbildung die bestätigten Fälle (`Confirmed`), und die Todesfälle (`Deaths`) dar. Nutzen sie für die beiden Linien unterschiedliche Farben (aber über alle Länder hinweg die gleichen). Weil sich die Bevölkerungszahlen so drastisch unterscheiden, lassen sie die y-Achse über die Länder hinweg frei variieren.
+
+Auch hier im Beispiel wieder blau für die Fallzahlen und rot für die Todesfälle. Mit `free_y` wird in jedem Land eine eigene Skalierung der y-Achse genutzt.
+
+```{r}
+ggplot(covid_se, aes(x = Day)) +
+  geom_line(aes(y = Confirmed), color = 'blue') +
+  geom_line(aes(y = Deaths), color = 'red') +
+  facet_wrap( ~ Country.Region, scales = 'free_y')
+```
+
+
+## Balkendiagramm
+
+> Nutzen Sie ein Balkendiagramm, um die relative Häufigkeit verstorbener Personen (`Deaths`) and der Gesamtzahl besätigter Fälle (`Confirmed`) pro Land bis zum heutigen Tag darzustellen. Denken Sie daran, dass Sie dafür Daten aggregieren müssen. Füllen Sie die Balken dabei mit länderspezifischen Farben.
+
+Zunächst Daten aggregieren:
+
+```{r}
+covid_deaths <- aggregate(cbind(Confirmed, Deaths) ~ Country.Region, data = covid_se, FUN = 'sum')
+```
+
+Dann muss die relative Häufigkeit als neue Variable im Datensatz erstellt werden:
+
+```{r}
+covid_deaths$DeathRatio <- covid_deaths$Deaths / covid_deaths$Confirmed
+```
+
+Zum Abschluss dann die Abbildung als Balkendiagramm. Auch hier darauf achten, dass die Werte des Datensatzes unverändert dargestellt werden sollen (`stat = 'identity'`).
+
+```{r}
+ggplot(covid_deaths, aes(x = Country.Region, y = DeathRatio, fill = Country.Region)) +
+  geom_bar(stat = 'identity')
+```
