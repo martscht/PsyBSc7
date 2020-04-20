@@ -3,11 +3,17 @@
 \name{Loesungen}
 \alias{Loesungen}
 \alias{Loesungen_1}
+\alias{Loesungen_2}
+\alias{Loesungen_3}
 \title{R-Skripte zur Lösung der Aufgaben im Praktikum zu PsyBSc 7, Sommersemester 2020
 
 Mit diesen Funktionen können Sie die Lösungen zu den Übungen in den einzelnen Sitzungen aufrufen. Die Passwörter werden nach dem Abgabetermin im OLAT bekannt gegeben.}
 \usage{
 Loesungen_1(password)
+
+Loesungen_2(password)
+
+Loesungen_3(password)
 }
 \description{
 R-Skripte zur Lösung der Aufgaben im Praktikum zu PsyBSc 7, Sommersemester 2020

@@ -32,3 +32,14 @@ Sitzung_2 <- function() {
   library(gradethis)
   learnr::run_tutorial('ggplot', package = 'PsyBSc7')
 }
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_3 <- function() {
+  library(learnr)
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  learnr::run_tutorial('loops', package = 'PsyBSc7')
+}
