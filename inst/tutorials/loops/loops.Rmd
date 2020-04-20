@@ -1,0 +1,446 @@
+---
+title: "Loops und Funktionen"
+output: 
+  learnr::tutorial:
+  progressive: false
+  allow_skip: true
+  includes:
+    after_body: footer.html
+    in_header: header.html
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+data(mdbf, package = 'PsyBSc7')
+knitr::opts_chunk$set(echo = FALSE)
+learnr::tutorial_options(exercise.eval = FALSE)
+```
+
+```{r for-loop-setup}
+mdbf_r <- mdbf
+neg <- c(3, 4, 5, 7, 9, 11)
+```
+
+```{r check-setup}
+mdbf_r <- mdbf
+mdbf_r[, 3] <- -1 * (mdbf_r[, 3] - 5)
+neg <- c(3, 4, 5, 7, 9, 11)
+```
+
+```{r build-function-IV-setup}
+empVar <- function(x) {
+  n <- length(x)
+  s2 <- sum((x - mean(x))^2)/n
+  return(s2)
+}
+```
+
+```{r build-function-V-setup}
+empVar <- function(x) {
+  n <- length(x)
+  s2 <- sum((x - mean(x))^2)/n
+  return(s2)
+}
+```
+
+```{r build-function-IX-setup}
+Vari <- function(x, empirical) {
+  n <- length(x)
+  if (empirical) {
+    s2 <- sum((x - mean(x))^2)/n
+  } else {
+    s2 <- sum((x - mean(x))^2)/(n-1)
+  }
+  return(s2)
+}
+```
+
+```{r build-function-X-setup}
+Vari <- function(x, empirical) {
+  n <- length(x)
+  if (empirical) {
+    s2 <- sum((x - mean(x))^2)/n
+  } else {
+    s2 <- sum((x - mean(x))^2)/(n-1)
+  }
+  return(s2)
+}
+```
+
+```{r build-function-XII-setup}
+Vari <- function(x, empirical = TRUE) {
+  n <- length(x)
+  if (empirical) {
+    s2 <- sum((x - mean(x))^2)/n
+  } else {
+    s2 <- sum((x - mean(x))^2)/(n-1)
+  }
+  return(s2)
+}
+```
+
+## Bedingungen: `if` und `else`
+
+### Abgleich mit einem Datum
+
+*Im Prozess der Datenaufbereitung und -auswertung kommt man häufig an den Punkt, an dem etwas nur unter bestimmten Bedingungen durchgeführt werden sollte. Wie in eigentlich allen Programmiersprachen werden wenn-dann Beziehungen auch in R mit `if` erzeugt. Dabei folgt auf ein `if` in normalen Klammern die Bedingung und dann in geschwungenen Klammern die Konsequenz. Zum Beispiel:*
+
+```{r only-if-I, exercise=TRUE, exercise.lines = 5}
+if (weekdays(Sys.Date()) == 'Donnerstag') {
+  'R Kurs um 8!'
+}
+```
+
+*Hier wird zuerst die Bedingung evaluiert:*
+
+```{r only-if-II, exercise=TRUE, exercise.lines = 3}
+(weekdays(Sys.Date()) == 'Donnerstag')
+```
+
+*Als Ergebnis wird ein logisches Element erwartet: also ein Objekt das entweder `TRUE` oder `FALSE` ist. Wie im letzten Semester besprochen, können logische Bedingungen mit `&` (logisches "und") und `|` (logisches "oder") verknüpft werden. Wenn das logische Objekt `TRUE` enthält, wird die R-Syntax in den geschwungenen Klammern ausgeführt; wenn es `FALSE` enthält, passiert nichts. Zum Beispiel:*
+
+```{r only-if-III, exercise=TRUE, exercise.lines = 3}
+(weekdays(Sys.Date()) == 'Samstag' | weekdays(Sys.Date()) == 'Sonntag')
+```
+
+
+### Abgleich mit mehreren Alternativen
+
+*Um zwischen zwei Alternativen auszuwählen, kann mit dem `else` gearbeitet werden:*
+
+```{r if-else-I, exercise=TRUE, exercise.lines = 7}
+if (weekdays(Sys.Date()) == 'Donnerstag') {
+  'R Kurs um 8!'
+} else {
+  'Ausschlafen'
+}
+```
+
+*Für einzelne Ereignisse kann in R die Notation außerdem mithilfe der `ifelse`-Funktion abgekürzt werden. Die Funktion nimmt drei Argumente entgegen:*
+  
+  *- `test`: die Bedingung*
+  *- `yes`: was getan werden soll, wenn die Bedingung zutrifft*
+  *- `no`: was getan werden soll, wenn die Bedingung nicht zutrifft*
+  
+```{r if-else-II, exercise=TRUE, exercise.lines = 3}
+ifelse(weekdays(Sys.Date()) == 'Donnerstag', 'R Kurs um 8!', 'Ausschlafen')
+```
+
+*Die ausgiebige Notation ist immer dann von Vorteil, wenn der auszuführende R-Code mehrere Zeilen lang ist oder z.B. weitere Bedingungen enthält. Natürlich sind wenn-dann Ausführungen eigentlich hauptsächlich dann nützlich, wenn Code für verschiedene Daten, Objekte oder Funktionen mehrfach genutzt werden soll und man nicht in jedem Einzelfall weiß, welche Inhalte die Objekte haben, mit denen man arbeitet. Ein einfaches Beispiel mit einer Zufallszahl könnte so aussehen:*
+
+```{r if-else-III, exercise=TRUE, exercise.lines = 10}
+x <- sample(1:10, 1)
+if (x > 5) {
+  y <- 1
+} else {
+  y <- 0
+}
+x
+y
+```
+
+
+## Loops (Schleifen)
+
+### Datensatz
+
+*Loops (oder Schleifen) bieten die Möglichkeit den gleichen R-Code mehrmals anzuwenden, ohne ihn wiederholt schreiben zu müssen. Gerade in Kombination mit `if` und `else` kann man so sehr kurze, leserliche Skripte verfassen und potentielle Fehler, die sich in sehr lange Skripte gerne einschleichen, umgehen. In R werden drei Arten von Loops unterschieden: `for`-Loops, `while`-Loops und `repeat`-Loops.*
+
+*Loops sind zum Beispiel nützlich für das Rekodieren von Items. Der `mdbf` Datensatz enthält 98 Beobachtungen auf 12 Variablen, allesamt Items des **M**ehr**d**imensionalen **B**efindlichkeits**f**ragebogens. In diesem Fragebogen werden Adjektive zur Beschreibung der aktuellen Stimmung genutzt um die drei Dimensionen der Stimmung - Gut vs. Schlecht, Wach vs. Müde und Ruhig vs. Unruhig - zu erheben:*
+
+```{r load-data, exercise=TRUE, exercise.lines = 4}
+data(mdbf, package = 'PsyBSc7')
+str(mdbf)
+```
+
+
+Variable | Adjektiv | Richtung | Dimension 
+-------- | -------- | -------- | --------- 
+`stim1` | zufrieden | positiv | Gut vs. Schlecht
+`stim2` | ausgeruht | positiv | Wach vs. Müde
+`stim3` | ruhelos | negativ | Ruhig vs. Unruhig
+`stim4` | schlecht | negativ | Gut vs. Schlecht
+`stim5` | schlapp | negativ | Wach vs. Müde
+`stim6` | gelassen | positiv | Ruhig vs. Unruhig
+`stim7` | müde | negativ | Wach vs. Müde
+`stim8` | gut | positiv | Gut vs. Schlecht
+`stim9` | unruhig | negativ | Ruhig vs. Unruhig
+`stim10` | munter | positiv | Wach vs. Müde
+`stim11` | unwohl | negativ | Gut vs. Schlecht
+`stim12` | entspannt | positiv | Ruhig vs. Unruhig
+
+*Um die drei Skalenwerte berechnen zu können müssen die jeweils "negativen" Adjektive ins Positive umgepolt werden. Hierzu gibt es zum Beispiel folgende zwei Möglichkeiten:*
+
+```{r manual-recode, exercise=TRUE, exercise.lines = 8}
+mdbf$stim4_r <- -1 * (mdbf$stim4 - 5)
+
+mdbf$stim4_r[mdbf$stim4 == 1] <- 4
+mdbf$stim4_r[mdbf$stim4 == 2] <- 3
+mdbf$stim4_r[mdbf$stim4 == 3] <- 2
+mdbf$stim4_r[mdbf$stim4 == 4] <- 1
+```
+
+*Mit Hilfe der Loops können wir uns die Arbeit ersparen, diesen Abschnitt für jedes negative Adjektiv schreiben zu müssen.*
+
+### `for`-Loops
+
+*In `for`-Loops wird ein Abschnitt von R-Syntax für jedes Element in einem vorab festgelegten Objekt durchgeführt. Es ist also nötig, vorher zu wissen, für welche Fälle ein Skript durchgeführt werden muss.*
+
+```{r copy-data, exercise=TRUE, exercise.lines = 8}
+# Kopie des Datensatzes erstellen
+# Datenverlust vorbeugen
+mdbf_r <- mdbf
+
+# Vektor der negativen Items
+neg <- c(3, 4, 5, 7, 9, 11)
+```
+
+*In `neg` wird kodiert, welche Items negativ formuliert. Mit der `for`-loop wird jedes Element dieses dann Vektors ein mal genutzt:*
+
+```{r for-loop, exercise=TRUE, exercise.lines = 5}
+for (i in neg) {
+  mdbf_r[, i] <- -1 * (mdbf_r[, i] - 5)
+}
+```
+
+*Zur Prüfung des Erfolges:*
+
+```{r check, exercise=TRUE, exercise.lines = 3}
+cor(mdbf[, 3], mdbf_r[, 3])
+```
+
+### `while`-Loops
+
+*In `while`-Loops wird der Code so lange ausgeführt, wie ein vorab definiertes Kriterium erfüllt ist. Ein einfaches Beispiel wäre es, so lange einen Münzwurf zu simulieren, bis man 10 mal "Kopf" geworfen hat.*
+
+```{r while-loop, exercise=TRUE, exercise.lines = 14}
+# Münze erstellen
+coin <- c('Kopf', 'Zahl')
+
+# Leeres Objekt für die Aufzeichnung erstellen
+toss <- NULL
+
+# Loop
+while (sum(toss == 'Kopf')<10) {
+  toss <- c(toss, sample(coin, 1))
+}
+
+# Würfe ansehen
+toss
+```
+
+### `repeat`-Loops
+
+*Im Gegensatz zu `for` und `while` wird bei `repeat` zunächst kein explizites Abbruchkriterium definiert. Stattdessen wird `repeat` häufig genutzt, wenn es verschiedene oder veränderliche Abbruchkriterien für den Loop gibt. Diese Kriterien werden bei `repeat` allerdings innerhalb des Loops definiert - in den meisten Fällen wird dazu über `if` mindestens eine Bedingung definiert, unter der die Ausführung abgebrochen werden soll.*
+
+*Ein einfaches Beispiel hierfür ist es, eine Fibonacci Sequnz zu bilden (eine Sequenz in der eine Zahl immer die Summe der vorherigen beiden Zahlen ist) und die Sequenz abzubrechen, wenn die letzte Zahl z.B. größer als 1000 ist. Ich kann nicht vorab bestimmen, welches Element das sein wird, wodurch es geschickter wird innerhalb des Loops das Kriterium zu evaluieren.*
+
+```{r repeat-loop-I, exercise=TRUE, exercise.lines = 11}
+fibo <- c(1, 1)
+
+repeat {
+  n <- length(fibo)
+  fibo <- c(fibo, fibo[n] + fibo[n - 1])
+  if (fibo[n+1] > 1000) break
+}
+
+fibo
+```
+
+*Loops können mit `break` unterbrochen werden - das gilt nicht nur für `repeat`, sondern auch für die anderen beiden Formen von Loops.*
+
+*Generell sollten Loops in R nur genutzt werden, wenn keine Vektor-basierte Alternative zur Verfügung steht. Zum Beispiel: um eine Variable zu zentrieren sollte nicht ein Loop genutzt werden, der von jedem Element den Mittelwert abzieht. Stattdessen ist R in der Lage den Mittelwert direkt von jedem Element des Vektors abzuziehen - diese Umsetzung ist also direkt Vektor-basiert und in R (beinahe ausnahmslos) die schnellere und effizientere Variante.*
+
+*Die `apply`-Familie ermöglicht darüber hinaus Loops sehr kurz zu schreiben, weil sie eine Funktion für alle Elemente eines Objekts via Loop anwendet.*
+
+## Funktionen
+
+### Erstellen einer eigenen Funktion
+
+*Funktionen, die in R angewendet werden können, sind ebenfalls Objekte. Dadurch können eigene Funktionen wie andere Objekte auch angelegt werden - dazu müssen sie lediglich mit der `function`-Funktion erstellt werden. Im Allgeimenen sieht das wie folgt aus:*
+
+```{r build-function-I, exercise=TRUE, exercise.lines = 5, eval = FALSE}
+eigene_funktion <- function(argument1, argument2, ...) {
+  # Durchgeführte Operationen
+}
+```
+
+*Wie bei Loops auch, wird die durchgeführte Syntax durch geschwungene Klammern umschlossen. Als Argumente können beliebig viele Einstellungen für die Funktion definiert werden, auf die dann in der Funktion Bezug genommen wird. Wichtig ist dabei, dass Funktionen keinen generellen Zugriff auf den Workspace haben, sondern alle Objekte, die sie benötigen durch die Argumente an sie weitergegeben werden sollten.*
+
+*Ein einfaches Beispiel: in R wird mit der `var`-Funktion die Schätzung für die Populationsvarianz $\widehat{\sigma}^2$ und nicht die empirische Varianz $s$ bestimmt. Wir können also eigene Funktion anlegen, die die empirische Varianz schätzt. Dafür können wir die Formel zur Varianzberechnung einfach in R-Code übersetzen:*
+
+$$s^2 = \frac{\sum_{i=1}^n(x_i - \bar{x})^2}{n}$$
+
+*Als R-Code also:*
+
+```{r build-function-II, exercise=TRUE, exercise.lines = 6, eval = FALSE}
+x <- mdbf[, 1]
+n <- length(x)
+s2 <- sum((x - mean(x))^2) / n
+s2
+```
+
+*Dieser Code funktioniert allerdings nur für eine einzige Variable mit dem Namen `x` und wir müssten den Code für jede einzelne Anwendung wiederholen. Um das abzukürzen, können wir eine eigene, wiedervendbare Funktion anlegen:*
+
+```{r build-function-III, exercise=TRUE, exercise.lines = 7}
+empVar <- function(x) {
+  n <- length(x)
+  s2 <- sum((x - mean(x))^2)/n
+  return(s2)
+}
+```
+
+*Diese Funktion kann jetzt auf jede beliebige Variable angewendet werden:*
+
+```{r build-function-IV, exercise=TRUE, exercise.lines = 4}
+empVar(mdbf[, 1])
+empVar(mdbf[, 2])
+```
+
+*Das Einzige, was diese Funktion von in R implementierten Paketen unterscheidet ist, dass sie im Workspace angezeigt wird:*
+
+```{r build-function-V, exercise=TRUE, exercise.lines = 3}
+ls()
+```
+
+*Weil beim Durchführen von Funktionen als erstes der Workspace nach definierten Funktionen durchsucht wird, sollten Funktionen möglichst einzigartig benannt werden, weil sonst nicht mehr (so leicht) auf die R-internen Funktionen zugegriffen werden kann.*
+
+*Funktionen sollten prinzipiell mit `return` Ergebnisse nach außen geben. Eine Funktion ohne `return` wird zwar durchgeführt, man hat aber keinen Zugriff auf das Ergebnis, weil alle innerhalb der Funktion angelegten Objekte entfernt werden, sobald die Durchführung der Funktion abgeschlossen ist:*
+
+```{r build-function-VI, exercise=TRUE, exercise.eval = FALSE, exercise.lines = 8}
+empVar <- function(x) {
+  n <- length(x)
+  s2 <- sum((x - mean(x))^2)/n
+}
+empVar(mdbf[, 2])
+s2
+
+```
+
+*Hier wird mit `s2` also das schon vorhandene Objekt abgefragt. Das `s2` in der Funktion ist nur innerhalb der Funktion ansprechbar - das im Workspace liegende `s2` hingegen, ist nur außerhalb der Funktion ansprechbar! Zusätzlich sollte beachtet werden, dass `return` nur ein einziges Argument entgegennimmt: Funktionen in R können also nur ein einziges Objekt als Ergebnis liefern. Wenn mehrere Ergebnisse ausgegeben werden sollen, müssen diese vorher zu einem Objekt (meistens einer Liste) zusammengefasst werden.*
+
+```{r build-function-VII, exercise=TRUE, exercise.lines = 9}
+empVar <- function(x) {
+  n <- length(x)
+  s2 <- sum((x - mean(x))^2)/n
+  out <- list(s2 = s2, n = n)
+  return(out)
+}
+empVar(mdbf[, 2])
+```
+
+*Funktionen können also eine beliebige Anzahl von Argumente entgegennehmen, aber nur ein einziges Objekt als Ergebnis liefern. Um eine gemeinsame Funktion für beide Formen der Varianz zu haben, könnten wir die Anzahl der Argumente erweitern:*
+
+```{r build-function-VIII, exercise=TRUE, exercise.lines = 11}
+Vari <- function(x, empirical) {
+  n <- length(x)
+  if (empirical) {
+    s2 <- sum((x - mean(x))^2)/n
+  } else {
+    s2 <- sum((x - mean(x))^2)/(n-1)
+  }
+  return(s2)
+}
+```
+
+*In diesem Fall wird also eine Einstellung für `empirical` benötigt, die dann von `ìf` als `TRUE` oder `FALSE` bewertet werden kann:*
+
+```{r build-function-IX, exercise=TRUE, exercise.lines = 4}
+Vari(mdbf[, 2], TRUE)
+Vari(mdbf[, 2], FALSE)
+```
+
+*Wenn wir die Einstellung vergessen, wird - wie bei allen anderen R Funktionen auch - ein Fehler produziert:*
+
+```{r build-function-X, exercise=TRUE, exercise.lines = 3}
+Vari(mdbf[, 2])
+```
+
+*Wenn Voreinstellungen für Argumente festgelegt werden sollen, erreichen wir das durch:*
+
+```{r build-function-XI, exercise=TRUE, exercise.lines = 11}
+Vari <- function(x, empirical = TRUE) {
+  n <- length(x)
+  if (empirical) {
+    s2 <- sum((x - mean(x))^2)/n
+  } else {
+    s2 <- sum((x - mean(x))^2)/(n-1)
+  }
+  return(s2)
+}
+```
+
+```{r build-function-XII, exercise=TRUE, exercise.lines = 3}
+Vari(mdbf[, 2])
+```
+
+*Solange jetzt nicht explizit etwas bei der Anwendung der Funktion für `empirical` deklariert wird, wird von dieser Voreinstellung ausgegangen. Wie hier gezeigt, sind `if` und `else` in Funktionen häufig relevant, um die Funktion für verschiedene Situationen nutzbar zu machen. Auch Loops können in Funktionen definiert und genutzt werden.*
+
+## Aufgaben
+
+*Zur Bearbeitung der Aufgaben öffnen Sie bitte ein neues RStudio-Fenster. Nutzen Sie für die Aufgaben den Datensatz `mdbf.rds`. Die Daten können mittels des `PsyBSc7::Aufgaben_3()`-Befehls geladen werden. Der Datensatz enthält 98 Beobachtungen auf 12 Variablen, allesamt Items des **M**ehr**d**imensionalen **B**efindlichkeits**f**ragebogens. In diesem Fragebogen werden Adjektive zur Beschreibung der aktuellen Stimmung genutzt um die drei Dimensionen der Stimmung - Gut vs. Schlecht, Wach vs. Müde und Ruhig vs. Unruhig - zu erheben.*
+
+
+Variable | Adjektiv | Richtung | Dimension 
+-------- | -------- | -------- | --------- 
+`stim1` | zufrieden | positiv | Gut vs. Schlecht
+`stim2` | ausgeruht | positiv | Wach vs. Müde
+`stim3` | ruhelos | negativ | Ruhig vs. Unruhig
+`stim4` | schlecht | negativ | Gut vs. Schlecht
+`stim5` | schlapp | negativ | Wach vs. Müde
+`stim6` | gelassen | positiv | Ruhig vs. Unruhig
+`stim7` | müde | negativ | Wach vs. Müde
+`stim8` | gut | positiv | Gut vs. Schlecht
+`stim9` | unruhig | negativ | Ruhig vs. Unruhig
+`stim10` | munter | positiv | Wach vs. Müde
+`stim11` | unwohl | negativ | Gut vs. Schlecht
+`stim12` | entspannt | positiv | Ruhig vs. Unruhig
+
+
+*Schreiben Sie eine Funktion, die für alle Variablen in einem beliebigen Datensatz gleichzeitig jeweils die univariate Normalverteilung mit dem Shapiro-Wilk-Test prüft und die Verteilungen grafisch darstellt. Ermöglichen Sie dabei durch ein Argument die Wahl zwischen Histogramm und QQ-Plot und legen Sie dafür eine Voreinstellung fest. Wenden Sie die Funtion zum Schluss auf den Datensatz `mdbf` an. Vergessen nicht, den Datensatz hierfür aber vorher zu laden.*
+
+**Bonus**:
+
+*- Nutzen Sie das `main`-Argument um die Abbildungen mit den korrekten Namen der dargestellten Variablen zu versehen.*
+*- Geben Sie die Ergebnisse der Shapiro-Tests als `data.frame` mit den Spalten Variablenname, Teststatistik und $p$-Wert aus.*
+
+
+*Für die einfache Variante:*
+
+```{r exI, exercise=TRUE, exercise.lines = 30}
+
+```
+
+<div id="exI-hint">
+Tipp:
+
+Legen Sie eine leere Liste an (mit `<- list()`), in der schrittweise die Ergebnisse des Shapiro-Wilk-Tests abgelegt werden können.
+
+Die Schleife muss durch alle items im Datensatz durchlaufen. Man benötigt also eine hierzu eine Information über die anzahl der Spalten.
+
+QQ-Plots können mit `qqnorm` erstellt werden. Die diagonale Linie kann zudem mit `qqline` hinzugefügt werden.
+
+Mittels `if` kann ein optionaler plot als histogram oder QQ-plot hinzugefüht werden. 
+</div>
+
+
+*Mit den Bonus-Aufgaben:*
+
+```{r exII, exercise=TRUE, exercise.lines = 40}
+
+```
+
+<div id="exII-hint">
+Tipp: 
+
+Legen Sie eine leere Liste an (mit `<- list()`), in der schrittweise die Ergebnisse des Shapiro-Wilk-Tests abgelegt werden können.
+
+Die Schleife muss durch alle items im Datensatz durchlaufen. Man benötigt also eine hierzu eine Information über die anzahl der Spalten.
+
+QQ-Plots können mit `qqnorm` erstellt werden. Die diagonale Linie kann zudem mit `qqline` hinzugefügt werden.
+
+Mittels `if` kann ein optionaler plot als histogram oder QQ-plot hinzugefüht werden. 
+
+Die `data.frame` Funktion erlaubt es, ein data frame anzulegen.
+</div>
