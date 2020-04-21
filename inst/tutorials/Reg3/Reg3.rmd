@@ -1,0 +1,203 @@
+---
+title: "Sitzung 6: Regressionanalyse III"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
+---
+
+```{r setup, include = FALSE}
+source('setup.R')
+```
+
+** basierend auf Unterlagen von Prof. Johannes Hartig
+
+## Vorbereitung
+### Übungs-Datensatz (wie beim letzten Termin)
+
+Eine Stichprobe von 100 Schülerinnen und Schülern hat einen Lese- und einen Mathematiktest beantwortet, zusätzlich einen allgemeinen Intelligenztest. Im Datensatz enthalten ist zudem das Geschlecht (`female`, 0=m, 1=w).
+
+```{r}
+library(car)
+library(MASS)
+# Datensatz laden
+data("Schulleistungen", package = "PsyBSc7")
+```
+
+Gegenstand der folgenden Übung ist Die Prüfung von Voraussetzungen der Regressionsanalyse:
+
+* Linearität (Wiederholung)
+* Homoskedaszidität (Wiederholung)
+* Normalverteilung der Residuen (Wiederholung)
+* Multikollinearität
+* Identifikation von Ausreißern und einflussreichen Datenpunkten
+
+```{r}
+# Modell zur Vorhersage der Leseleistung
+mod <- lm(reading ~ female + IQ, data = Schulleistungen)
+```
+
+## Linearität
+
+Eine grafische Prüfung der partiellen Linearität der zwischen den einzelnen Prädiktorvariablen und dem Kriterium durch *partielle Regressionsplots* erfolgen. Für jeden Prädiktor werden die Residuen bei Vorhersage durch die anderen Prädiktoren gegen die Residuen des Kriteriums bei Vorhersage durch den jeweiligen Prädiktor dargestellt. Diese Grafiken können Hinweise auf systematische nicht-lineare Zusammenhänge geben, die in der Modellspezifikation nicht berücksichtigt wurden.
+
+```{r}
+
+avPlots(mod, pch = 16, lwd = 4)
+
+```
+
+Mit Hilfe der Argumente `pch=16` und `lwd=4` werden die Darstellung der Punkte (ausgefüllt anstatt leer) sowie die Dicke der Linie manipuliert. Den Achsenbeschriftungen ist zu entnehmen, dass auf der Y-Achse jeweils *reading | others* dargestellt ist. Die vertikale Linie *|* steht hierbei für den mathematischen Ausdruck gegeben und *others* steht hierbei für alle weiteren (anderen) Prädiktoren im Modell. Bei den unabhängigen Variablen (UV, *female*, *IQ*) steht *UV | others* jeweils für die jeweilige UV gegeben der anderen UVs im Modell. Somit beschreiben die beiden Plots jeweils die Beziehungen, die die UVs über die anderen UVs im Modell hinaus mit dem Kriterium (AV, abhängige Variable) haben. 
+
+
+## Verteilung der Residuen
+
+### Homoskedastizität
+
+Die Varianz der Residuen sollte unabhängig von den Ausprägungen der Prädiktoren sein. Dies wird i.d.R. grafisch geprüft, indem die Residuen $e_i$ gegen die Vorhergesagten Werte $\hat{y}_i$ geplottet werden; dem sogenannten Residuenplot (engl., residual plot). In diesem Streudiagramm sollten die Residuen gleichmäßig über $\hat{y}_i$ streuen und keine systematischen Trends (linear, quadratisch, auffächernd) erkennbar sein. Die Funktion `residualPlots` des Pakets `car` erzeugt separate Streudiagramme für die Residuen in Abhängigkeit von jedem einzelnen Prädiktor $x_j$ und von den vorhergesagten Werten $\hat{y}_i$ (*"Fittet Values"*). Zusätzlich wird für jeden Plot ein quadratischer Trend eingezeichnet und auf Signifikanz getestet, womit eine zusätzliche Prüfung auf nicht-lineare Effekte erfolgt. Sind diese Test nicht signifikant, ist davon auszugehen, dass diese Effekte nicht vorliegen und die Voraussetzungen nicht verletzt sind.
+
+Die Funktion `ncvTest` prüft, ob die Varianz der Residuen bedeutsam linear (!) mit den vorhergesagten Werten zusammenhängt. Wird dieser Test signifikant, ist die Annahme der Homoskedaszidität verletzt [(Wikipedia: Breusch-Pagan)](https://en.wikipedia.org/wiki/Breusch–Pagan_test). Wird er nicht signifikant, kann dennoch eine Verletzung vorliegen, z.B. ein nicht-linearer Zusammenhang.
+
+
+```{r}
+
+# Grafisch (+ Test auf Nicht-Linearität)
+residualPlots(mod, pch = 16)
+# Test For Non-Constant Error Variance
+ncvTest(mod)
+
+```
+
+
+### Normalverteilung
+
+Voraussetzung für die Signifikanztests im Kontext der linearen Regression ist die Normalverteilung der Residuen. Auch diese Annahme wird i.d.R. grafisch geprüft. Hierfür bietet sich zum einen ein Histogramm der Residuen an, zum anderen ein *Q-Q-Diagramm* (oder "Quantile-Quantile-Plot"). Zusätzlich zur grafischen Darstellung erlaubt z.B. der Shapiro-Wilk-Test auf Normalität (`shapiro.test`) einen Signifkanztest der Nullhypothese, dass die Residuen normalverteilt sind. Auch der Kolmogorov-Smirnov Test, welcher eine deskriptive mit einer theoretischen Verteilung vergleicht, wäre denkbar. 
+ 
+
+```{r}
+res <- studres(mod) # Studentisierte Residuen als Objekt speichern
+df_res <- data.frame(res) # als Data.Frame für ggplot
+# Grafisch: Histogramm mit Normalverteilungskurve
+library(ggplot2)
+ggplot(data = df_res, aes(x = res)) + 
+     geom_histogram(aes(y =..density..),
+                    bins = 15,                    # Wie viele Balken sollen gezeichnet werden?
+                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
+                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
+     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
+     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
+
+# hier nochmal nur das Nötigste:
+ggplot(data = df_res, aes(x = res)) + 
+     geom_histogram(aes(y =..density..),  bins = 15) +           
+     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)))
+
+# Grafisch: Q-Q-Diagramm mit der car Funktion qqPlot
+qqPlot(mod, pch = 16, distribution = "norm") 
+
+# Test auf Abweichung von der Normalverteilung mit dem Shpiro Test
+shapiro.test(res)
+
+# Test auf Abwweichung von der Normalverteilung mit dem Kolmogorov-Smirnov Test
+ks.test(res, "pnorm", mean(res), sd(res))
+```
+
+Für unser Modell zeigen alle Ergebnisse übereinstimmend, dass die Residuen normalverteilt sind (bzw. lehnen diese Hypothese nicht ab: *Shapiro-Wilk Test* ubd *Kolmogorov-Smirnov Tests gegen die Normalverteilung*). Studentisieren der Residuen führt eine Art Standardisierung durch, sodass anschließend der Mittelwert *0* und die Varianz *1* ist. `distribution = "norm` im `qqPlot` des `car` Pakets erzeugt den Vergleich zur Normalverteilung (auch der Vergleich zu anderen Verteilungen wäre möglich). Dem *Kolmogorov-Smirnov Tests gegen die Normalverteilung* `ks.test` muss zusnächst als erstes Argument `res`, die Variable, deren Verteilung untersucht werden soll, übergeben werden. `"pnorm"` zeigt an, dass die empirische Verteilung unserer Daten `res` mit der Normalverteilung verglichen werden soll (wird hier eine andere Verteilung gewählt, so kann gegen diese geprüft werden; auch können zwei empirisiche Verteilungen auf Gleichheit untersucht werden). Anschließend übergeben wir die verteilungsspezifischen Parameter; hier `mean(res)` (der Mittelwert) sowie `sd(res)` (die Standardabweichung), da die Normalverteilung genau durch diese beiden Parameter bestimmt ist (hier könnten auch theoretisch angenommene Parameter gewählt werden, z.B. `0` und `1` für eine Mittelwert von 0 und einer Varianz von 1). 
+
+Wäre der *Shapiro-Wilk-Normality Tests* oder der *Kolmogorov-Smirnov Tests gegen die Normalverteilung* signifikant auf dem 5%-Niveau, würde dies dafür sprechen, dass "mit einer Irrtumswahrscheinlichkeit von 5% die Null-Hypothese auf Gleichheit der Normalverteilung mit unserer empirischen Verteilung verworfen werden muss, da in der Population die Abweichung der empirischen zur theoretischen Normalverteilung mit der Irrtumswahrscheinlichkeit von 5% ungleich 0 ist". 
+
+Schiefe Verteilungen, welche sich im Histogramm oder im Q-Q-Plot wiederpiegeln sowie zu signifikanten *Shapiro-Wilk-Normality Tests* oder *Kolmogorov-Smirnov Tests gegen die Normalverteilung* führen können, könnten Indizien für nichtlineare (z.B. quadratische) Beziehungen im Datensatz sprechen. Weitere Analysen wären hierfür nötig.
+
+## Multikollinearität
+
+Multikollinearität ist ein potenzielles Problem der multiplen Regressionsanalyse und liegt vor, wenn zwei oder mehrere Prädiktoren hoch miteinander korrelieren. Hohe Multikollinearität
+
+* schränkt die mögliche multiple Korrelation ein, da die Prädiktoren redundant sind und sich überlappende Varianzanteile in $y$ erklären.
+* erschwert die Identifikation von bedeutsamen Prädiktoren, da deren Effekte untereinander konfundiert sind (die Effekte können schwer voneinander getrennt werden).
+* bewirkt eine Erhöung der Standardfehler der Regressionkoeffizienten *(der Standardfehler ist die Standardabweichung zu der Varianz der Regressionskoeffizienten bei wiederholter Stichprobenziehung und Schätzung)*, d.h. die Schätzungen werden instabil. 
+
+Multikollinearität kann durch Inspektion der *bivariaten Zusammenhänge* (Korrelationsmatrix) der Prädiktoren $x_j$ untersucht werden, dies kann aber nicht alle Formen von Multikollinearität aufdecken. Darüber hinaus ist die Berechung der sogennanten *Toleranz* und des *Varianzinflationsfaktors* (VIF) für jeden Prädiktor möglich. Hiefür wird für jeden Prädiktor $x_j$ der Varianzanteil $R_j^2$ berechnet, der durch Vorhersage von $x_j$ durch *alle anderen Prädiktoren* in der Regression erklärt wird. Toleranz und VIF sind wie folgt definiert:
+
+* $T_j = 1-R^2_j = \frac{1}{VIF_j}$
+* $VIF = \frac{1}{1-R^2_j} = \frac{1}{T_j}$
+
+Offensichtlich genügt eine der beiden Statistiken, da sie vollständig redundant sind. Empfehlungen als Grenzwert für Kollinearitätsprobleme sind z. B. $VIF_j>10$ ($T_j<0.1$) (Eid, Gollwitzer, & Schmitt, 2017). Die Varianzinflationsfaktoren der Prädiktoren im Modell können mit der Funktion `vif` des `car`-Paktes bestimmt werden, der Toleranzwert als Kehrwert der VIFs.
+
+```{r}
+
+# Korrelation der Prädiktoren
+cor(Schulleistungen$female, Schulleistungen$IQ)
+# Varianzinflationsfaktoren
+vif(mod)
+# Toleranzwerte
+1 / vif(mod)
+
+```
+
+Für unser Modell wird ersichtlich, dass die Prädiktoren praktisch unkorreliert sind und dementsprechend kein Multikollinearitätsproblem vorliegt. Unabhängigkeit folgt hieraus allerdings nicht, da nichtlineare Beziehungen zwischen den Variablen bestehen könnten, die durch diese Indizes nicht abgebildet werden.
+
+## Identifikation von Ausreißern und einflussreichen Datenpunkten
+
+* *Hebelwerte* $h_j$ erlauben die Identifikation von Ausreissern aus der gemeinsamen Verteilung der unabhängigen Variablen, d.h. einzelne Fälle, die weit entfernt vom  Mittelwert der gemeisamen Verteilung der unabhängigen Variablen liegen und somit einen starken Einfluss auf die Regressionsgewichte haben können. Diese werden mit der Funktion `hatvalues` ermittelt. Kriterien zur Beurteilung der Hebelwerte variieren, so werden von Eid et al. (2017) Grenzen von $2\cdot k / n$ für große und $3\cdot k / n$ für kleine Stichproben vorgeschlagen, in den Vorlesungsfolien werden Werte von $4/n$ als auffällig eingestuft. Alternativ zu einem festen Cut-Off-Kriterium kann die Verteilung der Hebelwerte inspiziert und diejenigen Werte kritisch betrachtet werden, die aus der Verteilung ausreißen.
+
+* *Cooks Distanz* $CD_i$ gibt eine Schätzung, wie stark sich die Regressionsgewichte verändern, wenn eine Person $i$ aus dem Datensatz entfernt wird. Fälle, derem Elimination zu einer deutlichen Veränderung der Ergebnisse führen würden, sollten kritisch geprüft werden. Als einfache Daumenregel gilt, dass $CD_i>1$ auf einen einflussreichen Datenpunkt hinweist. Cooks Distanz kann mit der Funktion `cooks.distance` ermittel werden.
+
+* die Funktion `influencePlot` des `car`-Paktes erzeugt ein "Blasendiagramm" zur simultanen grafischen Darstellung von Hebelwerten (auf der x-Achse), studentisierten Residuen (auf der y-Achse) und Cooks Distanz (als Größe der Blasen). Vertikale Bezugslinien markieren das Doppelte und Dreifache des durchschnittlichen Hebelwertes, horizontale Bezugslinien die Werte -2, 0 und 2 auf der Skala der studentisierten Residuen. Fälle, die nach einem der drei Kriterien als Ausreißer identifiziert werden, werden im Streudiagramm durch ihre Zeilennummer gekennzeichnet. Diese Zeilennummern können verwendet werden, um sich die Daten der auffälligen Fälle anzeigen zu lassen.
+
+```{r}
+
+# Hebelwerte
+n <- length(residuals(mod))
+h <- hatvalues(mod) # Hebelwerte
+df_h <- data.frame(h) # als Data.Frame für ggplot
+ggplot(data = df_h, aes(x = h)) + 
+     geom_histogram(aes(y =..density..),  bins = 15)+
+  geom_vline(xintercept = 4/n, col = "red") # Cut-off bei 4/n
+
+# Cooks Distanz
+CD <- cooks.distance(mod) # Cooks Distanz
+df_CD <- data.frame(CD) # als Data.Frame für ggplot
+ggplot(data = df_CD, aes(x = CD)) + 
+     geom_histogram(aes(y =..density..),  bins = 15)+
+  geom_vline(xintercept = 1, col = "red") # Cut-Off bei 1
+
+# Blasendiagramm mit Hebelwerten, studentisierten Residuen und Cooks Distanz
+# In "IDs" werden die Zeilennummern der auffälligen Fälle gespeichert,
+# welche gleichzeitig als Zahlen im Blasendiagramm ausgegeben werden
+InfPlot <- influencePlot(mod)
+IDs <- as.numeric(row.names(InfPlot))
+# Werte der identifizierten Fälle
+InfPlot
+# Rohdaten der auffälligen Fälle (gerundet für bessere Übersichtlichkeit)
+round(Schulleistungen[IDs,],2)
+# z-Standardisierte Werte der auffälligen Fälle
+round(scale(Schulleistungen)[IDs,],2) 
+```
+
+Die Funktion `scale` z-standardisiert den Datensatz, mit Hilfe von `[IDs,]`, werden die entsprechenden Zeilen der Ausreißer aus dem Datensatz ausgegeben und anschließend auf 2 Nachkommastellen gerundet. Mit Hilfe der z-standardisieren Ergebnisse lassen sich Ausreißer hinsichtlich ihrer Ausprägungen einordnen:
+
+
+### Interpretation
+
+Was ist an den fünf identifizierten Fällen konkret auffällig?
+
+* Fall 6: recht niedrige Lesekompetenz bei gleichzeitig überdurchschnittlichem IQ (Ausreißer aus der gemeinsamen Verteilung der Prädiktoren)
+* Fall 9: Sehr hohe Werte in IQ, Lesen & Mathe
+* Fall 33: Durchschnittliche Matheleistung "trotz" eher niedriger Intelligenz
+* Fall 80: Sehr niedriger IQ, gleichzeitig überdurchschnittliche Lesekompetenz (Ausreißer aus der gemeinsamen Verteilung der Prädiktoren)
+* Fall 99: Sehr niedrige Werte in IQ, Lesekompetenz und Mathematik
+
+Die Entscheidung, ob Ausreißer oder auffällige Datenpunkte aus Analysen ausgeschlossen werden, ist schwierig und kann nicht pauschal beantwortet werden. Im vorliegenden Fall wäre z.B. zu Überlegen, ob die Intelligenztestwerte der Fälle 80 und 99, die im Bereich von Lernbehinderung oder sogar geistiger Behinderung liegen, in einer Stichprobe von Schülern/innen aus Regelschulen als glaubwürdige Messungen interpretiert werden können oder als Hinweise auf mangelndes Commitment bei der Beantwortung.
+
+
+
+
+## Literatur
+[Eid, M., Gollwitzer, M., & Schmitt, M. (2017).](https://hds.hebis.de/ubffm/Record/HEB366849158) *Statistik und Forschungsmethoden* (5. Auflage, 1. Auflage: 2010). Weinheim: Beltz. 
+
+
+* <small> *Blau hinterlegte Autorenangaben führen Sie direkt zur universitätsinternen Ressource.*
