@@ -36,10 +36,36 @@ Gegenstand der folgenden Übung ist Die Prüfung von Voraussetzungen der Regress
 * Multikollinearität
 * Identifikation von Ausreißern und einflussreichen Datenpunkten
 
-```{r}
+
+
+
+```{r exercise_lm_reading, exercise = TRUE, exercise.eval = FALSE}
+# Modell zur Vorhersage der Leseleistung
+mod <- ...
+...
+```
+
+```{r exercise_lm_reading-hint-1}
+# Verwenden Sie den Befehl
+lm(...~...)
+```
+
+```{r exercise_lm_reading-solution}
 # Modell zur Vorhersage der Leseleistung
 mod <- lm(reading ~ female + IQ, data = Schulleistungen)
+mod
 ```
+
+```{r, echo = F}
+# For further use
+mod <- lm(reading ~ female + IQ, data = Schulleistungen)
+```
+
+```{r exercise_setup1, echo = F}
+# For further use in exercises
+mod <- lm(reading ~ female + IQ, data = Schulleistungen)
+```
+
 
 ## Linearität
 
