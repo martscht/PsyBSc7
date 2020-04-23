@@ -40,6 +40,49 @@ Sitzung_2 <- function() {
 }
 
 
+#' @rdname Sitzungen
+#' @export
+Sitzung_3 <- function() {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_4 <- function() {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+  
+  
+#' @rdname Sitzungen
+#' @export
+Sitzung_5 <- function() {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+  devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+ 
+
 
 #' @rdname Sitzungen
 #' @export
@@ -54,3 +97,76 @@ Sitzung_6 <- function() {
   library(gradethis)
   learnr::run_tutorial('Reg3', package = 'PsyBSc7')
 }
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_7 <- function() {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_8 <- function() {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_9 <- function() {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_10 <- function() {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_11 <- function() {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
