@@ -182,48 +182,6 @@ res <- studres(mod) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 ```
 
-```{r exercise_, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
-
-```
-
-```{r -solution}
-
-```
-
-```{r exercise_, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
-
-```
-
-```{r -solution}
-
-```
-
-```{r exercise_, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
-
-```
-
-```{r -solution}
-
-```
-
-
-```{r exercise_, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
-
-```
-
-```{r -solution}
-
-```
-
-```{r exercise_, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
-
-```
-
-```{r -solution}
-
-```
- 
- 
  
 
 ```{r}
