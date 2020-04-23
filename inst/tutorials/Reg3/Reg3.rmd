@@ -18,7 +18,7 @@ source('setup.R')
 ## Vorbereitung
 ### Übungs-Datensatz (wie beim letzten Termin)
 
-Eine Stichprobe von 100 Schülerinnen und Schülern hat einen Lese- und einen Mathematiktest beantwortet, zusätzlich einen allgemeinen Intelligenztest. Im Datensatz enthalten ist zudem das Geschlecht (`female`, 0=m, 1=w).
+Eine Stichprobe von 100 Schülerinnen und Schülern hat einen Lese- und einen Mathematiktest beantwortet, zusätzlich einen allgemeinen Intelligenztest. Im Datensatz enthalten ist zudem das Geschlecht (`female`, 0=m, 1=w). Wir laden als erstes die nötigen `R`-Pakete sowie den Datensatz.
 
 ```{r}
 library(car)
@@ -37,7 +37,7 @@ Gegenstand der folgenden Übung ist Die Prüfung von Voraussetzungen der Regress
 * Identifikation von Ausreißern und einflussreichen Datenpunkten
 
 
-
+Sagen Sie mit Hilfe eines Regressionsmodells die Leseleistung durch das Geschlecht und durch die Intelligenz vorher (im Datensatz *Schulleistungen*).
 
 ```{r exercise_lm_reading, exercise = TRUE, exercise.eval = FALSE}
 # Modell zur Vorhersage der Leseleistung

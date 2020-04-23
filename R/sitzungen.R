@@ -66,7 +66,7 @@ Sitzung_4 <- function() {
   }
   library(gradethis)
   message('Leider ist die Sitzung noch nicht fertig :(.')
-  
+}
   
 #' @rdname Sitzungen
 #' @export
