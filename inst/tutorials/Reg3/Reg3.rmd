@@ -28,16 +28,7 @@ library(ggplot2)
 data("Schulleistungen", package = "PsyBSc7")
 ```
 
-Gegenstand der folgenden Übung ist Die Prüfung von Voraussetzungen der Regressionsanalyse:
-
-* Linearität (Wiederholung)
-* Homoskedaszidität (Wiederholung)
-* Normalverteilung der Residuen (Wiederholung)
-* Multikollinearität
-* Identifikation von Ausreißern und einflussreichen Datenpunkten
-
-
-Sagen Sie mit Hilfe eines Regressionsmodells die Leseleistung durch das Geschlecht und durch die Intelligenz vorher (im Datensatz *Schulleistungen*).
+Sagen Sie mit Hilfe eines Regressionsmodells die Leseleistung durch das Geschlecht und durch die Intelligenz vorher (im Datensatz *Schulleistungen*) und speichern sie diese Modell unter dem Namen *mod* ab.
 
 ```{r exercise_lm_reading, exercise = TRUE, exercise.eval = FALSE}
 # Modell zur Vorhersage der Leseleistung
@@ -67,35 +58,61 @@ mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 ```
 
 
+
+Gegenstand der folgenden Sitzung ist Die Prüfung von Voraussetzungen der Regressionsanalyse:
+
+* Linearität (Wiederholung)
+* Homoskedaszidität (Wiederholung)
+* Normalverteilung der Residuen (Wiederholung)
+* Multikollinearität
+* Identifikation von Ausreißern und einflussreichen Datenpunkten
+
+
+
 ## Linearität
 
 Eine grafische Prüfung der partiellen Linearität der zwischen den einzelnen Prädiktorvariablen und dem Kriterium durch *partielle Regressionsplots* erfolgen. Für jeden Prädiktor werden die Residuen bei Vorhersage durch die anderen Prädiktoren gegen die Residuen des Kriteriums bei Vorhersage durch den jeweiligen Prädiktor dargestellt. Diese Grafiken können Hinweise auf systematische nicht-lineare Zusammenhänge geben, die in der Modellspezifikation nicht berücksichtigt wurden.
 
-```{r}
 
-avPlots(mod, pch = 16, lwd = 4)
-
+```{r exercise_avPlots, exercise = TRUE, exercise.eval = FALSE, setup = exercise_setup1}
+avPlots(..., pch = 16, lwd = 4)
 ```
 
-Mit Hilfe der Argumente `pch=16` und `lwd=4` werden die Darstellung der Punkte (ausgefüllt anstatt leer) sowie die Dicke der Linie manipuliert. Den Achsenbeschriftungen ist zu entnehmen, dass auf der Y-Achse jeweils *reading | others* dargestellt ist. Die vertikale Linie *|* steht hierbei für den mathematischen Ausdruck gegeben und *others* steht hierbei für alle weiteren (anderen) Prädiktoren im Modell. Bei den unabhängigen Variablen (UV, *female*, *IQ*) steht *UV | others* jeweils für die jeweilige UV gegeben der anderen UVs im Modell. Somit beschreiben die beiden Plots jeweils die Beziehungen, die die UVs über die anderen UVs im Modell hinaus mit dem Kriterium (AV, abhängige Variable) haben. 
+```{r exercise_avPlots-solution}
+avPlots(mod, pch = 16, lwd = 4)
+```
+
+
+
+Mit Hilfe der Argumente `pch=16` und `lwd=4` werden die Darstellung der Punkte (ausgefüllt anstatt leer) sowie die Dicke der Linie (vierfache Dicke) manipuliert. Den Achsenbeschriftungen ist zu entnehmen, dass auf der Y-Achse jeweils *reading | others* dargestellt ist. Die vertikale Linie *|* steht hierbei für den mathematischen Ausdruck gegeben und *others* steht hierbei für alle weiteren (anderen) Prädiktoren im Modell. Bei den unabhängigen Variablen (UV, *female*, *IQ*) steht *UV | others* jeweils für die jeweilige UV gegeben der anderen UVs im Modell. Somit beschreiben die beiden Plots jeweils die Beziehungen, die die UVs über die anderen UVs im Modell hinaus mit dem Kriterium (AV, abhängige Variable) haben. 
 
 
 ## Verteilung der Residuen
 
 ### Homoskedastizität
 
-Die Varianz der Residuen sollte unabhängig von den Ausprägungen der Prädiktoren sein. Dies wird i.d.R. grafisch geprüft, indem die Residuen $e_i$ gegen die Vorhergesagten Werte $\hat{y}_i$ geplottet werden; dem sogenannten Residuenplot (engl., residual plot). In diesem Streudiagramm sollten die Residuen gleichmäßig über $\hat{y}_i$ streuen und keine systematischen Trends (linear, quadratisch, auffächernd) erkennbar sein. Die Funktion `residualPlots` des Pakets `car` erzeugt separate Streudiagramme für die Residuen in Abhängigkeit von jedem einzelnen Prädiktor $x_j$ und von den vorhergesagten Werten $\hat{y}_i$ (*"Fittet Values"*). Zusätzlich wird für jeden Plot ein quadratischer Trend eingezeichnet und auf Signifikanz getestet, womit eine zusätzliche Prüfung auf nicht-lineare Effekte erfolgt. Sind diese Test nicht signifikant, ist davon auszugehen, dass diese Effekte nicht vorliegen und die Voraussetzungen nicht verletzt sind.
+Die Varianz der Residuen sollte unabhängig von den Ausprägungen der Prädiktoren sein. Dies wird i.d.R. grafisch geprüft, indem die Residuen $e_i$ gegen die Vorhergesagten Werte $\hat{y}_i$ geplottet werden; dem sogenannten *Residuenplot* (engl., *residual plot*). In diesem Streudiagramm sollten die Residuen gleichmäßig über $\hat{y}_i$ streuen und keine systematischen Trends (linear, quadratisch, auffächernd, o.ä.) erkennbar sein. Die Funktion `residualPlots` des Pakets `car` erzeugt separate Streudiagramme für die Residuen in Abhängigkeit von jedem einzelnen Prädiktor $x_j$ und von den vorhergesagten Werten $\hat{y}_i$ (*"Fittet Values"*). Zusätzlich wird für jeden Plot ein quadratischer Trend eingezeichnet und auf Signifikanz getestet, womit eine zusätzliche Prüfung auf nicht-lineare Effekte erfolgt. Sind diese Test nicht signifikant, ist davon auszugehen, dass diese Effekte nicht vorliegen und die Voraussetzungen nicht verletzt sind.
+
+```{r exercise_residualPlots, exercise = TRUE, exercise.eval = FALSE, setup = exercise_setup1}
+# Grafisch (+ Test auf Nicht-Linearität)
+residualPlots(..., pch = 16)
+```
+
+```{r exercise_residualPlots-solution}
+# Grafisch (+ Test auf Nicht-Linearität)
+residualPlots(mod, pch = 16)
+```
 
 Die Funktion `ncvTest` prüft, ob die Varianz der Residuen bedeutsam linear (!) mit den vorhergesagten Werten zusammenhängt. Wird dieser Test signifikant, ist die Annahme der Homoskedaszidität verletzt [(Wikipedia: Breusch-Pagan)](https://en.wikipedia.org/wiki/Breusch–Pagan_test). Wird er nicht signifikant, kann dennoch eine Verletzung vorliegen, z.B. ein nicht-linearer Zusammenhang.
 
+```{r exercise_ncvTest, exercise = TRUE, exercise.eval = FALSE, setup = exercise_setup1}
+# Test For Non-Constant Error Variance
+ncvTest(...)
+```
 
-```{r}
-
-# Grafisch (+ Test auf Nicht-Linearität)
-residualPlots(mod, pch = 16)
+```{r exercise_ncvTest-solution, exercise = TRUE, exercise.eval = FALSE, setup = exercise_setup1}
 # Test For Non-Constant Error Variance
 ncvTest(mod)
-
 ```
 
 
