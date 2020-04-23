@@ -74,7 +74,7 @@ Gegenstand der folgenden Sitzung ist Die Prüfung von Voraussetzungen der Regres
 Eine grafische Prüfung der partiellen Linearität der zwischen den einzelnen Prädiktorvariablen und dem Kriterium durch *partielle Regressionsplots* erfolgen. Für jeden Prädiktor werden die Residuen bei Vorhersage durch die anderen Prädiktoren gegen die Residuen des Kriteriums bei Vorhersage durch den jeweiligen Prädiktor dargestellt. Diese Grafiken können Hinweise auf systematische nicht-lineare Zusammenhänge geben, die in der Modellspezifikation nicht berücksichtigt wurden.
 
 
-```{r exercise_avPlots, exercise = TRUE, exercise.eval = FALSE, setup = exercise_setup1}
+```{r exercise_avPlots, exercise = TRUE, exercise.eval = FALSE, exercise.setup = exercise_setup1}
 avPlots(..., pch = 16, lwd = 4)
 ```
 
@@ -93,7 +93,7 @@ Mit Hilfe der Argumente `pch=16` und `lwd=4` werden die Darstellung der Punkte (
 
 Die Varianz der Residuen sollte unabhängig von den Ausprägungen der Prädiktoren sein. Dies wird i.d.R. grafisch geprüft, indem die Residuen $e_i$ gegen die Vorhergesagten Werte $\hat{y}_i$ geplottet werden; dem sogenannten *Residuenplot* (engl., *residual plot*). In diesem Streudiagramm sollten die Residuen gleichmäßig über $\hat{y}_i$ streuen und keine systematischen Trends (linear, quadratisch, auffächernd, o.ä.) erkennbar sein. Die Funktion `residualPlots` des Pakets `car` erzeugt separate Streudiagramme für die Residuen in Abhängigkeit von jedem einzelnen Prädiktor $x_j$ und von den vorhergesagten Werten $\hat{y}_i$ (*"Fittet Values"*). Zusätzlich wird für jeden Plot ein quadratischer Trend eingezeichnet und auf Signifikanz getestet, womit eine zusätzliche Prüfung auf nicht-lineare Effekte erfolgt. Sind diese Test nicht signifikant, ist davon auszugehen, dass diese Effekte nicht vorliegen und die Voraussetzungen nicht verletzt sind.
 
-```{r exercise_residualPlots, exercise = TRUE, exercise.eval = FALSE, setup = exercise_setup1}
+```{r exercise_residualPlots, exercise = TRUE, exercise.eval = FALSE, exercise.setup = exercise_setup1}
 # Grafisch (+ Test auf Nicht-Linearität)
 residualPlots(..., pch = 16)
 ```
@@ -105,12 +105,12 @@ residualPlots(mod, pch = 16)
 
 Die Funktion `ncvTest` prüft, ob die Varianz der Residuen bedeutsam linear (!) mit den vorhergesagten Werten zusammenhängt. Wird dieser Test signifikant, ist die Annahme der Homoskedaszidität verletzt [(Wikipedia: Breusch-Pagan)](https://en.wikipedia.org/wiki/Breusch–Pagan_test). Wird er nicht signifikant, kann dennoch eine Verletzung vorliegen, z.B. ein nicht-linearer Zusammenhang.
 
-```{r exercise_ncvTest, exercise = TRUE, exercise.eval = FALSE, setup = exercise_setup1}
+```{r exercise_ncvTest, exercise = TRUE, exercise.eval = FALSE, exercise.setup = exercise_setup1}
 # Test For Non-Constant Error Variance
 ncvTest(...)
 ```
 
-```{r exercise_ncvTest-solution, exercise = TRUE, exercise.eval = FALSE, setup = exercise_setup1}
+```{r exercise_ncvTest-solution, exercise = TRUE, exercise.eval = FALSE, exercise.setup = exercise_setup1}
 # Test For Non-Constant Error Variance
 ncvTest(mod)
 ```
