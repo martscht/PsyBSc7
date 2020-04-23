@@ -91,7 +91,7 @@ Mit Hilfe der Argumente `pch=16` und `lwd=4` werden die Darstellung der Punkte (
 
 ### Homoskedastizität
 
-Die Varianz der Residuen sollte unabhängig von den Ausprägungen der Prädiktoren sein. Dies wird i.d.R. grafisch geprüft, indem die Residuen $e_i$ gegen die Vorhergesagten Werte $\hat{y}_i$ geplottet werden; dem sogenannten *Residuenplot* (engl., *residual plot*). In diesem Streudiagramm sollten die Residuen gleichmäßig über $\hat{y}_i$ streuen und keine systematischen Trends (linear, quadratisch, auffächernd, o.ä.) erkennbar sein. Die Funktion `residualPlots` des Pakets `car` erzeugt separate Streudiagramme für die Residuen in Abhängigkeit von jedem einzelnen Prädiktor $x_j$ und von den vorhergesagten Werten $\hat{y}_i$ (*"Fittet Values"*). Zusätzlich wird für jeden Plot ein quadratischer Trend eingezeichnet und auf Signifikanz getestet, womit eine zusätzliche Prüfung auf nicht-lineare Effekte erfolgt. Sind diese Test nicht signifikant, ist davon auszugehen, dass diese Effekte nicht vorliegen und die Voraussetzungen nicht verletzt sind.  Die zugehörige `R`-Funktion heißt `residualPlots` und brauch als Argument das Modell `mod`.
+Die Varianz der Residuen sollte unabhängig von den Ausprägungen der Prädiktoren sein. Dies wird i.d.R. grafisch geprüft, indem die Residuen $e_i$ gegen die Vorhergesagten Werte $\hat{y}_i$ geplottet werden; dem sogenannten *Residuenplot* (engl., *residual plot*). In diesem Streudiagramm sollten die Residuen gleichmäßig über $\hat{y}_i$ streuen und keine systematischen Trends (linear, quadratisch, auffächernd, o.ä.) erkennbar sein. Die Funktion `residualPlots` des Pakets `car` erzeugt separate Streudiagramme für die Residuen in Abhängigkeit von jedem einzelnen Prädiktor $x_j$ und von den vorhergesagten Werten $\hat{y}_i$ (*"Fittet Values"*); als Input brauch sie das Modell `mod`. Zusätzlich wird für jeden Plot ein quadratischer Trend eingezeichnet und auf Signifikanz getestet, womit eine zusätzliche Prüfung auf nicht-lineare Effekte erfolgt. Sind diese Test nicht signifikant, ist davon auszugehen, dass diese Effekte nicht vorliegen und die Voraussetzungen nicht verletzt sind.  
 
 ```{r exercise_residualPlots, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup1"}
 # Grafisch (+ Test auf Nicht-Linearität)
@@ -116,14 +116,117 @@ ncvTest(mod)
 ```
 
 
+
+
+
+
 ### Normalverteilung
 
 Voraussetzung für die Signifikanztests im Kontext der linearen Regression ist die Normalverteilung der Residuen. Auch diese Annahme wird i.d.R. grafisch geprüft. Hierfür bietet sich zum einen ein Histogramm der Residuen an, zum anderen ein *Q-Q-Diagramm* (oder "Quantile-Quantile-Plot"). Zusätzlich zur grafischen Darstellung erlaubt z.B. der Shapiro-Wilk-Test auf Normalität (`shapiro.test`) einen Signifkanztest der Nullhypothese, dass die Residuen normalverteilt sind. Auch der Kolmogorov-Smirnov Test, welcher eine deskriptive mit einer theoretischen Verteilung vergleicht, wäre denkbar. 
+
+Fangen wir mit der Vorbereitung der Daten an. Wir wollen die studentisierten Residuen grafisch mit dem `R`-Paket `ggplot2`darzustellen. Der Befehl `studres` aus dem `MASS` Paket greift die Residuen aus einem `lm` Objekt ab; also aus `mod`. Speichern Sie diese Residuen als `res` ab und erzeugen Sie dann daraus einen `data.frame`, welchen wir später in den Grafiken mit `ggplot2` verwenden wollen. 
+ 
+```{r test_dataprep, exercise = TRUE, exercise.setup = "exercise_setup1", exercise.eval = FALSE}
+
+```
+
+```{r test_dataprep-hint-1}
+# Verwenden Sie die Befehle 
+studres(...)
+```
+ 
+```{r test_dataprep-hint-2}
+# Verwenden Sie die Befehle 
+studres(...)
+# und
+data.frame(...)
+```
+
+```{r test_dataprep-hint-3}
+# Verwenden Sie die Befehle 
+studres(...)
+# und
+data.frame(...)
+# geben Sie das Objekt des Data.frames zurück (sehen Sie sich dieses an)
+```
+ 
+```{r test_dataprep-check}
+# Intro into excercise
+mod <- lm(reading ~ female + IQ, data = Schulleistungen)
+
+# Begin grading:
+res <- studres(mod) # Studentisierte Residuen als Objekt speichern
+df_res <- data.frame(res) # als Data.Frame für ggplot
+res <- df_res
+
+grade_result(
+  fail_if(~ (!identical(.result, res)), 'Haben Sie die richtigen Input-Argumente verwendet? Sie wollen die studentisierten Resiuden abspeichern - als data.frame. Geben Sie diese Objekt aus.'),
+  pass_if(~ identical(.result, res)),
+  correct = 'Sehr gut! Sie haben erfolgreich die Residuen als data.frame abgespeichert.',
+  incorrect = 'Leider falsch.',
+  glue_correct = '{.correct}',
+  glue_incorrect = '{.incorrect} {.message}')
+```
+
+
+```{r, echo = F}
+res <- studres(mod) # Studentisierte Residuen als Objekt speichern
+df_res <- data.frame(res) # als Data.Frame für ggplot
+```
+
+
+```{r exercise_setup2, echo = F}
+# For further use in exercises
+mod <- lm(reading ~ female + IQ, data = Schulleistungen)
+res <- studres(mod) # Studentisierte Residuen als Objekt speichern
+df_res <- data.frame(res) # als Data.Frame für ggplot
+```
+
+```{r exercise_, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+
+```
+
+```{r -solution}
+
+```
+
+```{r exercise_, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+
+```
+
+```{r -solution}
+
+```
+
+```{r exercise_, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+
+```
+
+```{r -solution}
+
+```
+
+
+```{r exercise_, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+
+```
+
+```{r -solution}
+
+```
+
+```{r exercise_, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+
+```
+
+```{r -solution}
+
+```
+ 
+ 
  
 
 ```{r}
-res <- studres(mod) # Studentisierte Residuen als Objekt speichern
-df_res <- data.frame(res) # als Data.Frame für ggplot
 # Grafisch: Histogramm mit Normalverteilungskurve
 ggplot(data = df_res, aes(x = res)) + 
      geom_histogram(aes(y =..density..),
