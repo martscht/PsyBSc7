@@ -14,7 +14,6 @@ runtime: shiny_prerendered
 source('setup.R')
 ```
 
-** basierend auf Unterlagen von Prof. Johannes Hartig
 
 ## Vorbereitung
 ### Übungs-Datensatz (wie beim letzten Termin)
@@ -24,6 +23,7 @@ Eine Stichprobe von 100 Schülerinnen und Schülern hat einen Lese- und einen Ma
 ```{r}
 library(car)
 library(MASS)
+library(ggplot2)
 # Datensatz laden
 data("Schulleistungen", package = "PsyBSc7")
 ```
@@ -108,7 +108,6 @@ Voraussetzung für die Signifikanztests im Kontext der linearen Regression ist d
 res <- studres(mod) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 # Grafisch: Histogramm mit Normalverteilungskurve
-library(ggplot2)
 ggplot(data = df_res, aes(x = res)) + 
      geom_histogram(aes(y =..density..),
                     bins = 15,                    # Wie viele Balken sollen gezeichnet werden?
@@ -220,10 +219,12 @@ Was ist an den fünf identifizierten Fällen konkret auffällig?
 Die Entscheidung, ob Ausreißer oder auffällige Datenpunkte aus Analysen ausgeschlossen werden, ist schwierig und kann nicht pauschal beantwortet werden. Im vorliegenden Fall wäre z.B. zu Überlegen, ob die Intelligenztestwerte der Fälle 80 und 99, die im Bereich von Lernbehinderung oder sogar geistiger Behinderung liegen, in einer Stichprobe von Schülern/innen aus Regelschulen als glaubwürdige Messungen interpretiert werden können oder als Hinweise auf mangelndes Commitment bei der Beantwortung.
 
 
-
-
 ## Literatur
 [Eid, M., Gollwitzer, M., & Schmitt, M. (2017).](https://hds.hebis.de/ubffm/Record/HEB366849158) *Statistik und Forschungsmethoden* (5. Auflage, 1. Auflage: 2010). Weinheim: Beltz. 
 
 
 * <small> *Blau hinterlegte Autorenangaben führen Sie direkt zur universitätsinternen Ressource.*
+
+#
+$*$ *Diese Sitzung basiert zum Teil auf Unterlagen von Prof. Johannes Hartig aus dem SoSe 2019.*
+
