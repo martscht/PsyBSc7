@@ -1,6 +1,12 @@
 #' @name Sitzungen
 #' @aliases Sitzung_1
 #' @aliases Sitzung_2
+#' @aliases Sitzung_3
+#' @aliases Sitzung_4
+#' @aliases Sitzung_5
+#' @aliases Sitzung_6
+#' @aliases Sitzung_7
+
 #' 
 #' @title Übungen für das Praktikum in PsyBSc 7, Sommersemester 2020
 #'
@@ -31,4 +37,20 @@ Sitzung_2 <- function() {
   }
   library(gradethis)
   learnr::run_tutorial('ggplot', package = 'PsyBSc7')
+}
+
+
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_6 <- function() {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  learnr::run_tutorial('Reg3', package = 'PsyBSc7')
 }
