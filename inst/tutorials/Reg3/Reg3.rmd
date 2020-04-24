@@ -305,7 +305,7 @@ ks.test # sind wie folgt angeordnet:
 # (Variable, "Verteilung (Wahrscheinlichkeitswerte)", Argument1_der_Verteilung, Argument2_der_Verteilung)
 ```
 
-```{r exercise_ks-hint-1}
+```{r exercise_ks-hint-2}
 # Variable = res
 # "Verteilung (Wahrscheinlichkeitswerte)" = "pnorm", die Verteilungswerte der Normalverteilung mit den Argumenten q=Quantil, sowie Mittelwert und Standardabweichung
 # Argument1_der_Verteilung = Mittelwert von res
