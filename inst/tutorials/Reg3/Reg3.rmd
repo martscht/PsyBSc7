@@ -455,6 +455,16 @@ InfPlot <- influencePlot(mod)
 IDs <- as.numeric(row.names(InfPlot))
 # Werte der identifizierten Fälle
 InfPlot
+```
+
+```{r, include = F}
+InfPlot <- influencePlot(mod)
+IDs <- as.numeric(row.names(InfPlot))
+```
+
+
+
+```{r}
 # Rohdaten der auffälligen Fälle (gerundet für bessere Übersichtlichkeit)
 round(Schulleistungen[IDs,],2)
 # z-Standardisierte Werte der auffälligen Fälle
