@@ -345,31 +345,63 @@ Multikollinearität ist ein potenzielles Problem der multiplen Regressionsanalys
 * erschwert die Identifikation von bedeutsamen Prädiktoren, da deren Effekte untereinander konfundiert sind (die Effekte können schwer voneinander getrennt werden).
 * bewirkt eine Erhöung der Standardfehler der Regressionkoeffizienten *(der Standardfehler ist die Standardabweichung zu der Varianz der Regressionskoeffizienten bei wiederholter Stichprobenziehung und Schätzung)*, d.h. die Schätzungen werden instabil. 
 
-Für weiterführende Informationen zur Instabilität und Standardfehlern siehe im [Appendix A](#AppendixA) nach.
+Für weiterführende Informationen zur Instabilität und Standardfehlern siehe [Appendix A](#AppendixA).
 
 Multikollinearität kann durch Inspektion der *bivariaten Zusammenhänge* (Korrelationsmatrix) der Prädiktoren $x_j$ untersucht werden, dies kann aber nicht alle Formen von Multikollinearität aufdecken. Darüber hinaus ist die Berechung der sogennanten *Toleranz* und des *Varianzinflationsfaktors* (VIF) für jeden Prädiktor möglich. Hiefür wird für jeden Prädiktor $x_j$ der Varianzanteil $R_j^2$ berechnet, der durch Vorhersage von $x_j$ durch *alle anderen Prädiktoren* in der Regression erklärt wird. Toleranz und VIF sind wie folgt definiert:
 
 * $T_j = 1-R^2_j = \frac{1}{VIF_j}$
 * $VIF = \frac{1}{1-R^2_j} = \frac{1}{T_j}$
 
-Offensichtlich genügt eine der beiden Statistiken, da sie vollständig redundant sind. Empfehlungen als Grenzwert für Kollinearitätsprobleme sind z. B. $VIF_j>10$ ($T_j<0.1$) ([Eid, Gollwitzer, & Schmitt, 2017](https://hds.hebis.de/ubffm/Record/HEB366849158)). Die Varianzinflationsfaktoren der Prädiktoren im Modell können mit der Funktion `vif` des `car`-Paktes bestimmt werden, der Toleranzwert als Kehrwert der VIFs.
+Offensichtlich genügt eine der beiden Statistiken, da sie vollständig redundant sind. Empfehlungen als Grenzwert für Kollinearitätsprobleme sind z. B. $VIF_j>10$ ($T_j<0.1$) (siehe [Eid, Gollwitzer, & Schmitt, 2017, , S. 712 und folgend](https://hds.hebis.de/ubffm/Record/HEB366849158)). Die Varianzinflationsfaktoren der Prädiktoren im Modell können mit der Funktion `vif` des `car`-Paktes bestimmt werden, der Toleranzwert als Kehrwert der VIFs.
 
 ```{r}
-
 # Korrelation der Prädiktoren
 cor(Schulleistungen$female, Schulleistungen$IQ)
-# Varianzinflationsfaktoren
-vif(mod)
-# Toleranzwerte
-1 / vif(mod)
+```
 
+Wir übergeben wieder das Regressionsmodell an `vif`.
+ 
+```{r exercise_VIF, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+# Varianzinflationsfaktoren
+vif(...)
+```
+
+```{r exercise_VIF-solution}
+# Finale Lösung:
+vif(mod)
+```
+
+```{r test_T, exercise = TRUE, exercise.setup = "exercise_setup1", exercise.eval = FALSE}
+
+```
+
+```{r test_dataprep-hint-1}
+# Verwenden Sie den Befehl
+vif(...) # von zuvor und berechnen Sie den Kehrwert
+```
+ 
+
+```{r test_T}
+# Intro into excercise
+mod <- lm(reading ~ female + IQ, data = Schulleistungen)
+
+# Begin grading:
+res <- 1/vif(mod)
+
+grade_result(
+  fail_if(~ (!identical(.result, res)), 'Haben Sie die richtigen Input-Argumente verwendet? Sie wollen die Toleranz als Kehrwert des VIF bestimmen.'),
+  pass_if(~ identical(.result, res)),
+  correct = 'Sehr gut! Sie haben erfolgreich die Toleranz aus dem VIF berechnet.',
+  incorrect = 'Leider falsch.',
+  glue_correct = '{.correct}',
+  glue_incorrect = '{.incorrect} {.message}')
 ```
 
 Für unser Modell wird ersichtlich, dass die Prädiktoren praktisch unkorreliert sind und dementsprechend kein Multikollinearitätsproblem vorliegt. Unabhängigkeit folgt hieraus allerdings nicht, da nichtlineare Beziehungen zwischen den Variablen bestehen könnten, die durch diese Indizes nicht abgebildet werden.
 
 ## Identifikation von Ausreißern und einflussreichen Datenpunkten
 
-* *Hebelwerte* $h_j$ erlauben die Identifikation von Ausreissern aus der gemeinsamen Verteilung der unabhängigen Variablen, d.h. einzelne Fälle, die weit entfernt vom  Mittelwert der gemeisamen Verteilung der unabhängigen Variablen liegen und somit einen starken Einfluss auf die Regressionsgewichte haben können. Diese werden mit der Funktion `hatvalues` ermittelt. Kriterien zur Beurteilung der Hebelwerte variieren, so werden von Eid et al. (2017) Grenzen von $2\cdot k / n$ für große und $3\cdot k / n$ für kleine Stichproben vorgeschlagen, in den Vorlesungsfolien werden Werte von $4/n$ als auffällig eingestuft. Alternativ zu einem festen Cut-Off-Kriterium kann die Verteilung der Hebelwerte inspiziert und diejenigen Werte kritisch betrachtet werden, die aus der Verteilung ausreißen.
+* *Hebelwerte* $h_j$ erlauben die Identifikation von Ausreissern aus der gemeinsamen Verteilung der unabhängigen Variablen, d.h. einzelne Fälle, die weit entfernt vom  Mittelwert der gemeisamen Verteilung der unabhängigen Variablen liegen und somit einen starken Einfluss auf die Regressionsgewichte haben können. Diese werden mit der Funktion `hatvalues` ermittelt. Kriterien zur Beurteilung der Hebelwerte variieren, so werden von [Eid et al. (2017, S. 712 und folgend)](https://hds.hebis.de/ubffm/Record/HEB366849158) Grenzen von $2\cdot k / n$ für große und $3\cdot k / n$ für kleine Stichproben vorgeschlagen, in den Vorlesungsfolien werden Werte von $4/n$ als auffällig eingestuft. Alternativ zu einem festen Cut-Off-Kriterium kann die Verteilung der Hebelwerte inspiziert und diejenigen Werte kritisch betrachtet werden, die aus der Verteilung ausreißen.
 
 * *Cooks Distanz* $CD_i$ gibt eine Schätzung, wie stark sich die Regressionsgewichte verändern, wenn eine Person $i$ aus dem Datensatz entfernt wird. Fälle, derem Elimination zu einer deutlichen Veränderung der Ergebnisse führen würden, sollten kritisch geprüft werden. Als einfache Daumenregel gilt, dass $CD_i>1$ auf einen einflussreichen Datenpunkt hinweist. Cooks Distanz kann mit der Funktion `cooks.distance` ermittel werden.
 
@@ -483,7 +515,7 @@ sqrt(diag(I_3)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_
 
 Dieser Exkurs zeigt, wie sich die Multikolinearität auf die Standardfehler und damit auf die Präzision der Parameterschätzung auswirkt. Inhaltlich bedeutet dies, dass die Prädiktoren redundant sind und nicht klar ist, welchem Prädiktor die Effekte zugeschrieben werden können.
 
-*Die Matrix $I$ wird im Zusammenhang mit der Maximum-Likelihood-Schätzung auch die Inverse der Fischer-Information genannt und enthält die Informationen der Kovariationen der Parameterschätzer.*
+*Die Matrix $I$ wird im Zusammenhang mit der Maximum-Likelihood-Schätzung auch die Inverse der Fischer-Information genannt und enthält die Informationen der Kovariationen der Parameterschätzer (diese Informationen enthält sie hier im Übrigen auch!).*
 
 ## Literatur
 [Eid, M., Gollwitzer, M., & Schmitt, M. (2017).](https://hds.hebis.de/ubffm/Record/HEB366849158) *Statistik und Forschungsmethoden* (5. Auflage, 1. Auflage: 2010). Weinheim: Beltz. 
