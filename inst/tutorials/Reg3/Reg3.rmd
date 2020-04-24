@@ -68,7 +68,7 @@ mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 ```
 
-Im Output sehen wir die Parameterschätzungen unseres Regressionsmodells: $\text{Reading}_i=\beta_0+\beta_1\text{Female}_i+\beta_2\text{IQ}_i+\varepsilon_i$, für $i=1,\dots,100=:n$.
+Im Output sehen wir die Parameterschätzungen unseres Regressionsmodells: $$\text{Reading}_i=\beta_0+\beta_1\text{Female}_i+\beta_2\text{IQ}_i+\varepsilon_i,$$ für $i=1,\dots,100=:n$.
 
 Gegenstand der folgenden Sitzung ist Die Prüfung von Voraussetzungen der Regressionsanalyse:
 
