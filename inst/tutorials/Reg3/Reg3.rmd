@@ -22,7 +22,7 @@ library(MASS)
 library(ggplot2)
 
 data("Schulleistungen", package = "PsyBSc7")
-#knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
+knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 ```
 
 
