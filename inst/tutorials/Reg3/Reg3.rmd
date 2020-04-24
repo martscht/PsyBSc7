@@ -186,14 +186,14 @@ df_res <- data.frame(res) # als Data.Frame für ggplot
 In dem folgenden Block sehen wir den Code für ein Histogramm in `ggplot2`-Notation. Hier sind einge Zusatzeinstellungen gewählt, die das Histogramm schöner machen sollen. Vervollständigen Sie mit Hilfe der Tipps den Code.
 
 
-```{r exercise_hist1, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+```{r exercise_hist1, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2", fig.height=6, fig.align="center"}
 # Grafisch: Histogramm mit Normalverteilungskurve
 ggplot(data = ???, aes(x = ??)) + 
      geom_histogram(aes(y =..density..),
                     bins = 15,                    # Wie viele Balken sollen gezeichnet werden?
                     colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
                     fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
-     stat_function(fun = dnorm, args = list(mean = mean(???), sd = sd(???)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
+     stat_function(fun = dnorm, args = list(mean = mean(???), sd = sd(???)), col = "darkblue") + # Füge die Normalverteilungsdiche hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung, wähle dunkelblau als Linienfarbe
      labs(title = "Histogramm der Residuen mit Normalverteilungsdichte", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
 ```
 
@@ -251,9 +251,9 @@ ggplot(data = df_res, aes(x = res)) +
      labs(title = "Histogramm der Residuen mit Normalverteilungsdichte", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
 ```
 
-Nutzen wir nur die Defaulteinstellung des Histogramms, sie es so aus:
+Nutzen wir nur die Defaulteinstellung des Histogramms (bis auf `bins = 15` *- für die Vergleichbarkeit der beiden Grafiken*), sieht es so aus:
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 # hier nochmal nur das Nötigste:
 ggplot(data = df_res, aes(x = res)) + 
      geom_histogram(aes(y =..density..),  bins = 15) +           
@@ -262,7 +262,7 @@ ggplot(data = df_res, aes(x = res)) +
 
 Ähnliche Informationen sind aus dem *Q-Q-Plot* zu entnehmen. Die `R`-Funktion aus dem `car` Paket ist dazu sehr nützlich, da hier die Verteilung direkt mit `distribution` festgelegt werden kann.
 
-```{r exercise_qqplot, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+```{r exercise_qqplot, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2", fig.height=6, fig.align="center"}
 # Grafisch: Q-Q-Diagramm mit der car Funktion qqPlot
 qqPlot(..., pch = 16, distribution = ...) 
 ```
