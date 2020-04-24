@@ -438,6 +438,7 @@ Im *Fall 1* sind alle unkorreliert. Die Inverse ist leicht zu bilden.
 XX_1 <- matrix(c(1,0,0,
                0,4,0,
                0,0,4),3,3)
+XX_1 # Die Matrix X'X im Fall 1
 solve(XX_1) # Inverse
 sqrt(diag(solve(XX_1))) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_e^2=1
 ```
@@ -447,6 +448,7 @@ Im *Fall 2* sind alle fast perfekt korreliert - es liegt hohe Multikolinearität
 XX_2 <- matrix(c(1,0.9,0.8,
                3.9,4,4.1,
                4.1,3.9,4),3,3)
+XX_2 # Die Matrix X'X im Fall 2
 solve(XX_2) # Inverse
 sqrt(diag(solve(XX_2))) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_e^2=1
 sqrt(diag(solve(XX_1))) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_e^2=1
@@ -457,9 +459,21 @@ Im *Fall 3* sind alle perfekt korreliert - es liegt perfekte Multikolinearität 
 XX_3 <- matrix(c(1,1,1,
                4,4,4,
                4,4,4),3,3)
+XX_3 # Die Matrix X'X im Fall 3
+```
+
+```{r, eval = F}
 solve(XX_3) # Inverse
 sqrt(diag(solve(XX_3))) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_e^2=1
+
+# hier wird eine Fehlermeldung ausgegeben, wodurch der Code nicht ausführbar ist:
+
+#    Error in solve.default(XX_3) : 
+#    Lapack routine dgesv: system is exactly singular: U[2,2] = 0
 ```
+
+Dieser Exkurs zeigt, wie sich die Multikolinearität auf die Standardfehler und damit auf die Präzision der Parameterschätzung auswirkt. Inhaltlich bedeutet dies, dass die Prädiktoren redundant sind und nicht klar ist, welchem Prädiktor die Effekte zugeschrieben werden können.
+
 
 ## Literatur
 [Eid, M., Gollwitzer, M., & Schmitt, M. (2017).](https://hds.hebis.de/ubffm/Record/HEB366849158) *Statistik und Forschungsmethoden* (5. Auflage, 1. Auflage: 2010). Weinheim: Beltz. 
