@@ -462,8 +462,7 @@ InfPlot <- influencePlot(mod)
 IDs <- as.numeric(row.names(InfPlot))
 ```
 
-
-
+Schauen wir uns die möglichen Ausreißer an.
 ```{r}
 # Rohdaten der auffälligen Fälle (gerundet für bessere Übersichtlichkeit)
 round(Schulleistungen[IDs,],2)
