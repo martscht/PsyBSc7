@@ -352,14 +352,14 @@ Multikollinearität kann durch Inspektion der *bivariaten Zusammenhänge* (Korre
 * $T_j = 1-R^2_j = \frac{1}{VIF_j}$
 * $VIF = \frac{1}{1-R^2_j} = \frac{1}{T_j}$
 
-Offensichtlich genügt eine der beiden Statistiken, da sie vollständig redundant sind. Empfehlungen als Grenzwert für Kollinearitätsprobleme sind z. B. $VIF_j>10$ ($T_j<0.1$) (siehe [Eid, Gollwitzer, & Schmitt, 2017, , S. 712 und folgend](https://hds.hebis.de/ubffm/Record/HEB366849158)). Die Varianzinflationsfaktoren der Prädiktoren im Modell können mit der Funktion `vif` des `car`-Paktes bestimmt werden, der Toleranzwert als Kehrwert der VIFs.
+Offensichtlich genügt eine der beiden Statistiken, da sie vollständig redundant sind. Empfehlungen als Grenzwert für Kollinearitätsprobleme sind z. B. $VIF_j>10$ ($T_j<0.1$) (siehe [Eid, Gollwitzer, & Schmitt, 2017, S. 712 und folgend](https://hds.hebis.de/ubffm/Record/HEB366849158)). Die Varianzinflationsfaktoren der Prädiktoren im Modell können mit der Funktion `vif` des `car`-Paktes bestimmt werden, der Toleranzwert als Kehrwert der VIFs.
 
 ```{r}
 # Korrelation der Prädiktoren
 cor(Schulleistungen$female, Schulleistungen$IQ)
 ```
 
-Wir übergeben wieder das Regressionsmodell an `vif`.
+Die Prädiktoren sind nur schwach negativ korreliert. Wir schauen uns trotzdem den VIF und die Toleranz an. Dazu übergeben wir wieder das Regressionsmodell an `vif`.
  
 ```{r exercise_VIF, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
 # Varianzinflationsfaktoren
@@ -401,7 +401,7 @@ Für unser Modell wird ersichtlich, dass die Prädiktoren praktisch unkorreliert
 
 ## Identifikation von Ausreißern und einflussreichen Datenpunkten
 
-* *Hebelwerte* $h_j$ erlauben die Identifikation von Ausreissern aus der gemeinsamen Verteilung der unabhängigen Variablen, d.h. einzelne Fälle, die weit entfernt vom  Mittelwert der gemeisamen Verteilung der unabhängigen Variablen liegen und somit einen starken Einfluss auf die Regressionsgewichte haben können. Diese werden mit der Funktion `hatvalues` ermittelt. Kriterien zur Beurteilung der Hebelwerte variieren, so werden von [Eid et al. (2017, S. 707 und folgend)](https://hds.hebis.de/ubffm/Record/HEB366849158) Grenzen von $2\cdot k / n$ für große und $3\cdot k / n$ für kleine Stichproben vorgeschlagen, in den Vorlesungsfolien werden Werte von $4/n$ als auffällig eingestuft. Alternativ zu einem festen Cut-Off-Kriterium kann die Verteilung der Hebelwerte inspiziert und diejenigen Werte kritisch betrachtet werden, die aus der Verteilung ausreißen. Die Funktion `hatvalues` erzeugt die Hebelwerte aus einem Regression-Objekt. 
+*Hebelwerte* $h_j$ erlauben die Identifikation von Ausreissern aus der gemeinsamen Verteilung der unabhängigen Variablen, d.h. einzelne Fälle, die weit entfernt vom  Mittelwert der gemeisamen Verteilung der unabhängigen Variablen liegen und somit einen starken Einfluss auf die Regressionsgewichte haben können. Diese werden mit der Funktion `hatvalues` ermittelt. Kriterien zur Beurteilung der Hebelwerte variieren, so werden von [Eid et al. (2017, S. 707 und folgend)](https://hds.hebis.de/ubffm/Record/HEB366849158) Grenzen von $2\cdot k / n$ für große und $3\cdot k / n$ für kleine Stichproben vorgeschlagen, in den Vorlesungsfolien werden Werte von $4/n$ als auffällig eingestuft (hierbei ist $k$ die Anzahl an Prädiktoren und $n$ die Anzahl der Beobachtungen). Alternativ zu einem festen Cut-Off-Kriterium kann die Verteilung der Hebelwerte inspiziert und diejenigen Werte kritisch betrachtet werden, die aus der Verteilung ausreißen. Die Funktion `hatvalues` erzeugt die Hebelwerte aus einem Regression-Objekt. Wir wollen diese als Histogramm darstellen.
 
 ```{r exercise_h, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
 # Hebelwerte
@@ -425,7 +425,7 @@ ggplot(data = df_h, aes(x = h)) +
 ```
 
 
-* *Cooks Distanz* $CD_i$ gibt eine Schätzung, wie stark sich die Regressionsgewichte verändern, wenn eine Person $i$ aus dem Datensatz entfernt wird. Fälle, derem Elimination zu einer deutlichen Veränderung der Ergebnisse führen würden, sollten kritisch geprüft werden. Als einfache Daumenregel gilt, dass $CD_i>1$ auf einen einflussreichen Datenpunkt hinweist. Cooks Distanz kann mit der Funktion `cooks.distance` ermittel werden.
+*Cooks Distanz* $CD_i$ gibt eine Schätzung, wie stark sich die Regressionsgewichte verändern, wenn eine Person $i$ aus dem Datensatz entfernt wird. Fälle, derem Elimination zu einer deutlichen Veränderung der Ergebnisse führen würden, sollten kritisch geprüft werden. Als einfache Daumenregel gilt, dass $CD_i>1$ auf einen einflussreichen Datenpunkt hinweist. Cooks Distanz kann mit der Funktion `cooks.distance` ermittel werden.
 
 ```{r exercise_CD, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
 # Cooks Distanz
@@ -445,7 +445,7 @@ ggplot(data = df_CD, aes(x = CD)) +
   geom_vline(xintercept = 1, col = "red") # Cut-Off bei 1
 ```
 
-* die Funktion `influencePlot` des `car`-Paktes erzeugt ein "Blasendiagramm" zur simultanen grafischen Darstellung von Hebelwerten (auf der x-Achse), studentisierten Residuen (auf der y-Achse) und Cooks Distanz (als Größe der Blasen). Vertikale Bezugslinien markieren das Doppelte und Dreifache des durchschnittlichen Hebelwertes, horizontale Bezugslinien die Werte -2, 0 und 2 auf der Skala der studentisierten Residuen. Fälle, die nach einem der drei Kriterien als Ausreißer identifiziert werden, werden im Streudiagramm durch ihre Zeilennummer gekennzeichnet. Diese Zeilennummern können verwendet werden, um sich die Daten der auffälligen Fälle anzeigen zu lassen.
+Die Funktion `influencePlot` des `car`-Paktes erzeugt ein "Blasendiagramm" zur simultanen grafischen Darstellung von Hebelwerten (auf der x-Achse), studentisierten Residuen (auf der y-Achse) und Cooks Distanz (als Größe der Blasen). Vertikale Bezugslinien markieren das Doppelte und Dreifache des durchschnittlichen Hebelwertes, horizontale Bezugslinien die Werte -2, 0 und 2 auf der Skala der studentisierten Residuen. Fälle, die nach einem der drei Kriterien als Ausreißer identifiziert werden, werden im Streudiagramm durch ihre Zeilennummer gekennzeichnet. Diese Zeilennummern können verwendet werden, um sich die Daten der auffälligen Fälle anzeigen zu lassen.
 
 ```{r exercise_Blasen, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
 # Blasendiagramm mit Hebelwerten, studentisierten Residuen und Cooks Distanz
