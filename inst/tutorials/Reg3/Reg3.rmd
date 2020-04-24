@@ -467,6 +467,7 @@ XX_3 <- matrix(c(1,2,2,
                2,4,4,
                2,4,4),3,3)
 XX_3 # Die Matrix X'X im Fall 3
+det(XX_3) # Determinante on X'X im Fall 3
 ```
 
 ```{r, eval = F}
