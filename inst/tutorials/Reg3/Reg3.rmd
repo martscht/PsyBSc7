@@ -17,6 +17,9 @@ library(learnr)       # package to generate interactive HTML
 library(gradethis)    # grade Code from input in HTML
 library(shiny)        # nice appearance in R
 library(fontawesome)  # nice fonts
+library(car)
+library(MASS)
+library(ggplot2)
 
 data("Schulleistungen", package = "PsyBSc7")
 knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
