@@ -74,7 +74,7 @@ Gegenstand der folgenden Sitzung ist Die Prüfung von Voraussetzungen der Regres
 Eine grafische Prüfung der partiellen Linearität der zwischen den einzelnen Prädiktorvariablen und dem Kriterium durch *partielle Regressionsplots* erfolgen. Für jeden Prädiktor werden die Residuen bei Vorhersage durch die anderen Prädiktoren gegen die Residuen des Kriteriums bei Vorhersage durch den jeweiligen Prädiktor dargestellt. Diese Grafiken können Hinweise auf systematische nicht-lineare Zusammenhänge geben, die in der Modellspezifikation nicht berücksichtigt wurden. Die zugehörige `R`-Funktion heißt `avPlots` und brauch als Argument das Modell `mod`.
 
 
-```{r exercise_avPlots, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup1"}
+```{r exercise_avPlots, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup1", fig.height=6, fig.align="center"}
 avPlots(model = ..., pch = 16, lwd = 4)
 ```
 
@@ -93,7 +93,7 @@ Mit Hilfe der Argumente `pch=16` und `lwd=4` werden die Darstellung der Punkte (
 
 Die Varianz der Residuen sollte unabhängig von den Ausprägungen der Prädiktoren sein. Dies wird i.d.R. grafisch geprüft, indem die Residuen $e_i$ gegen die Vorhergesagten Werte $\hat{y}_i$ geplottet werden; dem sogenannten *Residuenplot* (engl., *residual plot*). In diesem Streudiagramm sollten die Residuen gleichmäßig über $\hat{y}_i$ streuen und keine systematischen Trends (linear, quadratisch, auffächernd, o.ä.) erkennbar sein. Die Funktion `residualPlots` des Pakets `car` erzeugt separate Streudiagramme für die Residuen in Abhängigkeit von jedem einzelnen Prädiktor $x_j$ und von den vorhergesagten Werten $\hat{y}_i$ (*"Fittet Values"*); als Input brauch sie das Modell `mod`. Zusätzlich wird für jeden Plot ein quadratischer Trend eingezeichnet und auf Signifikanz getestet, womit eine zusätzliche Prüfung auf nicht-lineare Effekte erfolgt. Sind diese Test nicht signifikant, ist davon auszugehen, dass diese Effekte nicht vorliegen und die Voraussetzungen nicht verletzt sind.  
 
-```{r exercise_residualPlots, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup1"}
+```{r exercise_residualPlots, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup1", fig.height=6, fig.align="center"}
 # Grafisch (+ Test auf Nicht-Linearität)
 residualPlots(model = ..., pch = 16)
 ```
@@ -122,7 +122,7 @@ ncvTest(mod)
 
 ### Normalverteilung
 
-Voraussetzung für die Signifikanztests im Kontext der linearen Regression ist die Normalverteilung der Residuen. Auch diese Annahme wird i.d.R. grafisch geprüft. Hierfür bietet sich zum einen ein Histogramm der Residuen an, zum anderen ein *Q-Q-Diagramm* (oder "Quantile-Quantile-Plot"). Zusätzlich zur grafischen Darstellung erlaubt z.B. der Shapiro-Wilk-Test auf Normalität (`shapiro.test`) einen Signifkanztest der Nullhypothese, dass die Residuen normalverteilt sind. Auch der Kolmogorov-Smirnov Test, welcher eine deskriptive mit einer theoretischen Verteilung vergleicht, wäre denkbar. 
+Voraussetzung für die Signifikanztests im Kontext der linearen Regression ist die Normalverteilung der Residuen. Auch diese Annahme wird i.d.R. grafisch geprüft. Hierfür bietet sich zum einen ein Histogramm der Residuen an, zum anderen ein *Q-Q-Diagramm* (oder "Quantile-Quantile-Plot"). Zusätzlich zur grafischen Darstellung erlaubt z.B. der Shapiro-Wilk-Test auf Normalität (`shapiro.test`) einen Signifkanztest der Nullhypothese, dass die Residuen normalverteilt sind. Auch der Kolmogorov-Smirnov (`ks.test`) Test, welcher eine deskriptive mit einer theoretischen Verteilung vergleicht, wäre denkbar. 
 
 Fangen wir mit der Vorbereitung der Daten an. Wir wollen die studentisierten Residuen grafisch mit dem `R`-Paket `ggplot2`darzustellen. Der Befehl `studres` aus dem `MASS` Paket greift die Residuen aus einem `lm` Objekt ab; also aus `mod`. Speichern Sie diese Residuen als `res` ab und erzeugen Sie dann daraus einen `data.frame`, welchen wir später in den Grafiken mit `ggplot2` verwenden wollen. 
  
@@ -182,9 +182,63 @@ res <- studres(mod) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 ```
 
- 
+In dem folgenden Block sehen wir den Code für ein Histogramm in `ggplot2`-Notation. Hier sind einge Zusatzeinstellungen gewählt, die das Histogramm schöner machen sollen. Vervollständigen Sie mit Hilfe der Tipps den Code.
 
-```{r}
+
+```{r exercise_hist1, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+# Grafisch: Histogramm mit Normalverteilungskurve
+ggplot(data = ???, aes(x = ??)) + 
+     geom_histogram(aes(y =..density..),
+                    bins = 15,                    # Wie viele Balken sollen gezeichnet werden?
+                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
+                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
+     stat_function(fun = dnorm, args = list(mean = mean(???), sd = sd(???)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
+     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
+```
+
+
+```{r exercise_hist1-hint-1}
+# an 
+data # wird in ggplot immer der data.frame mit den Daten übergeben
+```
+
+```{r exercise_hist1-hint-2}
+# der Dataframe enthält in unserem Fall eine Variable, welche die Residuen enthält. Den Namen haben wir selbst vergeben. Diesen können Sit mit
+colnames()
+# in Erfahrung bringen (welcher die Namen der Spalten ausgibt)
+```
+
+```{r exercise_hist1-hint-3}
+# Auf die x-Achse in einem Histogramm wird immer die Variable selbst abgetragen. Diese müssen sie an 
+aes(x = ...) # übergeben
+```
+
+```{r exercise_hist1-hint-4}
+# mit 
+stat_function(fun = dnorm, args = list(...)) # übergeben wir eine statistische Funktion, 
+# welche dazu geplottet werden soll.
+# Hier ist dies die Dichte der Normalverteilung "dnorm". Diese Funktion wird normalerweise mit
+dnorm(x = ..., mean = ..., sd = ...) # angesprochen. Wir können mit dieser die Dichte der Normalverteilung
+# am Punkt x berechnen. Um welche Normalverteilung es sich handelt, geben wir mit "mean" und "sd" an.
+# Die Normalverteilung ist eindeutig durch Mittelwert und Standardabweichung definiert.
+```
+
+```{r exercise_hist1-hint-5}
+# mit 
+stat_function(fun = dnorm, args = list(...)) # übergeben wir eine statistische Funktion, 
+# welche dazu geplottet werden soll.
+# Hier ist dies die Dichte der Normalverteilung "dnorm". Diese Funktion wird normalerweise mit
+dnorm(x = ..., mean = ..., sd = ...) # angesprochen. Wir können mit dieser die Dichte der Normalverteilung
+# am Punkt x berechnen. Um welche Normalverteilung es sich handelt, geben wir mit "mean" und "sd" an.
+# Die Normalverteilung ist eindeutig durch Mittelwert und Standardabweichung definiert.
+# Die Argumente, die dnorm normalerweise erhält, können wir in args als Liste in stat_function abgeben
+# Hier brauchen wir allerdings "x" nicht, da das übrigbleibenden (wenn wir mean und sd angeben) Argument
+# für den Plot manipuliert wird (von ggplot2). Somit erhalten wir für die Ausprägungen entlang der
+# x-Achse die Dichte der Normalverteilung (und zwar der Residuen!).
+```
+
+
+```{r exercise_hist1-solution}
 # Grafisch: Histogramm mit Normalverteilungskurve
 ggplot(data = df_res, aes(x = res)) + 
      geom_histogram(aes(y =..density..),
@@ -193,18 +247,73 @@ ggplot(data = df_res, aes(x = res)) +
                     fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
      stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
      labs(title = "Histogramm der Residuen mit Normalverteilungsdichte", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
+```
 
+Nutzen wir nur die Defaulteinstellung des Histogramms, sie es so aus:
+
+```{r}
 # hier nochmal nur das Nötigste:
 ggplot(data = df_res, aes(x = res)) + 
      geom_histogram(aes(y =..density..),  bins = 15) +           
      stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)))
+```
 
+Ähnliche Informationen sind aus dem *Q-Q-Plot* zu entnehmen. Die `R`-Funktion aus dem `car` Paket ist dazu sehr nützlich, da hier die Verteilung direkt mit `distribution` festgelegt werden kann.
+
+```{r exercise_qqplot, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
 # Grafisch: Q-Q-Diagramm mit der car Funktion qqPlot
-qqPlot(mod, pch = 16, distribution = "norm") 
+qqPlot(..., pch = 16, distribution = ...) 
+```
 
-# Test auf Abweichung von der Normalverteilung mit dem Shpiro Test
+```{r exercise_qqplot-hint-1}
+qqplot() # brauch als Argument das Regressionmodell "mod". 
+```
+
+```{r exercise_qqplot-hint-2}
+# Die Normalverteilung heißt in R "norm".
+```
+
+```{r exercise_qqplot-solution}
+# Grafisch: Q-Q-Diagramm mit der car Funktion qqPlot
+qqPlot(mod, pch = 16, distribution = "norm")
+```
+
+Nun wollen wir noch statistische Tests verwenden. Diese testen im Grunde genommen die Null-Hypothese: $H_0:$ *"Normalverteilung liegt vor"*. (Wir wissen allerdings, dass wir Hypothesen nur verwerfen können und nicht wirklich annehmen, weshalb diese Tests immer nur unter Vorbehalt interpretiert werden sollten - Aussagen wie etwa: *"$H_0$ nicht verworfen; daraus folgt, dass, dass in der Population Normalverteilung herrscht"*, sind nicht zulässig).
+
+Der `shapiro.test` und der `ks.test` brauchen die Variablen selbst, welche auf Normalverteilung geprüft werden sollen; also `res`.
+
+```{r exercise_shapiro, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+# Test auf Abwweichung von der Normalverteilung mit dem Shapiro Test
+shapiro.test(...)
+```
+
+```{r exercise_shapiro-solution}
+# Test auf Abwweichung von der Normalverteilung mit dem Shapiro Test
 shapiro.test(res)
+```
 
+
+```{r exercise_ks, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+# Test auf Abwweichung von der Normalverteilung mit dem Kolmogorov-Smirnov Test
+ks.test(..., "...", mean(...), sd(...))
+```
+
+
+```{r exercise_ks-hint-1}
+# Die Argumente in 
+ks.test # sind wie folgt angeordnet: 
+# (Variable, "Verteilung (Wahrscheinlichkeitswerte)", Argument1_der_Verteilung, Argument2_der_Verteilung)
+```
+
+```{r exercise_ks-hint-1}
+# Variable = res
+# "Verteilung (Wahrscheinlichkeitswerte)" = "pnorm", die Verteilungswerte der Normalverteilung mit den Argumenten q=Quantil, sowie Mittelwert und Standardabweichung
+# Argument1_der_Verteilung = Mittelwert von res
+# Argument2_der_Verteilung = Standardabweichung von res
+```
+
+
+```{r exercise_ks-solution}
 # Test auf Abwweichung von der Normalverteilung mit dem Kolmogorov-Smirnov Test
 ks.test(res, "pnorm", mean(res), sd(res))
 ```
