@@ -42,7 +42,7 @@ lm(...~...)
 ```
 
 ```{r exercise_lm_reading-solution}
-# Modell zur Vorhersage der Leseleistung
+# Finale Lösung:
 mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 mod
 ```
@@ -79,6 +79,7 @@ avPlots(model = ..., pch = 16, lwd = 4)
 ```
 
 ```{r exercise_avPlots-solution}
+# Finale Lösung:
 avPlots(model = mod, pch = 16, lwd = 4)
 ```
 
@@ -99,7 +100,7 @@ residualPlots(model = ..., pch = 16)
 ```
 
 ```{r exercise_residualPlots-solution}
-# Grafisch (+ Test auf Nicht-Linearität)
+# Finale Lösung:
 residualPlots(model = mod, pch = 16)
 ```
 
@@ -111,7 +112,7 @@ ncvTest(model = ...)
 ```
 
 ```{r exercise_ncvTest-solution}
-# Test For Non-Constant Error Variance
+# Finale Lösung:
 ncvTest(mod)
 ```
 
@@ -239,7 +240,8 @@ dnorm(x = ..., mean = ..., sd = ...) # angesprochen. Wir können mit dieser die 
 
 
 ```{r exercise_hist1-solution}
-# Grafisch: Histogramm mit Normalverteilungskurve
+# Finale Lösung:
+
 ggplot(data = df_res, aes(x = res)) + 
      geom_histogram(aes(y =..density..),
                     bins = 15,                    # Wie viele Balken sollen gezeichnet werden?
@@ -274,7 +276,7 @@ qqplot() # brauch als Argument das Regressionmodell "mod".
 ```
 
 ```{r exercise_qqplot-solution}
-# Grafisch: Q-Q-Diagramm mit der car Funktion qqPlot
+# Finale Lösung:
 qqPlot(mod, pch = 16, distribution = "norm")
 ```
 
@@ -288,7 +290,7 @@ shapiro.test(...)
 ```
 
 ```{r exercise_shapiro-solution}
-# Test auf Abwweichung von der Normalverteilung mit dem Shapiro Test
+# Finale Lösung:
 shapiro.test(res)
 ```
 
@@ -314,7 +316,7 @@ ks.test # sind wie folgt angeordnet:
 
 
 ```{r exercise_ks-solution}
-# Test auf Abwweichung von der Normalverteilung mit dem Kolmogorov-Smirnov Test
+# Finale Lösung:
 ks.test(res, "pnorm", mean(res), sd(res))
 ```
 
