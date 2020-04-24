@@ -381,7 +381,7 @@ vif(...) # von zuvor und berechnen Sie den Kehrwert
 ```
  
 
-```{r test_T}
+```{r test_T-check}
 # Intro into excercise
 mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 
