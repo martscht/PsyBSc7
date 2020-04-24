@@ -512,10 +512,12 @@ I_2
 sqrt(diag(I_2)) # SEs im Fall 2
 sqrt(diag(I_1)) # SEs im Fall 1
 ```
-Die Standardfehler des *Fall 2* sind sehr groß im Vergleich zu *Fall 1*. Die Determinante von $X'X$ in *Fall 2* liegt nahe $0$.
+Die Standardfehler des *Fall 2* sind sehr groß im Vergleich zu *Fall 1*. Die Determinante von $X'X$ in *Fall 2* liegt nahe $0$; im *Fall 1* bei $16$.
 ```{r}
-det(XX_2)
+det(XX_2) # Determinante Fall 2
+det(XX_1) # Determinante Fall 1
 ```
+
 
 Im *Fall 3* sind alle perfekt korreliert - es liegt perfekte Multikolinearität vor. Die Inverse ist  **nicht** zu bilden (da $\text{det}(X'X) = 0$). Die Standardfehler sind nicht zu berechnen. Eine Fehlermeldung wird ausgegeben.
 ```{r}
