@@ -401,29 +401,52 @@ Für unser Modell wird ersichtlich, dass die Prädiktoren praktisch unkorreliert
 
 ## Identifikation von Ausreißern und einflussreichen Datenpunkten
 
-* *Hebelwerte* $h_j$ erlauben die Identifikation von Ausreissern aus der gemeinsamen Verteilung der unabhängigen Variablen, d.h. einzelne Fälle, die weit entfernt vom  Mittelwert der gemeisamen Verteilung der unabhängigen Variablen liegen und somit einen starken Einfluss auf die Regressionsgewichte haben können. Diese werden mit der Funktion `hatvalues` ermittelt. Kriterien zur Beurteilung der Hebelwerte variieren, so werden von [Eid et al. (2017, S. 712 und folgend)](https://hds.hebis.de/ubffm/Record/HEB366849158) Grenzen von $2\cdot k / n$ für große und $3\cdot k / n$ für kleine Stichproben vorgeschlagen, in den Vorlesungsfolien werden Werte von $4/n$ als auffällig eingestuft. Alternativ zu einem festen Cut-Off-Kriterium kann die Verteilung der Hebelwerte inspiziert und diejenigen Werte kritisch betrachtet werden, die aus der Verteilung ausreißen.
+* *Hebelwerte* $h_j$ erlauben die Identifikation von Ausreissern aus der gemeinsamen Verteilung der unabhängigen Variablen, d.h. einzelne Fälle, die weit entfernt vom  Mittelwert der gemeisamen Verteilung der unabhängigen Variablen liegen und somit einen starken Einfluss auf die Regressionsgewichte haben können. Diese werden mit der Funktion `hatvalues` ermittelt. Kriterien zur Beurteilung der Hebelwerte variieren, so werden von [Eid et al. (2017, S. 707 und folgend)](https://hds.hebis.de/ubffm/Record/HEB366849158) Grenzen von $2\cdot k / n$ für große und $3\cdot k / n$ für kleine Stichproben vorgeschlagen, in den Vorlesungsfolien werden Werte von $4/n$ als auffällig eingestuft. Alternativ zu einem festen Cut-Off-Kriterium kann die Verteilung der Hebelwerte inspiziert und diejenigen Werte kritisch betrachtet werden, die aus der Verteilung ausreißen. Die Funktion `hatvalues` erzeugt die Hebelwerte aus einem Regression-Objekt. 
 
-* *Cooks Distanz* $CD_i$ gibt eine Schätzung, wie stark sich die Regressionsgewichte verändern, wenn eine Person $i$ aus dem Datensatz entfernt wird. Fälle, derem Elimination zu einer deutlichen Veränderung der Ergebnisse führen würden, sollten kritisch geprüft werden. Als einfache Daumenregel gilt, dass $CD_i>1$ auf einen einflussreichen Datenpunkt hinweist. Cooks Distanz kann mit der Funktion `cooks.distance` ermittel werden.
-
-* die Funktion `influencePlot` des `car`-Paktes erzeugt ein "Blasendiagramm" zur simultanen grafischen Darstellung von Hebelwerten (auf der x-Achse), studentisierten Residuen (auf der y-Achse) und Cooks Distanz (als Größe der Blasen). Vertikale Bezugslinien markieren das Doppelte und Dreifache des durchschnittlichen Hebelwertes, horizontale Bezugslinien die Werte -2, 0 und 2 auf der Skala der studentisierten Residuen. Fälle, die nach einem der drei Kriterien als Ausreißer identifiziert werden, werden im Streudiagramm durch ihre Zeilennummer gekennzeichnet. Diese Zeilennummern können verwendet werden, um sich die Daten der auffälligen Fälle anzeigen zu lassen.
-
-```{r}
-
+```{r exercise_h, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
 # Hebelwerte
+n <- length(residuals(...))
+h <- hatvalues(...) # Hebelwerte
+df_h <- data.frame(h) # als Data.Frame für ggplot
+ggplot(data = df_h, aes(x = h)) + 
+     geom_histogram(aes(y =..density..),  bins = 15)+
+  geom_vline(xintercept = 4/n, col = "red") # Cut-off bei 4/n
+```
+
+
+```{r exercise_h-solution}
+# Finale Lösung
 n <- length(residuals(mod))
 h <- hatvalues(mod) # Hebelwerte
 df_h <- data.frame(h) # als Data.Frame für ggplot
 ggplot(data = df_h, aes(x = h)) + 
      geom_histogram(aes(y =..density..),  bins = 15)+
   geom_vline(xintercept = 4/n, col = "red") # Cut-off bei 4/n
+```
 
+
+* *Cooks Distanz* $CD_i$ gibt eine Schätzung, wie stark sich die Regressionsgewichte verändern, wenn eine Person $i$ aus dem Datensatz entfernt wird. Fälle, derem Elimination zu einer deutlichen Veränderung der Ergebnisse führen würden, sollten kritisch geprüft werden. Als einfache Daumenregel gilt, dass $CD_i>1$ auf einen einflussreichen Datenpunkt hinweist. Cooks Distanz kann mit der Funktion `cooks.distance` ermittel werden.
+
+```{r exercise_CD, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
+# Cooks Distanz
+CD <- cooks.distance(...) # Cooks Distanz
+df_CD <- data.frame(CD) # als Data.Frame für ggplot
+ggplot(data = df_CD, aes(x = CD)) + 
+     geom_histogram(aes(y =..density..),  bins = 15)+
+  geom_vline(xintercept = 1, col = "red") # Cut-Off bei 1
+```
+
+```{r exercise_CD-solution}
 # Cooks Distanz
 CD <- cooks.distance(mod) # Cooks Distanz
 df_CD <- data.frame(CD) # als Data.Frame für ggplot
 ggplot(data = df_CD, aes(x = CD)) + 
      geom_histogram(aes(y =..density..),  bins = 15)+
   geom_vline(xintercept = 1, col = "red") # Cut-Off bei 1
+```
 
+* die Funktion `influencePlot` des `car`-Paktes erzeugt ein "Blasendiagramm" zur simultanen grafischen Darstellung von Hebelwerten (auf der x-Achse), studentisierten Residuen (auf der y-Achse) und Cooks Distanz (als Größe der Blasen). Vertikale Bezugslinien markieren das Doppelte und Dreifache des durchschnittlichen Hebelwertes, horizontale Bezugslinien die Werte -2, 0 und 2 auf der Skala der studentisierten Residuen. Fälle, die nach einem der drei Kriterien als Ausreißer identifiziert werden, werden im Streudiagramm durch ihre Zeilennummer gekennzeichnet. Diese Zeilennummern können verwendet werden, um sich die Daten der auffälligen Fälle anzeigen zu lassen.
+```{r exercise_Blasen, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
 # Blasendiagramm mit Hebelwerten, studentisierten Residuen und Cooks Distanz
 # In "IDs" werden die Zeilennummern der auffälligen Fälle gespeichert,
 # welche gleichzeitig als Zahlen im Blasendiagramm ausgegeben werden
