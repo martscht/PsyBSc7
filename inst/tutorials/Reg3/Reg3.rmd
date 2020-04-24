@@ -423,11 +423,11 @@ Die Entscheidung, ob Ausreißer oder auffällige Datenpunkte aus Analysen ausges
 ## Appendix A {#AppendixA}
 ### Multikolinearität und Standardfehler
 Für eine einfache Regressionsgleichung mit $$Y_i=\beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \varepsilon_i$$
-kann die selbe Gleichung auch in Matrixnotation formuliert werden. $$Y = X\beta + \varepsilon$$. Hier ist $X$ die Systemmatrix, welche die Zeilenvektoren $X_i=(1, x_{i1}, x_{i2})$ enthält. Die Standardfehler, welche die Streuung der Parameter $\beta:=(\beta_0,\beta_1,\beta_2)$ beschreiben, lassen sich wie folgt bestimmen: Wir bestimmen die Matrix $I$ wie folgt
+kann die selbe Gleichung auch in Matrixnotation formuliert werden. $$Y = X\beta + \varepsilon.$$ Hier ist $X$ die Systemmatrix, welche die Zeilenvektoren $X_i=(1, x_{i1}, x_{i2})$ enthält. Die Standardfehler, welche die Streuung der Parameter $\beta:=(\beta_0,\beta_1,\beta_2)$ beschreiben, lassen sich wie folgt bestimmen: Wir bestimmen die Matrix $I$ wie folgt
 $$I:=(X'X)^{-1}\hat{\sigma}^2_e,$$
-wobei $\hat{\sigma}^2_e$ die Resiudalvarianz unserer Regressionanalyse ist (also der nicht-erklärte Anteil an der Varianz von $Y$). Aus der Matrix $I$ erhalten wir die Standardfehler sehr einfach: Sie stehen im Quadrat auf der Diagonale. Das heißt, die Standardfehler sind $SE(\beta)=\sqrt{\text{diag}(I)}$ (Wir nehmen mit $\text{diag}$ die Diagonalelemente aus $I$ und ziehen aus diesen jeweils die Wurzel: der erste Eintrag ist der $SE$ von $\beta_0$; also $SE(\beta_0)=\sqrt{I_{11}}$; der zweite von $\beta_1$;$SE(\beta_1)=\sqrt{I_{22}}$; usw.). Was hat das nun mit der Kolinearität zu tun? Wir wissen, dass in $X'X$ die Information über die Kovariation im Datensatz steckt. Bspw. lässt sich die empirische Kovarianzmatrix $S$ zwischen zwei Variablen $z_1$ und $z_2$ sehr einfach bestimmen ($Z=(z_1, z_2)$: $S=\frac{1}{n}Z'Z - \begin{pmatrix}\overline{z}_1\\\overline{z}_2 \end{pmatrix}\begin{pmatrix}\overline{z}_1&\overline{z}_2 \end{pmatrix}$. Weitere Informationen hierzu (Kovarianzmatrix und Standardfehler) sind im Appendix B (sowie auch in einigen Kapiteln) von [Eid et al. (2017)](https://hds.hebis.de/ubffm/Record/HEB366849158) Unterpunkt 5.2-5.4 bzw. ab Seite 1058 nachzulesen. 
+wobei $\hat{\sigma}^2_e$ die Resiudalvarianz unserer Regressionanalyse ist (also der nicht-erklärte Anteil an der Varianz von $Y$). Aus der Matrix $I$ erhalten wir die Standardfehler sehr einfach: Sie stehen im Quadrat auf der Diagonale. Das heißt, die Standardfehler sind $SE(\beta)=\sqrt{\text{diag}(I)}$ (Wir nehmen mit $\text{diag}$ die Diagonalelemente aus $I$ und ziehen aus diesen jeweils die Wurzel: der erste Eintrag ist der $SE$ von $\beta_0$; also $SE(\beta_0)=\sqrt{I_{11}}$; der zweite von $\beta_1$;$SE(\beta_1)=\sqrt{I_{22}}$; usw.). Was hat das nun mit der Kolinearität zu tun? Wir wissen, dass in $X'X$ die Information über die Kovariation im Datensatz steckt. Beispielsweise lässt sich die empirische Kovarianzmatrix $S$ zwischen zwei Variablen $z_1$ und $z_2$ sehr einfach bestimmen ($Z=(z_1, z_2)$: $S=\frac{1}{n}Z'Z - \begin{pmatrix}\overline{z}_1\\\overline{z}_2 \end{pmatrix}\begin{pmatrix}\overline{z}_1&\overline{z}_2 \end{pmatrix}$. Weitere Informationen hierzu (Kovarianzmatrix und Standardfehler) sind im Appendix B (sowie auch in einigen Kapiteln) von [Eid et al. (2017)](https://hds.hebis.de/ubffm/Record/HEB366849158) Unterpunkt 5.2-5.4 bzw. ab Seite 1058 nachzulesen. 
 
-Insgesamt bedeutet dies, dass die Standardfehler von der Inversen der Kovarianzmatrix unserer Daten sowie von der Residualvarianz abhängen. Sie sind also groß, wenn die Resiudalvarianz groß ist (damit ist die Vorhersage von $Y$ schlecht) oder wenn die Inverse der Kovarianzmatrix groß ist. Nehmen wir dazu an, dass $\hat{\sigma}_e^2=1$. Wir gucken uns jetzt drei Fälle an mit 
+Insgesamt bedeutet dies, dass die Standardfehler von der Inversen der Kovarianzmatrix unserer Daten sowie von der Residualvarianz abhängen. Sie sind also groß, wenn die Resiudalvarianz groß ist (damit ist die Vorhersage von $Y$ schlecht) oder wenn die Inverse der Kovarianzmatrix groß ist (also wenn die Variablen stark redundant sind). Nehmen wir dazu an, dass $\hat{\sigma}_e^2=1$. Wir gucken uns jetzt drei Fälle an mit 
 
 *Fall 1*: $X'X=\begin{pmatrix}1&0&0\\0&4&0\\0&0&4\end{pmatrix}$.
 *Fall 2*: $X'X=\begin{pmatrix}1&0.9&0.8\\3.9&4&4.1\\4.1&3.9&4\end{pmatrix}$  und 
@@ -444,11 +444,11 @@ I_1
 sqrt(diag(I_1)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_e^2=1
 ```
 
-Im *Fall 2* sind alle fast perfekt korreliert - es liegt hohe Multikolinearität vor. Die Inverse ist fast nicht zu bilden. Die Standardfehler sind deutlich erhöht im Vergleich zu Fall 1
+Im *Fall 2* sind alle fast perfekt korreliert - es liegt hohe Multikolinearität vor. Die Inverse ist noch zu bilden. Die Standardfehler sind deutlich erhöht im Vergleich zu Fall 1
 ```{r}
-XX_2 <- matrix(c(1,0.9,0.8,
-               3.9,4,4.1,
-               4.1,3.9,4),3,3)
+XX_2 <- matrix(c(1,1.8,1.9,
+               1.8,4,3.9,
+               1.9,3.9,4),3,3)
 XX_2 # Die Matrix X'X im Fall 2
 I_2 <- solve(XX_2)*1 # I (*1 wegen Residualvarianz = 1)
 I_2
@@ -458,9 +458,9 @@ sqrt(diag(I_1)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_
 
 Im *Fall 3* sind alle perfekt korreliert - es liegt perfekte Multikolinearität vor. Die Inverse ist  **nicht** zu bilden (da $\text{det}(X'X) = 0$). Die Standardfehler sind nicht zu berechnen. Eine Fehlermeldung wird ausgegeben.
 ```{r}
-XX_3 <- matrix(c(1,1,1,
-               4,4,4,
-               4,4,4),3,3)
+XX_3 <- matrix(c(1,2,2,
+               2,4,4,
+               2,4,4),3,3)
 XX_3 # Die Matrix X'X im Fall 3
 ```
 
@@ -469,7 +469,7 @@ I_3 <- solve(XX_3)*1 # I (*1 wegen Residualvarianz = 1)
 I_3
 sqrt(diag(I_3)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_e^2=1
 
-# hier wird eine Fehlermeldung ausgegeben, wodurch der Code nicht ausführbar ist:
+# hier wird eine Fehlermeldung ausgegeben, wodurch der Code nicht ausführbar ist und I_3 nicht gebildet werden kann:
 
 #    Error in solve.default(XX_3) : 
 #    Lapack routine dgesv: system is exactly singular: U[2,2] = 0
