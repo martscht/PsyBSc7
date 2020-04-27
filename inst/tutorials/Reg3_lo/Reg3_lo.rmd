@@ -1,15 +1,31 @@
 ---
-title: "Regressionsanalyse III: Regressionsdiagnostik -- Aufgaben mit Lösungen"
-author: "Julien P. Irmer**" 
-output:
-  html_document: default
-  pdf_document: default
-  word_document: default
+title: "Sitzung 6: Regressionanalyse III --- Aufgaben mit Lösungen"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
 ---
 
-*Statistik für Psychologen: Praktikum PsyBSc 7, Sommersemester 2020*
+```{r setup, include = FALSE}
+source('setup.R')
 
-** basierend auf Unterlagen von Prof. Johannes Hartig
+library(learnr)       # package to generate interactive HTML
+library(gradethis)    # grade Code from input in HTML
+library(shiny)        # nice appearance in R
+library(fontawesome)  # nice fonts
+library(car)
+library(MASS)
+library(ggplot2)
+
+data("PISA_2009_v2", package = "PsyBSc7")
+knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
+```
+
+?????????? lm.beta auch einbauen in normale Sitzung !??!?!
 
 ### Datensatz (wie beim letzten Termin)
 
