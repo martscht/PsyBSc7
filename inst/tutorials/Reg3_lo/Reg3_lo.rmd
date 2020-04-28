@@ -64,7 +64,7 @@ In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`
 
 ```{r}
 # Berechnung des Modells und Ausgabe der Ergebnisse
-m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA_2009)
+m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009)
 summary(lm.beta(m1))
 ```
 
@@ -136,7 +136,7 @@ Im Histogramm ist zu erkennen, dass die Residuen etwas linksschief / rechtssteil
 ### a) durch Inspektion der bivariaten Korrelationen und
 
 ```{r}
-cor(PISA_2009[,c("HISEI", "MotherEdu", "Books")])
+cor(PISA2009[,c("HISEI", "MotherEdu", "Books")])
 
 ```
 ### b) Berechnung von VIF und Toleranz.
@@ -188,9 +188,9 @@ IDs <- as.numeric(row.names(InfPlot))
 # Werte der identifizierten Fälle
 InfPlot
 # Rohdaten der auffälligen Fälle (gerundet für bessere Übersichtlichkeit)
-round(PISA_2009[IDs,c("Reading", "HISEI", "MotherEdu", "Books")],2)
+round(PISA2009[IDs,c("Reading", "HISEI", "MotherEdu", "Books")],2)
 # z-Standardisierte Werte der auffälligen Fälle
-round(scale(PISA_2009)[IDs,c("Reading", "HISEI", "MotherEdu", "Books")],2)
+round(scale(PISA2009)[IDs,c("Reading", "HISEI", "MotherEdu", "Books")],2)
 
 ```
 
@@ -209,7 +209,7 @@ round(scale(PISA_2009)[IDs,c("Reading", "HISEI", "MotherEdu", "Books")],2)
 
 Demonstration des Effekts des Ausschlusses eines auffälligen Wertes: Der Ausschluss des einzelnen Falls 141 mit der höchsten $CD_j$ erhöht das Regressionsgewicht der Bücherzahl um 2 Punkte und die erklärte Varianz um 3%!
 ```{r}
-m1.c <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA_2009[-141,])
+m1.c <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009[-141,])
 summary(m1)
 summary(m1.c)
 summary(m1.c)$r.squared - summary(m1)$r.squared  # erklärte Varianz durch Entfernen des Datenpunktes
