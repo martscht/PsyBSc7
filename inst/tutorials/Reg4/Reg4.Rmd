@@ -201,8 +201,8 @@ Ein sehr wichtiges Vorhersagemodell zu Zeiten der Corona-Pandemie oder dem stark
 
 ```{r letter-a, echo=FALSE}
 question("Welche Aussagen über Logarithmen bzw. Exponenten stimmen?",
-  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $\log_{10}(100)$ berechnen. Die Antwort ist 2.", correct = T),
-  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $\log_{10}(100)$ berechnen. Die Antwort ist 3.")
+  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $\\log_{10}(100)$ berechnen. Die Antwort ist 2.", correct = T),
+  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $\\log_{10}(100)$ berechnen. Die Antwort ist 3.")
 )
 ```
 
