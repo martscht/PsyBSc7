@@ -297,7 +297,7 @@ ggplot(...)
 ggplot(data = ..., aes(x = ..., y = ...))
 ```
 
-```{r exercise_graph_pop-hint-1}
+```{r exercise_graph_pop-hint-2}
 # Sie müssen den Datensatz sowie die Namen der Variablen verwenden
 ggplot(data = ..., aes(x = ..., y = ...)) + geom_point()
 ```
