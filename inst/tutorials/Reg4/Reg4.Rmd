@@ -274,6 +274,7 @@ abline(v = 0, lty = 3) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
 abline(h = log(a), lty = 3)  # im Punkt log(a) schneidet log(f) (das linearisierte exponentielle Wachstum) die y-Achse (x=0), h =llog(a) zeichnet zu y = log(a) eine horizontale Linie
 ```
 
+## Modellierung von exponentiellem Wachstum
 ### Das Modellieren von exponentiellem Wachstum am Beispiel der Weltbevölkerung von 1800 bis 2020
 
 
