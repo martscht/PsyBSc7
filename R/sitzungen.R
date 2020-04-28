@@ -1,6 +1,15 @@
 #' @name Sitzungen
 #' @aliases Sitzung_1
 #' @aliases Sitzung_2
+#' @aliases Sitzung_3
+#' @aliases Sitzung_4
+#' @aliases Sitzung_5
+#' @aliases Sitzung_6
+#' @aliases Sitzung_7
+#' @aliases Sitzung_8
+#' @aliases Sitzung_9
+#' @aliases Sitzung_10
+#' @aliases Sitzung_11
 #' 
 #' @title Übungen für das Praktikum in PsyBSc 7, Sommersemester 2020
 #'
@@ -49,6 +58,13 @@ Sitzung_3 <- function() {
 #' @export
 Sitzung_4 <- function() {
   library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
   message('Leider ist die Sitzung noch nicht fertig :(.')
 }
 
@@ -56,6 +72,13 @@ Sitzung_4 <- function() {
 #' @export
 Sitzung_5 <- function() {
   library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+  devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
   message('Leider ist die Sitzung noch nicht fertig :(.')
 }
 
@@ -63,13 +86,27 @@ Sitzung_5 <- function() {
 #' @export
 Sitzung_6 <- function() {
   library(learnr)
-  message('Leider ist die Sitzung noch nicht fertig :(.')
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  learnr::run_tutorial('Reg3', package = 'PsyBSc7')
 }
 
 #' @rdname Sitzungen
 #' @export
 Sitzung_7 <- function() {
   library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
   message('Leider ist die Sitzung noch nicht fertig :(.')
 }
 
@@ -78,6 +115,13 @@ Sitzung_7 <- function() {
 #' @export
 Sitzung_8 <- function() {
   library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
   message('Leider ist die Sitzung noch nicht fertig :(.')
 }
 
@@ -85,6 +129,13 @@ Sitzung_8 <- function() {
 #' @export
 Sitzung_9 <- function() {
   library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
   message('Leider ist die Sitzung noch nicht fertig :(.')
 }
 
@@ -92,6 +143,27 @@ Sitzung_9 <- function() {
 #' @export
 Sitzung_10 <- function() {
   library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_11 <- function() {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
   message('Leider ist die Sitzung noch nicht fertig :(.')
 }
 
