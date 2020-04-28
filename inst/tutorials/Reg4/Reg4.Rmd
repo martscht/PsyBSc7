@@ -227,15 +227,16 @@ $$\log_a(a)=1$$
 
 $$\log_a(bc)=\log_a(b)+\log_a(c)$$
 $$\log_a(b^c)=c\log_a(b)$$
-Also rechnen wir: $\log_{10}(10^x) = x\log_{10}(10)=x*1=x$ auf der linken Seite und $\log_{10}(100)=2$ auf der rechten Seite. So erhalten wir $x=2$ als Lösung. Natürlich wussten wir schon vorher, dass $10^2=100$ ergibt; es ist aber eine schöne Veranschaulichung, wofür Logarithmen bespielsweise gebraucht werden.
+
+$$x=\log_a(a^x)=a^{\log_a(x)}$$
+
+Also rechnen wir: $\log_{10}(10^x) = x\log_{10}(10)=x*1=x$ auf der linken Seite und $\log_{10}(100)=2$ auf der rechten Seite. So erhalten wir $x=2$ als Lösung. Natürlich wussten wir schon vorher, dass $10^2=100$ ergibt; es ist aber eine schöne Veranschaulichung, wofür Logarithmen unter anderem gebraucht werden.
 
 Es muss allerdings nicht immer der richtige Logarithmus zur jeweiligen Basis sein. Eine wichtige Logarithmusrechenregel besagt, dass der Logarithmus zur Basis $a$ leicht mit Hilfe des Logarithmus zur Basis $b$ berechnet werden kann: 
 
-$$\log_{a}(x) = \frac{\log_{b}(x)}{\log_{b}(a)},$$ siehe bspw. [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html).
+$$\log_{a}(x) = \frac{\log_{b}(x)}{\log_{b}(a)},$$ siehe bspw. [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html). Da diese Gesetzmäßigkeit gilt, wird in der Mathematik und auch in der Statistik meist nur der natürliche Logarithmus (*ln; logarithmus naturalis*) verwendet. Die Basis ist hierbei  $e$ ($\approx 2.718\dots$). Mit den obigen Rechenregeln sowie der Rechenregeln für Exponenten können wir jedes exponentielles Wachstum als Wachstum zur Basis *e* darstellen, denn
 
-Da diese Gesetzmäßigkeit gilt, wird in der Mathematik und auch in der Statistik meist nur der natürliche Logarithmus (*ln; logarithmus naturalis*) verwendet. Die Basis ist hierbei  $e$ ($\approx 2.718\dots$). Mit den obigen Rechenregeln sowie der Rechenregeln für Exponenten können wir jedes exponentielles Wachstum als Wachstum zur Basis *e* darstellen, denn
-
-$a^x = e^{\text{ln}(a^x)}=e^{x\text{ln}(a)}$, z.B. ist $10^3=e^{\text{ln}(10^3)}=e^{3\text{ln}(10)}=1000$. 
+$$a^x = e^{\text{ln}(a^x)}=e^{x\text{ln}(a)},\quad\text{ z.B. ist }\quad 10^3=e^{\text{ln}(10^3)}=e^{3\text{ln}(10)}=1000$$. 
 
 Da sich durch *e* und *ln* alle exponentiellen Verläufe darstellen lassen, wird in der Mathematik häufig *log* als das Symbol für den natürlich Logarithmus verwendet; so ist es auch in `R`: ohne weitere Einstellungen ist `log` der natürliche Logarithmus und `exp` ist die Exponentialfunktion. Mit Hilfe von `log(..., base = 10)` erhalten sie beispielsweise den 10er-Logarithmus. Probieren Sie die obige Gleichung selbst aus:
 
@@ -245,26 +246,30 @@ Da sich durch *e* und *ln* alle exponentiellen Verläufe darstellen lassen, wird
 exp(3*log(10))
 
 # gleiches Ergebnis:
-log(10^3, base = 10)
-log(10^3)/log(10)
+log(10^3, base = 10) # Logarithmus von 1000 zur Basis 10
+log(10^3)/log(10) # mit ln
+
+# gleiches Ergebnis:
+log(9, base = 3) # Logarithmus von 9 zur Basis 3
+log(9)/log(3) # mit ln
 ```
 
 ### Das Modellieren von exponentiellem Wachstum
 
 
-Wir betrachten nun eine allgemeine exponentielle Wachstumsfunktion $f(x) = a\ b^{c\ x}$ (hierbei ist $a$ ein Vorfaktor, der die Ausprägung an der Stelle $x=0$ beschreibt, $b$ ist die Basis des exponentiellen Wachstums und $c$ ist ein *eigentlich redundanter* Ratenparameter). Wegen der Beliebigkeit der Basis ist dies gleich $f(x) = e^{\text{ln}(a\ b^{c\ x})}=e^{\text{ln}(a) + \text{ln}(b)cx}$. Nun sind $\text{ln}(a)$ und $\text{ln}(b)c$ zwei Konstanten, die wir einfach umbenennen dürfen. Wir können sie beispielsweise $\beta_0$ und $\beta_1$ nennen; also $\beta_0 := \text{ln}(a)$ und $\beta_1:=\text{ln}(b)c$. Folglich steht $f(x) = e^{\beta_0 + \beta_1x}$ für beliebiges exponentielle Wachstum. Gleichzeit bedeutet dies, dass $\text{ln}(f(x)) = \beta_0 + \beta_1x$ eine lineare Funktion ist, welche wir ganz einfach mit einer Regressionanalyse, also `lm` in R, untersuchen können! Wir können somit sagen, dass durch Logarithmieren von $f(x)$, wir in der Lage sind, das exponentielle Wachstum zu *Linearisieren*, also das exponentielle Wachstum in eine lineare Funktion zu transformieren, welche mit Auswertungsinstrumenten für lineare Funktionen untersucht werden können. Dies bedeutet, dass wir nach logarithmierern der abhängigen Variable in der Lage sind die gesamte Klasse der exponentiellen Funktionen/des exponentiellen Wachstums für die Modellierung unserer Daten zu verwenden. Die folgenden zwei Grafiken verdeutlichen dies:
+Wir betrachten nun eine allgemeine exponentielle Wachstumsfunktion $f(x) = a\ b^{c\ x}$ (hierbei ist $a$ ein Vorfaktor, der die Ausprägung an der Stelle $x=0$ beschreibt, $b$ ist die Basis des exponentiellen Wachstums und $c$ ist ein *eigentlich redundanter* Ratenparameter). Wegen der Beliebigkeit der Basis ist dies gleich $f(x) = e^{\text{ln}(a\ b^{c\ x})}=e^{\text{ln}(a) + \text{ln}(b)cx}$. Nun sind $\text{ln}(a)$ und $\text{ln}(b)c$ zwei Konstanten, die wir einfach umbenennen dürfen. Wir können sie beispielsweise $\beta_0$ und $\beta_1$ nennen; also $\beta_0 := \text{ln}(a)$ und $\beta_1:=\text{ln}(b)c$. Folglich steht $f(x) = e^{\beta_0 + \beta_1x}$ für beliebiges exponentielle Wachstum. Gleichzeit bedeutet dies, dass $\text{ln}(f(x)) = \beta_0 + \beta_1x$ eine lineare Funktion ist, welche wir ganz einfach mit einer Regressionanalyse, also `lm` in R, untersuchen können! Wir können somit sagen, dass durch Logarithmieren von $f(x)$, wir in der Lage sind, das exponentielle Wachstum zu *Linearisieren*, also das exponentielle Wachstum in eine lineare Funktion zu transformieren, welche mit Auswertungsinstrumenten für lineare Funktionen untersucht werden können. Dies bedeutet, dass wir nach logarithmierern der abhängigen Variable in der Lage sind die gesamte Klasse der exponentiellen Funktionen/des exponentiellen Wachstums für die Modellierung unserer Daten zu verwenden. Die folgenden zwei Grafiken verdeutlichen dies (Sie können hier die Parameter beliebig verändern und sich den Effekt auf die Grafiken ansehen):
 
-```{r, fig.height=6, fig.align="center"}
+```{r exercise_exp_log, exercise = TRUE, exercise.eval = FALSE, fig.height=6, fig.align="center"}
 x <- seq(-1,2,0.1) # x = Variablen (als Zahlen zwischen -1 und 2)
 a <- 2   # Vorfaktor, der die Ausprägung an der Stelle x=0 beschreibt
 b <- 3   #  Basis des exponentiellen Wachstums
 c <- 1.5 # *eigentlich redundanter* Ratenparameter
 f <- a*b^(c*x) # f(x), eine exponentiell-wachsende Funktion in x
-plot(x = x, y = f, type = "l", col = "blue") # plotte f(x) gegen x
+plot(x = x, y = f, type = "l", col = "blue", main = "Plot von f(x) vs. x") # plotte f(x) gegen x
 abline(v = 0, lty = 3) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
 abline(h = a, lty = 3) # im Punkt a schneidet f (das exponentielle Wachstum) die y-Achse (x=0), h = a zeichnet zu y = a eine horizontale Linie
 
-plot(x = x, y = log(f), type = "l", col = "blue") # plotte ln(f(x)) gegen x
+plot(x = x, y = log(f), type = "l", col = "blue", main = "Plot von ln(f(x)) vs. x") # plotte ln(f(x)) gegen x
 abline(v = 0, lty = 3) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
 abline(h = log(a), lty = 3)  # im Punkt log(a) schneidet log(f) (das linearisierte exponentielle Wachstum) die y-Achse (x=0), h =llog(a) zeichnet zu y = log(a) eine horizontale Linie
 ```
