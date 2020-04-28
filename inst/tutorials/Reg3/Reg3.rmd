@@ -637,7 +637,7 @@ Im Einzelnen enthält der Datensatz die folgenden Variablen:
 * Bildungsabschluss des Vaters (`FatherEdu`, International Standard Classification of Education)
 * Bildungsabschluss der Mutter (`MotherEdu`, International Standard Classification of Education)
 
-## Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen
+#### Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen
 
 In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`), der Bildungsabschluss der Mutter (`MotherEdu`) und die Zahl der Bücher zu Hause (`Books`) bedeutsame Prädiktoren für die Lesekompetenz der Schüler/innen sind. Berechnen Sie diese Modell erneut.
 
@@ -649,27 +649,38 @@ summary(lm.beta(m1))
 ```
 
 **Aufgabe 1.** Prüfen Sie die Annahme der Homoskedastizität 
+
 a) durch Inspektion der Residuenplots und 
+
 b) den Breusch–Pagan Test auf nicht-konstante Varianz
 
 
-**Aufgabe 2.** Prüfen Sie die Annahme der Linearität 
+**Aufgabe 2.** Prüfen Sie die Annahme der Linearität
+
 a) durch Inspektion der partiellen Regressionsplots und 
+
 b) des Tests für quadratische Trends, der mit der Funktion `residualPlots` erzeugt wurde.
 
 **Aufgabe 3.** Püfen Sie die Normalverteilung der Residuen 
+
 a) grafisch und 
+
 b) über den Shapiro-Wilks-Test sowie den Kolmogorov-Smirnov-Test.
  
 
 **Aufgabe 4.** Prüfen Sie die Multikollinearität der Prädiktoren im Modell
+
 a) durch Inspektion der bivariaten Korrelationen und
+
 b) Berechnung von VIF und Toleranz.
 
 
 **Aufgabe 5.** Ausreißer und einflussreiche Datenpunkte
+
 a) Inspizieren Sie die Verteilung der Hebelwerten $h_i$
+
 b) Inspizieren Sie die Verteilung von Cooks Distanz $CD_i$
+
 c) Sichten Sie die Rohdaten und standardisierten Werte auffälliger Fälle (verwenden Sie die Funktion `influencePlot`).
 
 
