@@ -187,14 +187,27 @@ Erzeugt man für das erweiterte Modell Residuenplots, ist der quadratische Trend
 residualPlots(m1.b, pch = 16)
 ```
 
-Wenn Sie noch mehr über die Funktion `poly` und ihre Vorteile erfahren möchten, dann schauen Sie sich doch mal den [Appendix A](#AppendixA) an.
 
-Mit Hilfe von `poly(X, p)`, lassen sich Polynome bis zum Grad $p$ (als $X, X^2,\dots,X^{p-1},X^p$) in die Regression mit aufnehmen, ohne, dass sich die Parameterschätzungen der anderen Potenzen von $X$ ändern. Mit Hilfe von `I()` lassen sich innerhalb des `lm` Befehls zu dem noch weitere Funktionale hinzufügen, ohne diese vorher erzeugen zu müssen. Beispielsweise ließe sich durch `lm(Y ~ X + I(sin(X))) + I(exp(sqrt(X))` folgendes Regressionsmodell schätzen: $Y = \beta_0+\beta_1X + \beta_2\sin(X) + \beta_3e^{\sqrt{X}} + \varepsilon$. Allerdings lassen sich so nicht Wachstumsraten modellieren (z.B. exponentielles oder logarithmisches Wachstum) - hierzu müssten die Variablen tatsächlich transformiert werden.
+Mit Hilfe von `poly(X, p)`, lassen sich Polynome bis zum Grad $p$ (als $X, X^2,\dots,X^{p-1},X^p$) in die Regression mit aufnehmen, ohne, dass sich die Parameterschätzungen der anderen Potenzen von $X$ ändern. Wenn Sie noch mehr über die Funktion `poly` und ihre Vorteile erfahren möchten, dann schauen Sie sich doch mal den [Appendix A](#AppendixA) an. 
+
+Mit Hilfe von `I()` lassen sich innerhalb des `lm` Befehls zu dem noch weitere Funktionale hinzufügen, ohne diese vorher erzeugen zu müssen. Beispielsweise ließe sich durch `lm(Y ~ X + I(sin(X))) + I(exp(sqrt(X))` folgendes Regressionsmodell schätzen: $Y = \beta_0+\beta_1X + \beta_2\sin(X) + \beta_3e^{\sqrt{X}} + \varepsilon$. Allerdings lassen sich so nicht Wachstumsraten modellieren (z.B. exponentielles oder logarithmisches Wachstum) - hierzu müssten die Variablen tatsächlich transformiert werden. 
+
+
 
 ## Weitere nichtlineare Effekte
-*Im folgenden werden zum Teil fortgeschrittene Inhalte verwendet. Bitte sehen Sie dies als Bonus zum Vorlesungsstoff an.*
+<small> *Im folgenden werden zum Teil fortgeschrittene Inhalte verwendet. Bitte sehen Sie dies als Bonus zum Vorlesungsstoff an.* </small>
 
-Ein sehr wichtiges Vorhersagemodell zu Zeiten der Corona-Pandemie oder dem starken Bevölkerungswachstum ist das exponentielle Wachstum. Um dieses genauer zu verstehen, werden einige Grundlagen im Umgang mit Exponenten benötigt. Zum Beispiel muss man sich überlegen, welche Rate und welche Basis ein exponentieller Verlauf hat. Beispielsweise wächst $10^x$ deutlich schneller als $2^x$. 
+Ein sehr wichtiges Vorhersagemodell zu Zeiten der Corona-Pandemie oder dem starken Bevölkerungswachstum ist das exponentielle Wachstum. Um dieses genauer zu verstehen, werden einige Grundlagen im Umgang mit Exponenten benötigt. Zum Beispiel müssen wir uns überlegen, welche Rate und welche Basis ein exponentieller Verlauf hat. Beispielsweise wächst $10^x$ deutlich schneller als $2^x$. Wie gut kennen Sie sich noch mit Exponenten und Logarithmen aus?
+
+```{r letter-a, echo=FALSE}
+question("Welche Aussagen über Logarithmen bzw. Exponenten stimmen?",
+  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $\text{log}_{10}(100)$ berechnen. Die Antwort ist 2.", correct = T),
+  answer("Modell mit 5 Faktoren, weil es das weniger sparsame Modell ist."),
+  answer("Modell mit 4 Faktoren, weil es das sparsamere Modell ist. "),
+  answer("Modell mit 5 Faktoren, weil der p-Wert (p < 0.05) anzeigt, dass die Null-Hypothese, dass beide Modell gleich gut zu den Daten passen, verworfen wird. Wir entscheiden uns daher für das weniger restriktive Modell mit mehr Parametern; hier: das Modell mit fünf Faktoren.", correct = TRUE),
+  answer("Modell mit 4 Faktoren, weil der p-Wert (p < 0.05) anzeigt, dass die Null-Hypothese, dass beide Modell gleich gut zu den Daten passen, verworfen wird. Wir entscheiden uns daher für das restriktivere Modell mit weniger Parametern; hier: das Modell mit vier Faktoren.")
+)
+```
 
 ### Exkurs: Exponenten und Logarithmen
 
