@@ -338,11 +338,12 @@ summary(...)
 ```
 
 ```{r exercise_quad_pop-solution}
+# Finale Lösung
 m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
 summary(m_q)
 ```
 
-```{r exercise_setup2, include = F}
+```{r "exercise_setup2", include = F}
 m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
 m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
 ```
