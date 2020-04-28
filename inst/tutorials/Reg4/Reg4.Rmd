@@ -209,10 +209,10 @@ question("Welche Aussagen über Logarithmen bzw. Exponenten stimmen?",
   answer("$log_a(x)$ ist die Umkehrfunktion zu $a^x$. Dies bedeutet, dass $log_a(a^x)=x.$", correct = T),
   answer("Es gilt: $a^{c+d}=a^c+a^d$."),
   answer("Es gilt: $a^{c+d}=a^ca^d$."),
-  answer("Es gilt immer $a^x < b^x$ für $a < b$ und alle $x$."),
-  answer("Es gilt immer $a^x < b^x$ für $1 < a < b$ und alle $x$.", correct = T),
-  answer("Es gilt immer $a^x > b^x$ für $0 < a < b < 1$ und alle $x$.", correct = T), 
-  answer("Es gilt immer $a^x < b^x$ für $0 < a < b < 1$ und alle $x$.", correct = T)
+  answer("Es gilt immer $a^x < b^x$ für a < b und alle x."),
+  answer("Es gilt immer $a^x < b^x$ für 1 < a < b und alle x.", correct = T),
+  answer("Es gilt immer $a^x > b^x$ für 0 < a < b < 1 und alle x.", correct = T), 
+  answer("Es gilt immer $a^x < b^x$ für 0 < a < b < 1 und alle x.", correct = T)
 )
 ```
 Im folgenden Exkurs haben Sie die Möglichkeit Ihr Wissen nochmal aufzufrischen und zu erweitern. Ihnen werden Quellen genannt, in welchen Sie weitere Inhalte nachlesen können.
@@ -220,9 +220,9 @@ Im folgenden Exkurs haben Sie die Möglichkeit Ihr Wissen nochmal aufzufrischen 
 
 ### Exkurs: Exponenten und Logarithmen
 
-Um eine solche Gleichung nach $x$ aufzulösen wird der Logarithmus verwendet, denn er ist die Umkehrfunktion zum Exponentiellen (siehe beispielsweise hier für eine Wiederholung zum [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html), [Exponenten; Pierce (2019)](http://www.mathsisfun.com/exponent.html) oder [Exponentenrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponent-laws.html)). In der Schule wird zunächst der Logarithmus zur Basis *10* gelehrt. So kann man die Gleichung $10^x = 100$ leicht auflösen: Dazu müssen beide Seiten logarithmiert (zur Basis *10*) werden $\log_{10}(10^x) = \log_{10}(100)$ und wir erhalten $x = 2$. Es muss allerdings nicht immer der richtige Logarithmus zur jeweiligen Basis sein. Eine wichtige Logarithmusrechenregel besagt, dass der Logarithmus zur Basis *a* leicht mit Hilfe des Logarithmus zur Basis *b* berechnet werden kann: 
+Um eine exponentielle Gleichung nach $x$ aufzulösen wird der Logarithmus verwendet, denn er ist die Umkehrfunktion zum Exponentiellen (siehe beispielsweise hier für eine Wiederholung zum [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html), [Exponenten; Pierce (2019)](http://www.mathsisfun.com/exponent.html) oder [Exponentenrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponent-laws.html)). In der Schule wird zunächst der Logarithmus zur Basis *10* gelehrt. So kann man die Gleichung $10^x = 100$ leicht auflösen: Dazu müssen beide Seiten logarithmiert (zur Basis *10*) werden $\log_{10}(10^x) = \log_{10}(100)$ und wir erhalten $x = 2$. Es muss allerdings nicht immer der richtige Logarithmus zur jeweiligen Basis sein. Eine wichtige Logarithmusrechenregel besagt, dass der Logarithmus zur Basis *a* leicht mit Hilfe des Logarithmus zur Basis *b* berechnet werden kann: 
 
-$\log_{a}(x) = \frac{\log_{b}(x)}{\log_{b}(a)}$,     siehe bspw. [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html).
+$\log_{a}(x) = \frac{\log_{b}(x)}{\log_{b}(a)}$, siehe bspw. [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html).
 
 Da diese Gesetzmäßigkeit gilt, wird in der Mathematik und auch in der Statistik meist nur der natürliche Logarithmus (*ln; logarithmus naturalis*) verwendet. Die Basis ist hierbei  *e* ($\approx 2.718\dots$). Mit dieser Rechenregel sowie der Rechenregeln für Exponenten können wir jedes exponentielles Wachstum als Wachstum zur Basis *e* darstellen, denn
 
