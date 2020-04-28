@@ -1,5 +1,5 @@
 ---
-title: "Sitzung 6: Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte"
+title: "Sitzung 7: Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte"
 output: 
   learnr::tutorial:
     progressive: true
@@ -31,7 +31,7 @@ knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 
 
 
-## Datensatz (PISA: wie in den Übungen zum letzten Termin) $*$
+## Datensatz (PISA: wie in den Übungen zum letzten Termin) <small> $*$ </small>
 <small> $*$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_ </small>
 
 
@@ -48,8 +48,8 @@ data("PISA2009", package = "PsyBSc7")
 
 
 
-## Quadratische Verläufe in der Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen $**$
-$**$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_
+## Quadratische Verläufe in der Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen <small> $**$ </small>
+<small> $**$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_ </small>
 
 
 In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`), der Bildungsabschluss der Mutter (`MotherEdu`) und die Zahl der Bücher zu Hause (`Books`) bedeutsame Prädiktoren für die Lesekompetenz der Schüler/innen sind, allerdings zeigten Analysen, dass nicht alle Voraussetzungen erfüllt waren:
@@ -94,8 +94,8 @@ Die Frage ist nun, woher die Verstöße gegen die Normalverteilungsannahme komme
 
 
 
-## Aufnahme eines quadratischen Effekts $***$
-$***$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_
+## Aufnahme eines quadratischen Effekts <small> $***$ </small>
+<small> $***$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_ </small>
 
 
 Wird für den Bildungsabschluss der Mutter mit der Funktion `poly` ein linearer und qudratischer Trend in das Regressionsmodell aufgenommen, wird der quadratische Trend signifikant und das Modell erklärt signifikant mehr Varianz als ohne den quadratischen Trend:
@@ -153,7 +153,7 @@ rbind(coef(m1.b2),coef(m1.c2))
 
 Mit Hilfe von `poly(X, p)`, lassen sich Polynome bis zum Grad $p$ (als $X, X^2,\dots,X^{p-1},X^p$) in die Regression mit aufnehmen, ohne, dass sich die Parameterschätzungen der anderen Potenzen von $X$ ändern. Mit Hilfe von `I()` lassen sich innerhalb des `lm` Befehls zu dem noch weitere Funktionale hinzufügen, ohne diese vorher erzeugen zu müssen. Beispielsweise ließe sich durch `lm(Y ~ X + I(sin(X))) + I(exp(sqrt(X))` folgendes Regressionsmodell schätzen: $Y = \beta_0+\beta_1X + \beta_2\sin(X) + \beta_3e^{\sqrt{X}} + \varepsilon$. Allerdings lassen sich so nicht Wachstumsraten modellieren (z.B. exponentielles oder logarithmisches Wachstum) - hierzu müssten die Variablen tatsächlich transformiert werden.
 
-# Weitere nichtlineare Effekte
+## Weitere nichtlineare Effekte
 *Im folgenden werden zum Teil fortgeschrittene Inhalte verwendet. Bitte sehen Sie dies als Bonus zum Vorlesungsstoff an.*
 
 Ein sehr wichtiges Vorhersagemodell zu Zeiten der Corona-Pandemie oder dem starken Bevölkerungswachstum ist das exponentielle Wachstum. Um dieses genauer zu verstehen, werden einige Grundlagen im Umgang mit Exponenten benötigt. Zum Beispiel muss man sich überlegen, welche Rate und welche Basis ein exponentieller Verlauf hat. Beispielsweise wächst $10^x$ deutlich schneller als $2^x$. 
@@ -333,9 +333,9 @@ Wären beide Koeffizienten negativ, so würde dies für *beschleunigtes exponent
 
 
 
-## Appendix
 
-#### __Appendix A:__ Übersicht über erklärte Varianzanteile
+## Appendix A {#AppendixA}
+### Übersicht über erklärte Varianzanteile
 
 Hier sind nochmals die Anteile erklärter Varianz der Bevölkerungsdichte über die Zeit in den vier betrachteten Modellen dargestellt:
 
@@ -350,7 +350,8 @@ round(R2, 4)
 ```
 
 
-#### __Appendix B:__ Übersicht über die Modelle
+## Appendix B
+### Übersicht über die Modelle
 
 Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich verschieden. Insbesondere der Regressionfehler ist an einer anderen Stelle:
 
