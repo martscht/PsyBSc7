@@ -70,12 +70,17 @@ summary(lm.beta(m1))
 
 ## 1. Prüfen Sie die Annahme der Homoskedastizität 
 ### a) durch Inspektion der Residuenplots und 
-### b) den Breusch–Pagan Test auf nicht-konstante Varianz
 
 ```{r}
 # Residuenplots
 residualPlots(m1, pch = 16)
+```
+
+### b) den Breusch–Pagan Test auf nicht-konstante Varianz
+
+
 # Test For Non-Constant Error Variance
+```{r}
 ncvTest(m1)
 ```
 
