@@ -62,10 +62,7 @@ mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 mod
 ```
 
-```{r, echo = F}
-# For further use
-mod <- lm(reading ~ female + IQ, data = Schulleistungen)
-```
+
 
 ```{r exercise_setup1, echo = F}
 # For further use in exercises
@@ -104,6 +101,11 @@ grade_result(
   incorrect = 'Leider falsch.',
   glue_correct = '{.correct}',
   glue_incorrect = '{.incorrect} {.message}')
+```
+
+```{r, echo = F}
+# For further use
+mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 ```
 
 ```{r, include = F}
@@ -196,12 +198,17 @@ studres(...)
  
 ```{r test_dataprep-hint-2}
 # Verwenden Sie die Befehle 
-studres(...)
+res <- studres(...)
+```
+ 
+```{r test_dataprep-hint-3}
+# Verwenden Sie die Befehle 
+res <- studres(...)
 # und
 data.frame(...)
 ```
 
-```{r test_dataprep-hint-3}
+```{r test_dataprep-hint-4}
 # Verwenden Sie die Befehle 
 studres(...)
 # und
