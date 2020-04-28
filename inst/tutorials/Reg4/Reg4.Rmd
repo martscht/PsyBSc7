@@ -201,11 +201,8 @@ Ein sehr wichtiges Vorhersagemodell zu Zeiten der Corona-Pandemie oder dem stark
 
 ```{r letter-a, echo=FALSE}
 question("Welche Aussagen über Logarithmen bzw. Exponenten stimmen?",
-  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $\text{log}_{10}(100)$ berechnen. Die Antwort ist 2.", correct = T),
-  answer("Modell mit 5 Faktoren, weil es das weniger sparsame Modell ist."),
-  answer("Modell mit 4 Faktoren, weil es das sparsamere Modell ist. "),
-  answer("Modell mit 5 Faktoren, weil der p-Wert (p < 0.05) anzeigt, dass die Null-Hypothese, dass beide Modell gleich gut zu den Daten passen, verworfen wird. Wir entscheiden uns daher für das weniger restriktive Modell mit mehr Parametern; hier: das Modell mit fünf Faktoren.", correct = TRUE),
-  answer("Modell mit 4 Faktoren, weil der p-Wert (p < 0.05) anzeigt, dass die Null-Hypothese, dass beide Modell gleich gut zu den Daten passen, verworfen wird. Wir entscheiden uns daher für das restriktivere Modell mit weniger Parametern; hier: das Modell mit vier Faktoren.")
+  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $\log_{10}(100)$ berechnen. Die Antwort ist 2.", correct = T),
+  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $\log_{10}(100)$ berechnen. Die Antwort ist 3.")
 )
 ```
 
