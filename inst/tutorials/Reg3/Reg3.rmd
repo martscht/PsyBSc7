@@ -92,10 +92,10 @@ summary(...) # um dem standardisierten Modell die Zusammenfassungsstatistiken zu
  
 ```{r test_stdreg-check}
 # Intro into excercise
-mod <- lm(reading ~ female + IQ, data = Schulleistungen)
+mod1 <- lm(reading ~ female + IQ, data = Schulleistungen)
 
 # Begin grading:
-res <- summary(lm.beta(mod))
+res <- summary(lm.beta(mod1))
 
 grade_result(
   fail_if(~ (!identical(.result, res)), 'Haben Sie die richtigen Input-Argumente verwendet? Sie wollen die summary des standardisierten Modells ausgeben. Schauen Sie sich ggf. die Hints an.'),
