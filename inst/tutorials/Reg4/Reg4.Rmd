@@ -306,7 +306,7 @@ ggplot(data = ..., aes(x = ..., y = ...)) + geom_point()
 ggplot(data = WorldPopulation, aes(x = Year, y = Population))+geom_point()
 ```
 
-Das Diagramm lässt deutlich einen nichtlinearen Anstieg der Weltbevölkerung von 1800 bis 2020 vermuten. Auffällig ist auch der leichte Knick, der um 1950 zu vermuten ist und ab welchem die Bevölkerung, deskriptiv gesehen, noch stärker wächst. Dieser Knick ist zum Teil durch das Ende des Krieges, aber auch durch modernere Landwirtschaft und das Aufkommen von neuen Medikamenten (z.B. Penezilin) zu erklären. Wir wollen uns naiver Weise ein Regressionmodell, also einen linearen Verlauf, der Weltbevölkerung vorhergesagt durch das Jahr ansehen.
+Das Diagramm lässt deutlich einen nichtlinearen Anstieg der Weltbevölkerung von 1800 bis 2020 vermuten. Auffällig ist auch der leichte Knick, der um 1950 zu vermuten ist und ab welchem die Bevölkerung, deskriptiv gesehen, noch stärker wächst. Dieser Knick ist zum Teil durch das Ende des Krieges, aber auch durch modernere Landwirtschaft und das Aufkommen von neuen Medikamenten (z.B. Penezilin) zu erklären. Wir wollen uns naiver Weise ein Regressionmodell, also einen linearen Verlauf, der Weltbevölkerung vorhergesagt durch das Jahr, ansehen.
 
 
 ```{r, fig.height=6, fig.align="center"}
@@ -330,20 +330,66 @@ ggplot(data = df_res, aes(x = res)) +
      labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das lineare Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
 ```
 
-Durch `+ geom_smooth(method="lm", formula = "y~x")`, kann mit `ggplot` ein linearer Trend inklusive Konfidenzintervall hinzugefügt werden. Obwohl ein linearer Verlauf sehr unwahrscheinlich erscheint, können mit dem linearen Modell bereits `r round(summary(m_l)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte durch die Jahreszahl eklären. Wie der Grafik deutlich zu entnehmen ist, sind die Residuen in dieser Regressionanalyse stark abhängig von der Jahreszahl (negatives Residuum von von a. 1860-1970 und positive Residuen sonst; Wiederholung: $\varepsilon_i=Y_i-\hat{Y}_i$, wobei $\hat{Y}_i$ der vorhergesagte Wert ist). Auch wenn wir uns das zugehörige Histogramm der Residuen ansehen, widerspricht dieses der Annahme auf Normalverteilung. Vielleicht ist auch hier ein quadratischer Effekt versteckt? Wir möchten dem auf den Grund gehen und nutzen wieder die Funktion `poly`, um ein Polynom 2. Grades (eine quadratische Funktion) der Jahreszahl in unsere Analysen mit aufzunehmen.
+Durch `+ geom_smooth(method="lm", formula = "y~x")`, kann mit `ggplot` ein linearer Trend inklusive Konfidenzintervall hinzugefügt werden. Obwohl ein linearer Verlauf sehr unwahrscheinlich erscheint, können mit dem linearen Modell bereits `r round(summary(m_l)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte durch die Jahreszahl eklärt werden. Wie der Grafik deutlich zu entnehmen ist, sind die Residuen in dieser Regressionanalyse stark abhängig von der Jahreszahl (negatives Residuum von von a. 1860-1970 und positive Residuen sonst; *Wiederholung*: $\varepsilon_i=Y_i-\hat{Y}_i$, wobei $\hat{Y}_i$ der vorhergesagte Wert ist). Auch wenn wir uns das zugehörige Histogramm der Residuen ansehen, widerspricht dieses der Annahme auf Normalverteilung. Vielleicht ist auch hier ein quadratischer Effekt versteckt? Wir möchten dem auf den Grund gehen und nutzen wieder die Funktion `poly`, um ein Polynom 2. Grades (eine quadratische Funktion) der Jahreszahl in unsere Analysen mit aufzunehmen.
 
-```{r, fig.height=6, fig.align="center"}
+```{r exercise_quad_pop,  exercise = TRUE, exercise.eval = FALSE}
+m_q <- ... # quadratischer Verlauf
+summary(...)
+```
+
+```{r exercise_quad_pop-solution}
 m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
 summary(m_q)
-summary(m_q)$r.squared - summary(m_l)$r.squared  # Inkrement      
-anova(m_l, m_q)
+```
+
+```{r exercise_setup2, include = F}
+m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
+m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
+```
+
+```{r, include = F}
+m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
+m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
+```
+
+Das Varianzinkrement beläuft sich auf:
+```{r}
+summary(m_q)$r.squared - summary(m_l)$r.squared  # Inkrement 
+```
+
+Testen Sie dieses auf Signifikanz mit `anova`.
+
+```{r test_anova_pop,  exercise = TRUE, exercise.eval = FALSE, setup="exercise_setup2"}
+
+```
+
+
+```{r test_anova_pop-check}
+# Intro into excercise
+m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
+m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
+
+# Begin grading:
+res <- anova(m_l, m_q)
+sol2 <- anova(m_q, m_l)
+
+grade_result(
+  fail_if(~ (!identical(.result, res) & !identical(.result, sol2)), 'Der Befehl anova muss in diesem Zusammenhang zwei Argumente entgegennehmen: die zwei Regressions-Objekte, die wir zuvor abgespeichert hatten. Schauen Sie in der Übung zuvor an, wie dieses Modell hieß, falls Sie sich nicht sicher sind.'),
+    fail_if(~ (identical(.result, sol2)), 'Das ist an sich RICHTIG, allerdings sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m_l, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!'),
+  pass_if(~ identical(.result, res)),
+  correct = 'Sehr gut! Dies ist der Modellvergleich des ein- und zweifaktoriellen Modells. Hier sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m_l, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!',
+  incorrect = 'Leider falsch.',
+  glue_correct = '{.correct}',
+  glue_incorrect = '{.incorrect} {.message}')
+```
 
 
 
+
+```{r}
 res <- studres(m_q) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 # Grafisch: Histogramm mit Normalverteilungskurve
-library(ggplot2)
 ggplot(data = df_res, aes(x = res)) + 
      geom_histogram(aes(y =..density..),
                     bins = 10,                    # Wie viele Balken sollen gezeichnet werden?
@@ -351,7 +397,17 @@ ggplot(data = df_res, aes(x = res)) +
                     fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
      stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
      labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das quadratische Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
+```
 
+Auch dem `geom_smooth` Befehl kann einfach das modifizierte Regressionsmodell übergeben werden. Stellen Sie die Weltbevölkerung sowie das lineare und das quadratische Modell dar.
+```{r exercise_graph_pop,  exercise = TRUE, exercise.eval = FALSE, fig.height=6, fig.align="center"}
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
+     geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf (bis hier her ist es Code der Aufgabe zuvor!)
+     ...                                                             # plotte quadratischen Verlauf
+```
+
+```{r exercise_graph_pop-solution}
+# Finale Lösung
 ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
      geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")  # plotte quadratischen Verlauf
