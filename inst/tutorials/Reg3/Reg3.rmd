@@ -96,7 +96,7 @@ lmbeta <- lm.beta(mod)
 res <- summary(lmbeta)
 
 grade_result(
-  fail_if(~ (!identical(.result, res)), 'Haben Sie die richtigen Input-Argumente verwendet? Sie wollen die summary des standardisierten Modells ausgeben. Schauen Sie sich ggf. die Hints an.'),
+  fail_if(~ (identical(.result, res)), 'Haben Sie die richtigen Input-Argumente verwendet? Sie wollen die summary des standardisierten Modells ausgeben. Schauen Sie sich ggf. die Hints an.'),
   pass_if(~ identical(.result, res)),
   correct = 'Sehr gut! Sie haben erfolgreich die summary des standardisierten Modells ausgegeben.',
   incorrect = 'Leider falsch.',
