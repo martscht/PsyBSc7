@@ -10,4 +10,5 @@ library(MASS)
 library(lm.beta) # erforderlich für standardiserte Gewichte
 
 # Datensatz laden
-data("Schulleistungen", package = "PsyBSc7")
+data("PISA2009", package = "PsyBSc7")
+data("Worldpopulation", package = "PsyBSc7")

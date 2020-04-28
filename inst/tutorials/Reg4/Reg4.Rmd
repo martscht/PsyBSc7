@@ -257,7 +257,7 @@ log(9)/log(3) # mit ln
 ### Das Modellieren von exponentiellem Wachstum
 
 
-Wir betrachten nun eine allgemeine exponentielle Wachstumsfunktion $f(x) = a\ b^{c\ x}$ (hierbei ist $a$ ein Vorfaktor, der die Ausprägung an der Stelle $x=0$ beschreibt, $b$ ist die Basis des exponentiellen Wachstums und $c$ ist ein *eigentlich redundanter* Ratenparameter). Wegen der Beliebigkeit der Basis ist dies gleich $f(x) = e^{\text{ln}(a\ b^{c\ x})}=e^{\text{ln}(a) + \text{ln}(b)cx}$. Nun sind $\text{ln}(a)$ und $\text{ln}(b)c$ zwei Konstanten, die wir einfach umbenennen dürfen. Wir können sie beispielsweise $\beta_0$ und $\beta_1$ nennen; also $\beta_0 := \text{ln}(a)$ und $\beta_1:=\text{ln}(b)c$. Folglich steht $f(x) = e^{\beta_0 + \beta_1x}$ für beliebiges exponentielle Wachstum. Gleichzeit bedeutet dies, dass $\text{ln}(f(x)) = \beta_0 + \beta_1x$ eine lineare Funktion ist, welche wir ganz einfach mit einer Regressionanalyse, also `lm` in R, untersuchen können! Wir können somit sagen, dass durch Logarithmieren von $f(x)$, wir in der Lage sind, das exponentielle Wachstum zu *Linearisieren*, also das exponentielle Wachstum in eine lineare Funktion zu transformieren, welche mit Auswertungsinstrumenten für lineare Funktionen untersucht werden können. Dies bedeutet, dass wir nach logarithmierern der abhängigen Variable in der Lage sind die gesamte Klasse der exponentiellen Funktionen/des exponentiellen Wachstums für die Modellierung unserer Daten zu verwenden. Die folgenden zwei Grafiken verdeutlichen dies (Sie können hier die Parameter beliebig verändern und sich den Effekt auf die Grafiken ansehen):
+Wir betrachten nun eine allgemeine exponentielle Wachstumsfunktion $f(x) = a\ b^{c\ x}$ (hierbei ist $a$ ein Vorfaktor, der die Ausprägung an der Stelle $x=0$ beschreibt, $b$ ist die Basis des exponentiellen Wachstums und $c$ ist ein *eigentlich redundanter* Ratenparameter). Wegen der Beliebigkeit der Basis ist dies gleich $f(x) = e^{\text{ln}(a\ b^{c\ x})}=e^{\text{ln}(a) + \text{ln}(b)cx}$. Nun sind $\text{ln}(a)$ und $\text{ln}(b)c$ zwei Konstanten, die wir einfach umbenennen dürfen. Wir können sie beispielsweise $\beta_0$ und $\beta_1$ nennen; also $\beta_0 := \text{ln}(a)$ und $\beta_1:=\text{ln}(b)c$. Folglich steht $f(x) = e^{\beta_0 + \beta_1x}$ für beliebiges exponentielle Wachstum. Gleichzeit bedeutet dies, dass $\text{ln}(f(x)) = \beta_0 + \beta_1x$ eine lineare Funktion ist, welche wir ganz einfach mit einer Regressionanalyse, also `lm` in R, untersuchen können! Wir können somit sagen, dass durch Logarithmieren von $f(x)$, wir in der Lage sind, das exponentielle Wachstum zu *Linearisieren*, also das exponentielle Wachstum in eine lineare Funktion zu transformieren, welche mit Auswertungsinstrumenten für lineare Funktionen untersucht werden können. Dies bedeutet, dass wir nach logarithmierern der abhängigen Variable in der Lage sind die gesamte Klasse der exponentiellen Funktionen/des exponentiellen Wachstums für die Modellierung unserer Daten zu verwenden. Die folgenden zwei Grafiken verdeutlichen dies (Sie können hier die Parameter beliebig verändern und sich den Effekt auf die Grafiken ansehen; die horizontale gestrichelte Linie repräsentiert den Wert $a$, an welchem die Kurve $f$ bzw. $\ln(f)$ die y-Achse schneidet):
 
 ```{r exercise_exp_lograph,  exercise = TRUE, exercise.eval = FALSE, fig.height=6, fig.align="center"}
 x <- seq(-1,2,0.1) # x = Variablen (als Zahlen zwischen -1 und 2)
@@ -279,15 +279,34 @@ abline(h = log(a), lty = 3)  # im Punkt log(a) schneidet log(f) (das linearisier
 
 
 Nun können wir beispielsweise die Entwicklung der Weltbevölkerung von 1800 bis 2020 modellieren. Dazu müssen wir zunächst die Daten einladen:
-Die Dokumentation des Datensatzes mit Datenquellen sind hier einzusehen: [gapminder.org-Dokumentationen](https://www.gapminder.org/data/documentation/gd003/).
+Die Dokumentation des Datensatzes mit Datenquellen sind hier einzusehen: [gapminder.org-Dokumentationen](https://www.gapminder.org/data/documentation/gd003/). Schauen wir uns zunächst den Datensatz an.
 
-```{r, fig.height=6, fig.align="center"}
+```{r}
 data("WorldPopulation", package = "PsyBSc7") # Bereits zusammengefasster Datensatz von 1800-2020
 head(WorldPopulation) # Datenstruktur
+```
+
+In der ersten Spalte steht das Jahr; in der 2. die Weltbevölkerungsgröße. Wir wollen dies uns grafisch ansehen. Verwenden Sie `ggplot`, um die Population (`Population`) gegen das Jahr (`Year`) abzutragen und verwenden Sie `geom_point()`.
+
+```{r exercise_graph_pop,  exercise = TRUE, exercise.eval = FALSE, fig.height=6, fig.align="center"}
+ggplot(...)
+```
+
+```{r exercise_graph_pop-hint-1}
+# Sie müssen den Datensatz sowie die Namen der Variablen verwenden
+ggplot(data = ..., aes(x = ..., y = ...))
+```
+
+```{r exercise_graph_pop-hint-1}
+# Sie müssen den Datensatz sowie die Namen der Variablen verwenden
+ggplot(data = ..., aes(x = ..., y = ...)) + geom_point()
+```
+
+```{r exercise_graph_pop-solution}
 ggplot(data = WorldPopulation, aes(x = Year, y = Population))+geom_point()
 ```
 
-Das Diagramm lässt deutlich einen nichtlinearen Anstieg der Weltbevölkerung von 1800 bis 2020 vermuten. Auffällig ist auch der leichte Knick, der um 1950 zu vermuten ist und ab welchem die Bevölkerung, deskriptiv gesehen, noch stärker wächst. Dieser Knick ist zum Teil durch das Ende des Krieges, aber auch durch modernere Landwirtschaft und das Aufkommen von neuen Medikamenten (z.B. Penezilin) zu erklären. 
+Das Diagramm lässt deutlich einen nichtlinearen Anstieg der Weltbevölkerung von 1800 bis 2020 vermuten. Auffällig ist auch der leichte Knick, der um 1950 zu vermuten ist und ab welchem die Bevölkerung, deskriptiv gesehen, noch stärker wächst. Dieser Knick ist zum Teil durch das Ende des Krieges, aber auch durch modernere Landwirtschaft und das Aufkommen von neuen Medikamenten (z.B. Penezilin) zu erklären. Wir wollen uns naiver Weise ein Regressionmodell, also einen linearen Verlauf, der Weltbevölkerung vorhergesagt durch das Jahr ansehen.
 
 
 ```{r, fig.height=6, fig.align="center"}
@@ -295,6 +314,10 @@ ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")         # plotte linearen Verlauf 
 m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
 summary(m_l)  
+
+#########
+### Normalverteilung der Residuen?
+##
 res <- studres(m_l) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 # Grafisch: Histogramm mit Normalverteilungskurve
@@ -307,7 +330,7 @@ ggplot(data = df_res, aes(x = res)) +
      labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das lineare Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
 ```
 
-Obwohl ein linearer Verlauf sehr unwahrscheinlich wirkt, können hier bereits `r round(summary(m_l)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte durch die Jahreszahl eklären. Wie der Grafik deutlich zu entnehmen ist, sind die Residuen in dieser Regressionanalyse stark abhängig von der Jahreszahl (negatives Residuum von von a. 1860-1970 und positive Residuen sonst; Wiederholung: $\varepsilon_i=Y_i-\hat{Y}_i$, wobei $\hat{Y}_i$ der vorhergesagte Wert ist). Auch wenn wir uns das zugehörige Histogramm der Residuen ansehen, widerspricht dieses der Annahme auf Normalverteilung. Vielleicht ist auch hier ein quadratischer Effekt versteckt? Wir möchten dem auf den Grund gehen und nutzen wieder die Funktion `poly`, um ein Polynom 2. Grades (eine quadratische Funktion) der Jahreszahl in unsere Analysen mit aufzunehmen.
+Durch `+ geom_smooth(method="lm", formula = "y~x")`, kann mit `ggplot` ein linearer Trend inklusive Konfidenzintervall hinzugefügt werden. Obwohl ein linearer Verlauf sehr unwahrscheinlich erscheint, können mit dem linearen Modell bereits `r round(summary(m_l)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte durch die Jahreszahl eklären. Wie der Grafik deutlich zu entnehmen ist, sind die Residuen in dieser Regressionanalyse stark abhängig von der Jahreszahl (negatives Residuum von von a. 1860-1970 und positive Residuen sonst; Wiederholung: $\varepsilon_i=Y_i-\hat{Y}_i$, wobei $\hat{Y}_i$ der vorhergesagte Wert ist). Auch wenn wir uns das zugehörige Histogramm der Residuen ansehen, widerspricht dieses der Annahme auf Normalverteilung. Vielleicht ist auch hier ein quadratischer Effekt versteckt? Wir möchten dem auf den Grund gehen und nutzen wieder die Funktion `poly`, um ein Polynom 2. Grades (eine quadratische Funktion) der Jahreszahl in unsere Analysen mit aufzunehmen.
 
 ```{r, fig.height=6, fig.align="center"}
 m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
