@@ -40,7 +40,7 @@ Loesungen_2 <- function(password) {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_3 <- function() {
+Loesungen_3 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -60,7 +60,7 @@ Loesungen_3 <- function() {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_4 <- function() {
+Loesungen_4 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -79,7 +79,7 @@ Loesungen_4 <- function() {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_5 <- function() {
+Loesungen_5 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -98,7 +98,7 @@ Loesungen_5 <- function() {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_6 <- function() {
+Loesungen_6 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -118,7 +118,7 @@ Loesungen_6 <- function() {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_7 <- function() {
+Loesungen_7 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -138,7 +138,7 @@ Loesungen_7 <- function() {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_8 <- function() {
+Loesungen_8 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -158,7 +158,7 @@ Loesungen_8 <- function() {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_9 <- function() {
+Loesungen_9 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -178,7 +178,7 @@ Loesungen_9 <- function() {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_10 <- function() {
+Loesungen_10 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -198,7 +198,7 @@ Loesungen_10 <- function() {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_11 <- function() {
+Loesungen_11 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
