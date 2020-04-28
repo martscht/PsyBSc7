@@ -25,7 +25,6 @@ data("PISA_2009_v2", package = "PsyBSc7")
 knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 ```
 
-?????????? lm.beta auch einbauen in normale Sitzung !??!?!
 
 ### Datensatz (wie beim letzten Termin)
 
@@ -36,8 +35,8 @@ library(car)
 library(MASS)
 library(lm.beta) # erforderlich für standardiserte Gewichte
 # Datensatz laden 
-PISA_2009 <- readRDS("PISA_2009_v2.rda")
 
+data("PISA2009", package = "PsyBSc7")
 ```
 
 Im Einzelnen enthält der Datensatz die folgenden Variablen:
@@ -215,4 +214,8 @@ summary(m1)
 summary(m1.c)
 summary(m1.c)$r.squared - summary(m1)$r.squared  # erklärte Varianz durch Entfernen des Datenpunktes
 ```
+
+
+#
+$*$ *Diese Sitzung basiert zum Teil auf Unterlagen von Prof. Johannes Hartig aus dem SoSe 2019.*
 
