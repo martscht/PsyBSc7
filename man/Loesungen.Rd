@@ -5,6 +5,14 @@
 \alias{Loesungen_1}
 \alias{Loesungen_2}
 \alias{Loesungen_3}
+\alias{Loesungen_4}
+\alias{Loesungen_5}
+\alias{Loesungen_6}
+\alias{Loesungen_7}
+\alias{Loesungen_8}
+\alias{Loesungen_9}
+\alias{Loesungen_10}
+\alias{Loesungen_11}
 \title{R-Skripte zur Lösung der Aufgaben im Praktikum zu PsyBSc 7, Sommersemester 2020
 
 Mit diesen Funktionen können Sie die Lösungen zu den Übungen in den einzelnen Sitzungen aufrufen. Die Passwörter werden nach dem Abgabetermin im OLAT bekannt gegeben.}
@@ -13,7 +21,23 @@ Loesungen_1(password)
 
 Loesungen_2(password)
 
-Loesungen_3(password)
+Loesungen_3()
+
+Loesungen_4()
+
+Loesungen_5()
+
+Loesungen_6()
+
+Loesungen_7()
+
+Loesungen_8()
+
+Loesungen_9()
+
+Loesungen_10()
+
+Loesungen_11()
 }
 \description{
 R-Skripte zur Lösung der Aufgaben im Praktikum zu PsyBSc 7, Sommersemester 2020
