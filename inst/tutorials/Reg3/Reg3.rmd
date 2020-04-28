@@ -92,7 +92,7 @@ summary(...) # um dem standardisierten Modell die Zusammenfassungsstatistiken zu
 mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 
 # Begin grading:
-res <- summary(lm.beta(mod))
+res <- summary(mod)
 res$r.squared
 
 grade_result(
