@@ -93,6 +93,7 @@ mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 
 # Begin grading:
 res <- summary(lm.beta(mod))
+res$r.squared
 
 grade_result(
      fail_if(~ (!identical(.result, res)), 'Haben Sie die richtigen Input-Argumente verwendet? Sie wollen die studentisierten Resiuden abspeichern - als data.frame. Geben Sie diese Objekt aus (indem Sie den Namen des Objekts ohne Zuordnung als letztes schreiben).'),
