@@ -11,4 +11,4 @@ library(lm.beta) # erforderlich für standardiserte Gewichte
 
 # Datensatz laden
 data("PISA2009", package = "PsyBSc7")
-data("Worldpopulation", package = "PsyBSc7")
+data("WorldPopulation", package = "PsyBSc7")
