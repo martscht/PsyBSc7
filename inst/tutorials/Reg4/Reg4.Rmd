@@ -141,6 +141,10 @@ m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009)
 m1.b <- lm(Reading ~ HISEI + poly(MotherEdu, 2) + Books, data = PISA2009)
 ```
 
+```{r, echo = F}
+m1.b <- lm(Reading ~ HISEI + poly(MotherEdu, 2) + Books, data = PISA2009)
+```
+
 Mit dem folgenden Befehl können wir auf eine simple Weise das Inkrement bestimmen.
 ```{r}
 # Vergleich mit Modell ohne quadratischen Trend
