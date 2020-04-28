@@ -87,7 +87,7 @@ lm.beta(...) # um das geschätzte Modell zu standardisieren
 summary(...) # um dem standardisierten Modell die Zusammenfassungsstatistiken zu entlocken
 ```
 
-```{r excercise_stdreg-hint-solution}
+```{r excercise_stdreg-solution}
 #Finale Lösung
 summary(lm.beta(mod))
 ```
