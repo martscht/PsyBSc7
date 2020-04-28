@@ -57,7 +57,7 @@ In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`
 
 ```{r}
 # Berechnung des Modells und Ausgabe der Ergebnisse
-m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA_2009)
+m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009)
 summary(lm.beta(m1))
 ```
 
@@ -102,7 +102,7 @@ Wird für den Bildungsabschluss der Mutter mit der Funktion `poly` ein linearer 
 
 ```{r}
 # Modell mit linearem + quadratischem Trend für MotherEdu:
-m1.b <- lm(Reading ~ HISEI + poly(MotherEdu, 2) + Books, data = PISA_2009)
+m1.b <- lm(Reading ~ HISEI + poly(MotherEdu, 2) + Books, data = PISA2009)
 summary(lm.beta(m1.b))
 # Vergleich mit Modell ohne quadratischen Trend
 summary(m1.b)$r.squared - summary(m1)$r.squared # Inkrement
@@ -136,15 +136,15 @@ Die Funktion `apply` führt auf die Matrix, welche dem Argument `X` übergeben w
 
 
 ```{r}
-m1.b1 <- lm(Reading ~ HISEI + poly(MotherEdu, 1) + Books, data = PISA_2009)
+m1.b1 <- lm(Reading ~ HISEI + poly(MotherEdu, 1) + Books, data = PISA2009)
 summary(lm.beta(m1.b1))
-m1.b2 <- lm(Reading ~ HISEI + poly(MotherEdu, 2) + Books, data = PISA_2009)
+m1.b2 <- lm(Reading ~ HISEI + poly(MotherEdu, 2) + Books, data = PISA2009)
 summary(lm.beta(m1.b2))
 
-PISA_2009$MotherEdu2 <- PISA_2009$MotherEdu^2 # füge dem Datensatz den quadrierten Bildungsabschluss der Mutter hinzu
-m1.c1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA_2009)
+PISA2009$MotherEdu2 <- PISA2009$MotherEdu^2 # füge dem Datensatz den quadrierten Bildungsabschluss der Mutter hinzu
+m1.c1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009)
 summary(lm.beta(m1.c1))
-m1.c2 <- lm(Reading ~ HISEI + MotherEdu + MotherEdu2 + Books, data = PISA_2009)
+m1.c2 <- lm(Reading ~ HISEI + MotherEdu + MotherEdu2 + Books, data = PISA2009)
 summary(lm.beta(m1.c2))
 
 rbind(coef(m1.b1), coef(m1.c1))
