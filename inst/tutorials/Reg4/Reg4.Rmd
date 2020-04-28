@@ -212,7 +212,7 @@ question("Welche Aussagen über Logarithmen bzw. Exponenten stimmen?",
   answer("Es gilt immer $a^x < b^x$ für a < b und alle x."),
   answer("Es gilt immer $a^x < b^x$ für 1 < a < b und alle x.", correct = T),
   answer("Es gilt immer $a^x > b^x$ für 0 < a < b < 1 und alle x.", correct = T), 
-  answer("Es gilt immer $a^x < b^x$ für 0 < a < b < 1 und alle x.", correct = T)
+  answer("Es gilt immer $a^x < b^x$ für 0 < a < b < 1 und alle x.")
 )
 ```
 Im folgenden Exkurs haben Sie die Möglichkeit Ihr Wissen nochmal aufzufrischen und zu erweitern. Ihnen werden Quellen genannt, in welchen Sie weitere Inhalte nachlesen können.
