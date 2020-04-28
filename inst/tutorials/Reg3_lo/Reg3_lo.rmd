@@ -21,7 +21,7 @@ library(car)
 library(MASS)
 library(ggplot2)
 
-data("PISA_2009_v2", package = "PsyBSc7")
+data("PISA2009", package = "PsyBSc7")
 knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 ```
 
