@@ -62,7 +62,7 @@ summary(lm.beta(m1))
 
 Die Residuenplots sowie die Testung auf quadratische Trends zeigen an, dass für den Bildungsabschluss der Mutter auch eine quadratische Beziehung besteht:
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 # Residuenplots
 residualPlots(m1, pch = 16)
 ```
@@ -71,7 +71,7 @@ Die Effekte von Sozialstatus und Büchern werden durch das lineare Modell gut wi
 
 Auch dem Histogramm war eine Schiefe zu entnehmen, welche durch nichtlineare Terme entstehen können (im niederen Bereich liegen mehr Werte; eine Linksschiefe/Rechtssteile ist zu erkennen). 
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 res <- studres(m1) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 # Grafisch: Histogramm mit Normalverteilungskurve
@@ -169,9 +169,9 @@ sol2 <- anova(m1.b, m1)
 
 grade_result(
   fail_if(~ (!identical(.result, res) & !identical(.result, sol2)), 'Der Befehl anova muss in diesem Zusammenhang zwei Argumente entgegennehmen: die zwei Regressions-Objekte, die wir zuvor abgespeichert hatten. Schauen Sie in der Übung zuvor an, wie dieses Modell hieß, falls Sie sich nicht sicher sind.'),
-    fail_if(~ (identical(.result, sol2)), 'Das ist an sich RICHTIG, allerdings sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m1, da sonst die df negativ sein können und auch die Änderung in R^2 negativ sein könnte!'),
+    fail_if(~ (identical(.result, sol2)), 'Das ist an sich RICHTIG, allerdings sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m1, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!'),
   pass_if(~ identical(.result, res)),
-  correct = 'Sehr gut! Dies ist der Modellvergleich des ein- und zweifaktoriellen Modells. Hier sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m1, da sonst die df negativ sein können und auch die Änderung in R^2 negativ sein könnte!',
+  correct = 'Sehr gut! Dies ist der Modellvergleich des ein- und zweifaktoriellen Modells. Hier sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m1, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!',
   incorrect = 'Leider falsch.',
   glue_correct = '{.correct}',
   glue_incorrect = '{.incorrect} {.message}')
@@ -183,11 +183,194 @@ grade_result(
 
 Erzeugt man für das erweiterte Modell Residuenplots, ist der quadratische Trend beim Bildungsabschluss komplett verschwunden - er ist ja schon im Modell enthalten:
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 residualPlots(m1.b, pch = 16)
 ```
 
+Wenn Sie noch mehr über die Funktion `poly` und ihre Vorteile erfahren möchten, dann schauen Sie sich doch mal den [Appendix A](#AppendixA) an.
 
+Mit Hilfe von `poly(X, p)`, lassen sich Polynome bis zum Grad $p$ (als $X, X^2,\dots,X^{p-1},X^p$) in die Regression mit aufnehmen, ohne, dass sich die Parameterschätzungen der anderen Potenzen von $X$ ändern. Mit Hilfe von `I()` lassen sich innerhalb des `lm` Befehls zu dem noch weitere Funktionale hinzufügen, ohne diese vorher erzeugen zu müssen. Beispielsweise ließe sich durch `lm(Y ~ X + I(sin(X))) + I(exp(sqrt(X))` folgendes Regressionsmodell schätzen: $Y = \beta_0+\beta_1X + \beta_2\sin(X) + \beta_3e^{\sqrt{X}} + \varepsilon$. Allerdings lassen sich so nicht Wachstumsraten modellieren (z.B. exponentielles oder logarithmisches Wachstum) - hierzu müssten die Variablen tatsächlich transformiert werden.
+
+## Weitere nichtlineare Effekte
+*Im folgenden werden zum Teil fortgeschrittene Inhalte verwendet. Bitte sehen Sie dies als Bonus zum Vorlesungsstoff an.*
+
+Ein sehr wichtiges Vorhersagemodell zu Zeiten der Corona-Pandemie oder dem starken Bevölkerungswachstum ist das exponentielle Wachstum. Um dieses genauer zu verstehen, werden einige Grundlagen im Umgang mit Exponenten benötigt. Zum Beispiel muss man sich überlegen, welche Rate und welche Basis ein exponentieller Verlauf hat. Beispielsweise wächst $10^x$ deutlich schneller als $2^x$. 
+
+### Exkurs: Exponenten und Logarithmen
+
+Um eine solche Gleichung nach $x$ aufzulösen wird der Logarithmus verwendet, denn er ist die Umkehrfunktion zum Exponentiellen (siehe beispielsweise hier für eine Wiederholung zum [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html), [Exponenten; Pierce (2019)](http://www.mathsisfun.com/exponent.html) oder [Exponentenrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponent-laws.html)). In der Schule wird zunächst der Logarithmus zur Basis *10* gelehrt. So kann man die Gleichung $10^x = 100$ leicht auflösen: Dazu müssen beide Seiten logarithmiert (zur Basis *10*) werden $\log_{10}(10^x) = \log_{10}(100)$ und wir erhalten $x = 2$. Es muss allerdings nicht immer der richtige Logarithmus zur jeweiligen Basis sein. Eine wichtige Logarithmusrechenregel besagt, dass der Logarithmus zur Basis *a* leicht mit Hilfe des Logarithmus zur Basis *b* berechnet werden kann: 
+
+$\log_{a}(x) = \frac{\log_{b}(x)}{\log_{b}(a)}$,     siehe bspw. [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html).
+
+Da diese Gesetzmäßigkeit gilt, wird in der Mathematik und auch in der Statistik meist nur der natürliche Logarithmus (*ln; logarithmus naturalis*) verwendet. Die Basis ist hierbei  *e* ($\approx 2.718\dots$). Mit dieser Rechenregel sowie der Rechenregeln für Exponenten können wir jedes exponentielles Wachstum als Wachstum zur Basis *e* darstellen, denn
+
+$a^x = e^{\text{ln}(a^x)}=e^{x\text{ln}(a)}$, z.B. ist $10^3=e^{\text{ln}(10^3)}=e^{3\text{ln}(10)}=1000$. 
+
+Da sich durch *e* und *ln* alle exponentiellen Verläufe darstellen lassen, wird in der Mathematik häufig *log* als das Symbol für den natürlich Logarithmus verwendet; so ist es auch in R: ohne weitere Einstellungen ist `log` der natürliche Logarithmus und `exp` ist die Exponentialfunktion:
+
+```{r}
+10^3
+exp(3*log(10))
+```
+
+### Das Modellieren von exponentiellem Wachstum
+
+
+Wir betrachten nun eine allgemeine exponentielle Wachstumsfunktion $f(x) = a\ b^{c\ x}$ (hierbei ist $a$ ein Vorfaktor, der die Ausprägung an der Stelle $x=0$ beschreibt, $b$ ist die Basis des exponentiellen Wachstums und $c$ ist ein *eigentlich redundanter* Ratenparameter). Wegen der Beliebigkeit der Basis ist dies gleich $f(x) = e^{\text{ln}(a\ b^{c\ x})}=e^{\text{ln}(a) + \text{ln}(b)cx}$. Nun sind $\text{ln}(a)$ und $\text{ln}(b)c$ zwei Konstanten, die wir einfach umbenennen dürfen. Wir können sie beispielsweise $\beta_0$ und $\beta_1$ nennen; also $\beta_0 := \text{ln}(a)$ und $\beta_1:=\text{ln}(b)c$. Folglich steht $f(x) = e^{\beta_0 + \beta_1x}$ für beliebiges exponentielle Wachstum. Gleichzeit bedeutet dies, dass $\text{ln}(f(x)) = \beta_0 + \beta_1x$ eine lineare Funktion ist, welche wir ganz einfach mit einer Regressionanalyse, also `lm` in R, untersuchen können! Wir können somit sagen, dass durch Logarithmieren von $f(x)$, wir in der Lage sind, das exponentielle Wachstum zu *Linearisieren*, also das exponentielle Wachstum in eine lineare Funktion zu transformieren, welche mit Auswertungsinstrumenten für lineare Funktionen untersucht werden können. Dies bedeutet, dass wir nach logarithmierern der abhängigen Variable in der Lage sind die gesamte Klasse der exponentiellen Funktionen/des exponentiellen Wachstums für die Modellierung unserer Daten zu verwenden. Die folgenden zwei Grafiken verdeutlichen dies:
+
+```{r, fig.height=6, fig.align="center"}
+x <- seq(-1,2,0.1) # x = Variablen (als Zahlen zwischen -1 und 2)
+a <- 2   # Vorfaktor, der die Ausprägung an der Stelle x=0 beschreibt
+b <- 3   #  Basis des exponentiellen Wachstums
+c <- 1.5 # *eigentlich redundanter* Ratenparameter
+f <- a*b^(c*x) # f(x), eine exponentiell-wachsende Funktion in x
+plot(x = x, y = f, type = "l", col = "blue") # plotte f(x) gegen x
+abline(v = 0, lty = 3) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
+abline(h = a, lty = 3) # im Punkt a schneidet f (das exponentielle Wachstum) die y-Achse (x=0), h = a zeichnet zu y = a eine horizontale Linie
+
+plot(x = x, y = log(f), type = "l", col = "blue") # plotte ln(f(x)) gegen x
+abline(v = 0, lty = 3) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
+abline(h = log(a), lty = 3)  # im Punkt log(a) schneidet log(f) (das linearisierte exponentielle Wachstum) die y-Achse (x=0), h =llog(a) zeichnet zu y = log(a) eine horizontale Linie
+```
+
+### Das Modellieren von exponentiellem Wachstum am Beispiel der Weltbevölkerung von 1800 bis 2020
+
+
+Nun können wir beispielsweise die Entwicklung der Weltbevölkerung von 1800 bis 2020 modellieren. Dazu müssen wir zunächst die Daten einladen:
+Die Dokumentation des Datensatzes mit Datenquellen sind hier einzusehen: [gapminder.org-Dokumentationen](https://www.gapminder.org/data/documentation/gd003/).
+
+```{r, fig.height=6, fig.align="center"}
+data("WorldPopulation", package = "PsyBSc7") # Bereits zusammengefasster Datensatz von 1800-2020
+head(WorldPopulation) # Datenstruktur
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+geom_point()
+```
+
+Das Diagramm lässt deutlich einen nichtlinearen Anstieg der Weltbevölkerung von 1800 bis 2020 vermuten. Auffällig ist auch der leichte Knick, der um 1950 zu vermuten ist und ab welchem die Bevölkerung, deskriptiv gesehen, noch stärker wächst. Dieser Knick ist zum Teil durch das Ende des Krieges, aber auch durch modernere Landwirtschaft und das Aufkommen von neuen Medikamenten (z.B. Penezilin) zu erklären. 
+
+
+```{r, fig.height=6, fig.align="center"}
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
+     geom_point()+geom_smooth(method="lm", formula = "y~x")         # plotte linearen Verlauf 
+m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
+summary(m_l)  
+res <- studres(m_l) # Studentisierte Residuen als Objekt speichern
+df_res <- data.frame(res) # als Data.Frame für ggplot
+# Grafisch: Histogramm mit Normalverteilungskurve
+ggplot(data = df_res, aes(x = res)) + 
+     geom_histogram(aes(y =..density..),
+                    bins = 10,                    # Wie viele Balken sollen gezeichnet werden?
+                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
+                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
+     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
+     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das lineare Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
+```
+
+Obwohl ein linearer Verlauf sehr unwahrscheinlich wirkt, können hier bereits `r round(summary(m_l)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte durch die Jahreszahl eklären. Wie der Grafik deutlich zu entnehmen ist, sind die Residuen in dieser Regressionanalyse stark abhängig von der Jahreszahl (negatives Residuum von von a. 1860-1970 und positive Residuen sonst; Wiederholung: $\varepsilon_i=Y_i-\hat{Y}_i$, wobei $\hat{Y}_i$ der vorhergesagte Wert ist). Auch wenn wir uns das zugehörige Histogramm der Residuen ansehen, widerspricht dieses der Annahme auf Normalverteilung. Vielleicht ist auch hier ein quadratischer Effekt versteckt? Wir möchten dem auf den Grund gehen und nutzen wieder die Funktion `poly`, um ein Polynom 2. Grades (eine quadratische Funktion) der Jahreszahl in unsere Analysen mit aufzunehmen.
+
+```{r, fig.height=6, fig.align="center"}
+m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
+summary(m_q)
+summary(m_q)$r.squared - summary(m_l)$r.squared  # Inkrement      
+anova(m_l, m_q)
+
+
+
+res <- studres(m_q) # Studentisierte Residuen als Objekt speichern
+df_res <- data.frame(res) # als Data.Frame für ggplot
+# Grafisch: Histogramm mit Normalverteilungskurve
+library(ggplot2)
+ggplot(data = df_res, aes(x = res)) + 
+     geom_histogram(aes(y =..density..),
+                    bins = 10,                    # Wie viele Balken sollen gezeichnet werden?
+                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
+                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
+     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
+     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das quadratische Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
+
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
+     geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
+     geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")  # plotte quadratischen Verlauf
+```
+
+Durch den quadratischen Verlauf lassen sich `r round(summary(m_q)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_q)$r.squared*100 - summary(m_l)$r.squared*100, 2)`% entspricht (*mit einer Irrtumswahrscheinlichkeit von 5% ist das Inkrement in der Population nicht null.* Dies ist äquivialent zu folgdender Aussage: *mit einer Irrtumswahrscheinlichkeit von 5% ist der Effektsparameter (der Regressionkoeffizient) des quadratischen Verlaufs in der Population nicht null*; dies spricht folglich für einen quadratischen im Gegensatz zu einem linearen Verlauf). Das Histogramm spricht nicht für Normalverteilung der Residuen. Allerdings ist der Grafik deutlich zu entnehmen, dass der quadratische Verlauf nicht weit vom empirischen entfernt liegt.
+
+Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besser beschreibt. Dazu müssen wir zunächst die Weltpopulation logarithmieren und können anschließend ein lineares Modell verwenden.
+
+
+
+```{r, fig.height=6, fig.align="center"}
+WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
+m_log <- lm(log_Population ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
+summary(m_log)
+
+WorldPopulation$pred_Pop_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
+
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
+     geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
+     geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")+  # plotte quadratischen Verlauf
+     geom_line(aes(x = Year, y = pred_Pop_exp), col = "red", lwd = 1.5)
+
+
+res <- studres(m_log) # Studentisierte Residuen als Objekt speichern
+df_res <- data.frame(res) # als Data.Frame für ggplot
+# Grafisch: Histogramm mit Normalverteilungskurve
+ggplot(data = df_res, aes(x = res)) + 
+     geom_histogram(aes(y =..density..),
+                    bins = 10,                    # Wie viele Balken sollen gezeichnet werden?
+                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
+                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
+     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
+     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das logarithmierte Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
+```
+
+Das lineare Modell für die logarithmierte Bevölkerunsdichte scheint gut zu den Daten zu passen. Insgesamt können `r round(summary(m_log)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden; etwas weniger als durch das quadratische Wachstum, durch welches `r round(summary(m_q)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden konnten. Das Diagramm der retransformierten vorhergesagten Werten signalisiert, dass ein exponentielles Wachstumsmodell die Daten gut beschreibt, allerdings scheint der quadratische Trend vor allem ab ca. 1975 die Daten besser zu beschreiben. Das Histogramm der Residuen des logarithmierten Modells spricht deutlich gegen die Normalverteilungsannahme. Um das Modell genauer zu untersuchen, schauen wir uns den Plot der logarithmierten Bevölkerungsdichte an: 
+
+```{r, fig.height=6, fig.align="center"}
+ggplot(data = WorldPopulation, aes(x = Year, y = log_Population))+
+     geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")+      # plotte linearen Verlauf 
+     geom_smooth(method="lm", formula = "y~poly(x,2)", col = "gold3")
+
+residualPlot(m_log) # Residuenplots
+```
+
+Vielleicht wächst die Bevölkerung sogar schneller als exponentiell? Die gelbe Linie im logarithmierten Plot lässt dies vermuten. Auch die Residuen lassen vermuten, dass nichtlineare Effekte bestehen. Um dies genauer zu untersuchen fügen wir auch in das logarithmierte Modell einen quadratischen Trend der Zeit ein.
+
+
+```{r, fig.height=6, fig.align="center"}
+m_log_quad <- lm(log_Population ~ poly(Year,2), data = WorldPopulation)
+summary(m_log_quad)
+anova(m_log, m_log_quad)
+WorldPopulation$pred_Pop_exp_quad <- exp(predict(m_log_quad))
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
+     geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
+     geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")+  # plotte quadratischen Verlauf
+     geom_line(aes(x = Year, y = pred_Pop_exp), col = "red", lwd = 1.5)+
+     geom_line(aes(x = Year, y = pred_Pop_exp_quad), col = "gold3", lwd = 2)
+
+res <- studres(m_log_quad) # Studentisierte Residuen als Objekt speichern
+df_res <- data.frame(res) # als Data.Frame für ggplot
+# Grafisch: Histogramm mit Normalverteilungskurve
+library(ggplot2)
+ggplot(data = df_res, aes(x = res)) + 
+     geom_histogram(aes(y =..density..),
+                    bins = 10,                    # Wie viele Balken sollen gezeichnet werden?
+                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
+                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
+     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
+     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das logarithmierte quadratische Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
+
+residualPlot(m_log_quad)
+```
+
+Durch den quadratisch-exponentiellen Verlauf lassen sich `r round(summary(m_log_quad)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_log_quad)$r.squared*100 - summary(m_log)$r.squared*100, 2)`% im Vergleich zum reinen exponentiellen Verlaufsmodell entspricht. Interessant zu sehen ist, dass fast 100% der Variation im Datensatz erklärbar ist. Auch deutlich zu sehen ist, dass der Knick um 1950 durch das quadratisch-exponentielle Wachstum am besten darzustellen/ zu modellieren ist.
+Das Histogramm der Residuen des logarithmierten quadratischen Modells (welches das quadratisch-exponentielle Wachstum der Bevölkerung darstellt) ist etwas rechts-schief/links-steil. Die Residuenplots zeigen außerdem, dass auch hier die Residuen nicht vollständig unsystematisch sind. Dennoch ist die Resiudalvarianz sehr klein.
+
+Da die Modelle des quadratischen und des quadratisch-exponentiellen Verlaufs nicht geschachtelt sind (sie gehen nicht auseinander hervor und sind nicht durch Restringieren, bzw. Nullsetzen, von Regressionsparametern aus einander überführbar) und können daher nicht inferenzstatistisch miteinander verglichen werden. Da das quadratisch-exponentielle Modell mehr Variation als das rein quadratische Modell aufklärt und auch grafisch besser zum Verlauf der Daten passt (*besonders von 1800 bis ca. 1850 sagt das quadratische Modell ein Verkleinern der Bevölkerung vorher*), entscheiden wir uns final für dieses. Was bedeuten nun die Parameter in unserem Modell? Der Regressionscoeffizient des linearen Trends von `poly` liegt bei `r round(coef(m_log_quad)[2], 2)` und der Koeffizient des quadratischen Trends bei `r round(coef(m_log_quad)[3], 2)`. Dies spricht für ein **beschläunigtes exponentielles Wachstum**. Nach diesem Vorhersagemodel scheinen die Menschen sich schneller als exponentiell zu vermehren (zumindest von 1800 bis 2020).
+
+Wären beide Koeffizienten negativ, so würde dies für *beschleunigtes exponentiellen Zerfall/Abnahme* sprechen. Ist der Koeffizient des quadratische Trends negativ, wird von *exponentiellen Wachstum mit Dämpfung* gesprochen. 
+
+
+## Appendix A {#AppendixA}
 ### Exkurs: Was genau macht `poly`?
 ```{r}
 X <- 1:10   # Variable X
@@ -223,190 +406,9 @@ rbind(coef(m1.b1), coef(m1.c1))
 rbind(coef(m1.b2),coef(m1.c2))
 ```
 
-Mit Hilfe von `poly(X, p)`, lassen sich Polynome bis zum Grad $p$ (als $X, X^2,\dots,X^{p-1},X^p$) in die Regression mit aufnehmen, ohne, dass sich die Parameterschätzungen der anderen Potenzen von $X$ ändern. Mit Hilfe von `I()` lassen sich innerhalb des `lm` Befehls zu dem noch weitere Funktionale hinzufügen, ohne diese vorher erzeugen zu müssen. Beispielsweise ließe sich durch `lm(Y ~ X + I(sin(X))) + I(exp(sqrt(X))` folgendes Regressionsmodell schätzen: $Y = \beta_0+\beta_1X + \beta_2\sin(X) + \beta_3e^{\sqrt{X}} + \varepsilon$. Allerdings lassen sich so nicht Wachstumsraten modellieren (z.B. exponentielles oder logarithmisches Wachstum) - hierzu müssten die Variablen tatsächlich transformiert werden.
-
-## Weitere nichtlineare Effekte
-*Im folgenden werden zum Teil fortgeschrittene Inhalte verwendet. Bitte sehen Sie dies als Bonus zum Vorlesungsstoff an.*
-
-Ein sehr wichtiges Vorhersagemodell zu Zeiten der Corona-Pandemie oder dem starken Bevölkerungswachstum ist das exponentielle Wachstum. Um dieses genauer zu verstehen, werden einige Grundlagen im Umgang mit Exponenten benötigt. Zum Beispiel muss man sich überlegen, welche Rate und welche Basis ein exponentieller Verlauf hat. Beispielsweise wächst $10^x$ deutlich schneller als $2^x$. 
-
-### Exkurs: Exponenten und Logarithmen
-
-Um eine solche Gleichung nach $x$ aufzulösen wird der Logarithmus verwendet, denn er ist die Umkehrfunktion zum Exponentiellen (siehe beispielsweise hier für eine Wiederholung zum [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html), [Exponenten; Pierce (2019)](http://www.mathsisfun.com/exponent.html) oder [Exponentenrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponent-laws.html)). In der Schule wird zunächst der Logarithmus zur Basis *10* gelehrt. So kann man die Gleichung $10^x = 100$ leicht auflösen: Dazu müssen beide Seiten logarithmiert (zur Basis *10*) werden $\log_{10}(10^x) = \log_{10}(100)$ und wir erhalten $x = 2$. Es muss allerdings nicht immer der richtige Logarithmus zur jeweiligen Basis sein. Eine wichtige Logarithmusrechenregel besagt, dass der Logarithmus zur Basis *a* leicht mit Hilfe des Logarithmus zur Basis *b* berechnet werden kann: 
-
-$\log_{a}(x) = \frac{\log_{b}(x)}{\log_{b}(a)}$,     siehe bspw. [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html).
-
-Da diese Gesetzmäßigkeit gilt, wird in der Mathematik und auch in der Statistik meist nur der natürliche Logarithmus (*ln; logarithmus naturalis*) verwendet. Die Basis ist hierbei  *e* ($\approx 2.718\dots$). Mit dieser Rechenregel sowie der Rechenregeln für Exponenten können wir jedes exponentielles Wachstum als Wachstum zur Basis *e* darstellen, denn
-
-$a^x = e^{\text{ln}(a^x)}=e^{x\text{ln}(a)}$, z.B. ist $10^3=e^{\text{ln}(10^3)}=e^{3\text{ln}(10)}=1000$. 
-
-Da sich durch *e* und *ln* alle exponentiellen Verläufe darstellen lassen, wird in der Mathematik häufig *log* als das Symbol für den natürlich Logarithmus verwendet; so ist es auch in R: ohne weitere Einstellungen ist `log` der natürliche Logarithmus und `exp` ist die Exponentialfunktion:
-
-```{r}
-10^3
-exp(3*log(10))
-```
-
-### Das Modellieren von exponentiellem Wachstum
 
 
-Wir betrachten nun eine allgemeine exponentielle Wachstumsfunktion $f(x) = a\ b^{c\ x}$ (hierbei ist $a$ ein Vorfaktor, der die Ausprägung an der Stelle $x=0$ beschreibt, $b$ ist die Basis des exponentiellen Wachstums und $c$ ist ein *eigentlich redundanter* Ratenparameter). Wegen der Beliebigkeit der Basis ist dies gleich $f(x) = e^{\text{ln}(a\ b^{c\ x})}=e^{\text{ln}(a) + \text{ln}(b)cx}$. Nun sind $\text{ln}(a)$ und $\text{ln}(b)c$ zwei Konstanten, die wir einfach umbenennen dürfen. Wir können sie beispielsweise $\beta_0$ und $\beta_1$ nennen; also $\beta_0 := \text{ln}(a)$ und $\beta_1:=\text{ln}(b)c$. Folglich steht $f(x) = e^{\beta_0 + \beta_1x}$ für beliebiges exponentielle Wachstum. Gleichzeit bedeutet dies, dass $\text{ln}(f(x)) = \beta_0 + \beta_1x$ eine lineare Funktion ist, welche wir ganz einfach mit einer Regressionanalyse, also `lm` in R, untersuchen können! Wir können somit sagen, dass durch Logarithmieren von $f(x)$, wir in der Lage sind, das exponentielle Wachstum zu *Linearisieren*, also das exponentielle Wachstum in eine lineare Funktion zu transformieren, welche mit Auswertungsinstrumenten für lineare Funktionen untersucht werden können. Dies bedeutet, dass wir nach logarithmierern der abhängigen Variable in der Lage sind die gesamte Klasse der exponentiellen Funktionen/des exponentiellen Wachstums für die Modellierung unserer Daten zu verwenden. Die folgenden zwei Grafiken verdeutlichen dies:
-
-```{r}
-x <- seq(-1,2,0.1) # x = Variablen (als Zahlen zwischen -1 und 2)
-a <- 2   # Vorfaktor, der die Ausprägung an der Stelle x=0 beschreibt
-b <- 3   #  Basis des exponentiellen Wachstums
-c <- 1.5 # *eigentlich redundanter* Ratenparameter
-f <- a*b^(c*x) # f(x), eine exponentiell-wachsende Funktion in x
-plot(x = x, y = f, type = "l", col = "blue") # plotte f(x) gegen x
-abline(v = 0, lty = 3) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
-abline(h = a, lty = 3) # im Punkt a schneidet f (das exponentielle Wachstum) die y-Achse (x=0), h = a zeichnet zu y = a eine horizontale Linie
-
-plot(x = x, y = log(f), type = "l", col = "blue") # plotte ln(f(x)) gegen x
-abline(v = 0, lty = 3) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
-abline(h = log(a), lty = 3)  # im Punkt log(a) schneidet log(f) (das linearisierte exponentielle Wachstum) die y-Achse (x=0), h =llog(a) zeichnet zu y = log(a) eine horizontale Linie
-```
-
-### Das Modellieren von exponentiellem Wachstum am Beispiel der Weltbevölkerung von 1800 bis 2020
-
-
-Nun können wir beispielsweise die Entwicklung der Weltbevölkerung von 1800 bis 2020 modellieren. Dazu müssen wir zunächst die Daten einladen:
-Die Dokumentation des Datensatzes mit Datenquellen sind hier einzusehen: [gapminder.org-Dokumentationen](https://www.gapminder.org/data/documentation/gd003/).
-
-```{r}
-data("WorldPopulation", package = "PsyBSc7") # Bereits zusammengefasster Datensatz von 1800-2020
-head(WorldPopulation) # Datenstruktur
-ggplot(data = WorldPopulation, aes(x = Year, y = Population))+geom_point()
-```
-
-Das Diagramm lässt deutlich einen nichtlinearen Anstieg der Weltbevölkerung von 1800 bis 2020 vermuten. Auffällig ist auch der leichte Knick, der um 1950 zu vermuten ist und ab welchem die Bevölkerung, deskriptiv gesehen, noch stärker wächst. Dieser Knick ist zum Teil durch das Ende des Krieges, aber auch durch modernere Landwirtschaft und das Aufkommen von neuen Medikamenten (z.B. Penezilin) zu erklären. 
-
-
-```{r}
-ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
-     geom_point()+geom_smooth(method="lm", formula = "y~x")         # plotte linearen Verlauf 
-m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
-summary(m_l)  
-res <- studres(m_l) # Studentisierte Residuen als Objekt speichern
-df_res <- data.frame(res) # als Data.Frame für ggplot
-# Grafisch: Histogramm mit Normalverteilungskurve
-ggplot(data = df_res, aes(x = res)) + 
-     geom_histogram(aes(y =..density..),
-                    bins = 10,                    # Wie viele Balken sollen gezeichnet werden?
-                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
-                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
-     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
-     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das lineare Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
-```
-
-Obwohl ein linearer Verlauf sehr unwahrscheinlich wirkt, können hier bereits `r round(summary(m_l)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte durch die Jahreszahl eklären. Wie der Grafik deutlich zu entnehmen ist, sind die Residuen in dieser Regressionanalyse stark abhängig von der Jahreszahl (negatives Residuum von von a. 1860-1970 und positive Residuen sonst; Wiederholung: $\varepsilon_i=Y_i-\hat{Y}_i$, wobei $\hat{Y}_i$ der vorhergesagte Wert ist). Auch wenn wir uns das zugehörige Histogramm der Residuen ansehen, widerspricht dieses der Annahme auf Normalverteilung. Vielleicht ist auch hier ein quadratischer Effekt versteckt? Wir möchten dem auf den Grund gehen und nutzen wieder die Funktion `poly`, um ein Polynom 2. Grades (eine quadratische Funktion) der Jahreszahl in unsere Analysen mit aufzunehmen.
-
-```{r}
-m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
-summary(m_q)
-summary(m_q)$r.squared - summary(m_l)$r.squared  # Inkrement      
-anova(m_l, m_q)
-
-
-
-res <- studres(m_q) # Studentisierte Residuen als Objekt speichern
-df_res <- data.frame(res) # als Data.Frame für ggplot
-# Grafisch: Histogramm mit Normalverteilungskurve
-library(ggplot2)
-ggplot(data = df_res, aes(x = res)) + 
-     geom_histogram(aes(y =..density..),
-                    bins = 10,                    # Wie viele Balken sollen gezeichnet werden?
-                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
-                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
-     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
-     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das quadratische Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
-
-ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
-     geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
-     geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")  # plotte quadratischen Verlauf
-```
-
-Durch den quadratischen Verlauf lassen sich `r round(summary(m_q)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_q)$r.squared*100 - summary(m_l)$r.squared*100, 2)`% entspricht (*mit einer Irrtumswahrscheinlichkeit von 5% ist das Inkrement in der Population nicht null.* Dies ist äquivialent zu folgdender Aussage: *mit einer Irrtumswahrscheinlichkeit von 5% ist der Effektsparameter (der Regressionkoeffizient) des quadratischen Verlaufs in der Population nicht null*; dies spricht folglich für einen quadratischen im Gegensatz zu einem linearen Verlauf). Das Histogramm spricht nicht für Normalverteilung der Residuen. Allerdings ist der Grafik deutlich zu entnehmen, dass der quadratische Verlauf nicht weit vom empirischen entfernt liegt.
-
-Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besser beschreibt. Dazu müssen wir zunächst die Weltpopulation logarithmieren und können anschließend ein lineares Modell verwenden.
-
-
-
-```{r}
-WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
-m_log <- lm(log_Population ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
-summary(m_log)
-
-WorldPopulation$pred_Pop_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
-
-ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
-     geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
-     geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")+  # plotte quadratischen Verlauf
-     geom_line(aes(x = Year, y = pred_Pop_exp), col = "red", lwd = 1.5)
-
-
-res <- studres(m_log) # Studentisierte Residuen als Objekt speichern
-df_res <- data.frame(res) # als Data.Frame für ggplot
-# Grafisch: Histogramm mit Normalverteilungskurve
-ggplot(data = df_res, aes(x = res)) + 
-     geom_histogram(aes(y =..density..),
-                    bins = 10,                    # Wie viele Balken sollen gezeichnet werden?
-                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
-                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
-     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
-     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das logarithmierte Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
-```
-
-Das lineare Modell für die logarithmierte Bevölkerunsdichte scheint gut zu den Daten zu passen. Insgesamt können `r round(summary(m_log)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden; etwas weniger als durch das quadratische Wachstum, durch welches `r round(summary(m_q)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden konnten. Das Diagramm der retransformierten vorhergesagten Werten signalisiert, dass ein exponentielles Wachstumsmodell die Daten gut beschreibt, allerdings scheint der quadratische Trend vor allem ab ca. 1975 die Daten besser zu beschreiben. Das Histogramm der Residuen des logarithmierten Modells spricht deutlich gegen die Normalverteilungsannahme. Um das Modell genauer zu untersuchen, schauen wir uns den Plot der logarithmierten Bevölkerungsdichte an: 
-
-```{r}
-ggplot(data = WorldPopulation, aes(x = Year, y = log_Population))+
-     geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")+      # plotte linearen Verlauf 
-     geom_smooth(method="lm", formula = "y~poly(x,2)", col = "gold3")
-
-residualPlot(m_log) # Residuenplots
-```
-
-Vielleicht wächst die Bevölkerung sogar schneller als exponentiell? Die gelbe Linie im logarithmierten Plot lässt dies vermuten. Auch die Residuen lassen vermuten, dass nichtlineare Effekte bestehen. Um dies genauer zu untersuchen fügen wir auch in das logarithmierte Modell einen quadratischen Trend der Zeit ein.
-
-
-```{r}
-m_log_quad <- lm(log_Population ~ poly(Year,2), data = WorldPopulation)
-summary(m_log_quad)
-anova(m_log, m_log_quad)
-WorldPopulation$pred_Pop_exp_quad <- exp(predict(m_log_quad))
-ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
-     geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
-     geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")+  # plotte quadratischen Verlauf
-     geom_line(aes(x = Year, y = pred_Pop_exp), col = "red", lwd = 1.5)+
-     geom_line(aes(x = Year, y = pred_Pop_exp_quad), col = "gold3", lwd = 2)
-
-res <- studres(m_log_quad) # Studentisierte Residuen als Objekt speichern
-df_res <- data.frame(res) # als Data.Frame für ggplot
-# Grafisch: Histogramm mit Normalverteilungskurve
-library(ggplot2)
-ggplot(data = df_res, aes(x = res)) + 
-     geom_histogram(aes(y =..density..),
-                    bins = 10,                    # Wie viele Balken sollen gezeichnet werden?
-                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
-                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
-     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
-     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das logarithmierte quadratische Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
-
-residualPlot(m_log_quad)
-```
-
-Durch den quadratisch-exponentiellen Verlauf lassen sich `r round(summary(m_log_quad)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_log_quad)$r.squared*100 - summary(m_log)$r.squared*100, 2)`% im Vergleich zum reinen exponentiellen Verlaufsmodell entspricht. Interessant zu sehen ist, dass fast 100% der Variation im Datensatz erklärbar ist. Auch deutlich zu sehen ist, dass der Knick um 1950 durch das quadratisch-exponentielle Wachstum am besten darzustellen/ zu modellieren ist.
-Das Histogramm der Residuen des logarithmierten quadratischen Modells (welches das quadratisch-exponentielle Wachstum der Bevölkerung darstellt) ist etwas rechts-schief/links-steil. Die Residuenplots zeigen außerdem, dass auch hier die Residuen nicht vollständig unsystematisch sind. Dennoch ist die Resiudalvarianz sehr klein.
-
-Da die Modelle des quadratischen und des quadratisch-exponentiellen Verlaufs nicht geschachtelt sind (sie gehen nicht auseinander hervor und sind nicht durch Restringieren, bzw. Nullsetzen, von Regressionsparametern aus einander überführbar) und können daher nicht inferenzstatistisch miteinander verglichen werden. Da das quadratisch-exponentielle Modell mehr Variation als das rein quadratische Modell aufklärt und auch grafisch besser zum Verlauf der Daten passt (*besonders von 1800 bis ca. 1850 sagt das quadratische Modell ein Verkleinern der Bevölkerung vorher*), entscheiden wir uns final für dieses. Was bedeuten nun die Parameter in unserem Modell? Der Regressionscoeffizient des linearen Trends von `poly` liegt bei `r round(coef(m_log_quad)[2], 2)` und der Koeffizient des quadratischen Trends bei `r round(coef(m_log_quad)[3], 2)`. Dies spricht für ein **beschläunigtes exponentielles Wachstum**. Nach diesem Vorhersagemodel scheinen die Menschen sich schneller als exponentiell zu vermehren (zumindest von 1800 bis 2020).
-
-Wären beide Koeffizienten negativ, so würde dies für *beschleunigtes exponentiellen Zerfall/Abnahme* sprechen. Ist der Koeffizient des quadratische Trends negativ, wird von *exponentiellen Wachstum mit Dämpfung* gesprochen. 
-
-
-
-
-## Appendix A {#AppendixA}
+## Appendix B {#AppendixB}
 ### Übersicht über erklärte Varianzanteile
 
 Hier sind nochmals die Anteile erklärter Varianz der Bevölkerungsdichte über die Zeit in den vier betrachteten Modellen dargestellt:
@@ -422,7 +424,7 @@ round(R2, 4)
 ```
 
 
-## Appendix B
+## Appendix C {#AppendixC}
 ### Übersicht über die Modelle
 
 Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich verschieden. Insbesondere der Regressionfehler ist an einer anderen Stelle:
