@@ -73,37 +73,25 @@ Im Output sehen wir die Parameterschätzungen unseres Regressionsmodells:
 $$\text{Reading}_i=b_0+b_1\text{Female}_i+b_2\text{IQ}_i+\varepsilon_i,$$ 
 für $i=1,\dots,100=:n$. Wir wollen uns die Ergebnisse unserer Regressionsanalyse noch detaillierter anschauen. Dazu wollen wir wieder die `summary` Funktion anwenden. Um auch die standardisierten Ergebnisse ausgegeben zu bekommen, verwenden wir die Funktion `lm.beta` (*lm* steht hier für lineares Modell und *beta* für die standardisierten Koeffizienten; häufig werden allerdings $\beta$s auch für die unstandardisierten Regressionkoeffizienten verwendet, sodass darauf stehts zu achten ist - siehe bspw. [Appendix A](#AppendixA)).
 
-```{r test_stdreg, exercise = TRUE, exercise.setup = "exercise_setup1", exercise.eval = FALSE}
+```{r excercise_stdreg, exercise = TRUE, exercise.setup = "exercise_setup1", exercise.eval = FALSE}
 
 ```
 
-```{r test_stdreg-hint-1}
+```{r excercise_stdreg-hint-1}
 # Verwenden Sie den Befehl
 lm.beta(...) # um das geschätzte Modell zu standardisieren
 ```
  
-```{r test_stdreg-hint-2}
+```{r excercise_stdreg-hint-2}
 # Verwenden Sie den Befehl 
 summary(...) # um dem standardisierten Modell die Zusammenfassungsstatistiken zu entlocken
 ```
- 
-```{r test_stdreg-check}
-# Intro into excercise
-mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 
-# Begin grading:
-res <- summary(mod)
-res$r.squared
-
-grade_result(
-     fail_if(~ (!identical(.result, res)), 'Haben Sie die richtigen Input-Argumente verwendet? Sie wollen die studentisierten Resiuden abspeichern - als data.frame. Geben Sie diese Objekt aus (indem Sie den Namen des Objekts ohne Zuordnung als letztes schreiben).'),
-     pass_if(~ identical(.result, res)),
-     correct = 'Sehr gut! Sie haben erfolgreich die Residuen als data.frame abgespeichert.',
-     incorrect = 'Leider falsch.',
-     glue_correct = '{.correct}',
-     glue_incorrect = '{.incorrect} {.message}')
+```{r excercise_stdreg-hint-solution}
+#Finale Lösung
+summary(lm.beta(mod))
 ```
-
+ 
 ```{r, echo = F}
 # For further use
 mod <- lm(reading ~ female + IQ, data = Schulleistungen)
