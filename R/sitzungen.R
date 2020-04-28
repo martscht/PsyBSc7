@@ -6,7 +6,10 @@
 #' @aliases Sitzung_5
 #' @aliases Sitzung_6
 #' @aliases Sitzung_7
-
+#' @aliases Sitzung_8
+#' @aliases Sitzung_9
+#' @aliases Sitzung_10
+#' @aliases Sitzung_11
 #' 
 #' @title Übungen für das Praktikum in PsyBSc 7, Sommersemester 2020
 #'
