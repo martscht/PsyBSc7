@@ -20,6 +20,8 @@ library(fontawesome)  # nice fonts
 library(car)
 library(MASS)
 library(ggplot2)
+library(lm.beta) # erforderlich für standardiserte Gewichte
+
 
 data("Schulleistungen", package = "PsyBSc7")
 knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
@@ -68,7 +70,45 @@ mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 ```
 
-Im Output sehen wir die Parameterschätzungen unseres Regressionsmodells: $$\text{Reading}_i=\beta_0+\beta_1\text{Female}_i+\beta_2\text{IQ}_i+\varepsilon_i,$$ für $i=1,\dots,100=:n$.
+Im Output sehen wir die Parameterschätzungen unseres Regressionsmodells: $$\text{Reading}_i=b_0+b_1\text{Female}_i+b_2\text{IQ}_i+\varepsilon_i,$$ für $i=1,\dots,100=:n$. Wir wollen uns die Ergebnisse unserer Regressionsanalyse noch detaillierter anschauen. Dazu wollen wir wieder die `summary` Funktion anwenden. Um auch die standardisierten Ergebnisse ausgegeben zu bekommen, verwenden wir die Funktion `lm.beta` (*lm* steht hier für lineares Modell und *beta* für die standardisierten Koeffizienten; häufig werden allerdings $\beta$s auch für die unstandardisierten Regressionkoeffizienten verwendet, sodass darauf stehts zu achten ist - siehe bspw. [Appendix A](#AppendixA)).
+
+```{r test_stdreg, exercise = TRUE, exercise.setup = "exercise_setup1", exercise.eval = FALSE}
+
+```
+
+```{r test_stdreg-hint-1}
+# Verwenden Sie den Befehl
+lm.beta(...) # um das geschätzte Modell zu standardisieren
+```
+ 
+```{r test_stdreg-hint-2}
+# Verwenden Sie den Befehl 
+summary(...) # um dem standardisierten Modell die Zusammenfassungsstatistiken zu entlocken
+```
+ 
+```{r test_stdreg-check}
+# Intro into excercise
+mod <- lm(reading ~ female + IQ, data = Schulleistungen)
+
+# Begin grading:
+res <- summary(lm.beta(mod))
+
+grade_result(
+  fail_if(~ (!identical(.result, res)), 'Haben Sie die richtigen Input-Argumente verwendet? Sie wollen die summary des standardisierten Modells ausgeben. Schauen Sie sich ggf. die Hints an.'),
+  pass_if(~ identical(.result, res)),
+  correct = 'Sehr gut! Sie haben erfolgreich die summary des standardisierten Modells ausgegeben.',
+  incorrect = 'Leider falsch.',
+  glue_correct = '{.correct}',
+  glue_incorrect = '{.incorrect} {.message}')
+```
+
+```{r, include = F}
+# for later use
+stdsum <- summary(lm.beta(mod)) 
+```
+
+Interessant an der standardisierten Lösung ist, dass das Interzept $0$ ist. Dies macht völlig Sinn, da beim Standardisieren die Mittelwerte aller Variablen auf $0$ gesetzt werden und die Standardabweichungen auf $1$. So auch beim Kriterium - der Leseleistung. Der Mittelwert des Kriterium liegt genau an der Stelle, wo alle Prädiktoren ihren Mittelwert haben. Im standardisierten Modell ist der Mittelwert jedes Prädiktors gerade $0$. Somit liegt der Mittelwert des Kriteriums genau beim Interzept, welches also $0$ sein muss, wenn es sich um das voll standardisierte Modell handeln soll! Den Koeffizienten entnehmen wir, dass die Prädiktoren `female` und `IQ` signifikante Anteile am Kriterium erklären (*Mit einer Irrtumswahrscheinlichkeit von 5% ist der Regressionkoeffizent und damit die lineare Beziehung zwischen dem jeweiligen Prädiktor (z.B. IQ) und der Leseleistung in der Population nicht 0*). Der standardisierte Koeffizient des `IQ` ist hierbei deutlich größer ($\hat{\beta}_2=$`r round(stdsum[3,2], 2)`) als vom Geschlecht ($\hat{\beta}_1=$`r round(stdsum[2,2], 2)`). Damit ist ersichtlich, dass der `IQ` mehr Variation am Kriterium Leseleisstug erklärt. Dies war den unstandardisierten Koeffizienten nicht zu entnehmen. Hier lag der unstandardisierte Effekt des Geschlechts auf die Leseleistung bei $\hat{b}_1=$`r round(stdsum[2,1], 2)` und des des `IQ` lediglich bei $\hat{b}_2=$`r round(stdsum[3,1], 2)`. Dies liegt natürlich daran, dass der `IQ` eine wesentlich größere Streuung aufweißt als die dummykodierte Variable `female`.
+
 
 Gegenstand der folgenden Sitzung ist Die Prüfung von Voraussetzungen der Regressionsanalyse:
 
@@ -78,6 +118,9 @@ Gegenstand der folgenden Sitzung ist Die Prüfung von Voraussetzungen der Regres
 * Multikollinearität
 * Identifikation von Ausreißern und einflussreichen Datenpunkten
 
+
+
+Im Folgenden werden wir mit den unstandardisierten Modell weitermachen, welches sich hinter dem Objekt `mod` versteckt.
 
 
 ## Linearität
@@ -487,6 +530,8 @@ Die Entscheidung, ob Ausreißer oder auffällige Datenpunkte aus Analysen ausges
 
 ## Appendix A {#AppendixA}
 ### Multikolinearität und Standardfehler
+Im Folgenden stehen $\beta$s für _**unstandardisierte**_ Regressionskoeffizienten.
+
 Für eine einfache Regressionsgleichung mit $$Y_i=\beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \varepsilon_i$$
 kann die selbe Gleichung auch in Matrixnotation formuliert werden $$Y = X\beta + \varepsilon.$$ Hier ist $X$ die Systemmatrix, welche die Zeilenvektoren $X_i=(1, x_{i1}, x_{i2})$ enthält. Die Standardfehler, welche die Streuung der Parameter $\beta:=(\beta_0,\beta_1,\beta_2)$ beschreiben, lassen sich wie folgt bestimmen: Wir bestimmen die Matrix $I$ wie folgt
 $$I:=(X'X)^{-1}\hat{\sigma}^2_e,$$
