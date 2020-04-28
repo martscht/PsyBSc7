@@ -26,7 +26,7 @@ knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 ```
 
 
-### Datensatz (wie beim letzten Termin)
+## Datensatz (wie beim letzten Termin)
 
 Der Beispieldatensatz enthält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009. Gegenüber dem letzten Termin sind in dieser Version noch mehr Variablen enthalten, insbesondere über die Eltern und Besitztümer im Elternhaus. 
 
@@ -57,7 +57,7 @@ Im Einzelnen enthält der Datensatz die folgenden Variablen:
 * Bildungsabschluss des Vaters (`FatherEdu`, International Standard Classification of Education)
 * Bildungsabschluss der Mutter (`MotherEdu`, International Standard Classification of Education)
 
-# Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen
+## Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen
 
 In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`), der Bildungsabschluss der Mutter (`MotherEdu`) und die Zahl der Bücher zu Hause (`Books`) bedeutsame Prädiktoren für die Lesekompetenz der Schüler/innen sind. Berechnen Sie diese Modell erneut.
 
@@ -205,7 +205,7 @@ round(scale(PISA2009)[IDs,c("Reading", "HISEI", "MotherEdu", "Books")],2)
     * Fall 141: Niedrige Lesekompetenz "trotz" höchstem Abschluss der Mutter und maxiamal hoher Bücherzahl
 * Alle Werte sind hier prinzipiell möglich, weswegen keiner der möglichen Ausreißer zwangsläufig aus den Analysen ausgeschlossen werden muss.
 
-#### Bonus-Analyse
+## Bonus-Analyse
 
 Demonstration des Effekts des Ausschlusses eines auffälligen Wertes: Der Ausschluss des einzelnen Falls 141 mit der höchsten $CD_j$ erhöht das Regressionsgewicht der Bücherzahl um 2 Punkte und die erklärte Varianz um 3%!
 ```{r}
