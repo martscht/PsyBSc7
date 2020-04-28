@@ -400,13 +400,13 @@ ggplot(data = df_res, aes(x = res)) +
 ```
 
 Auch dem `geom_smooth` Befehl kann einfach das modifizierte Regressionsmodell übergeben werden. Stellen Sie die Weltbevölkerung sowie das lineare und das quadratische Modell dar.
-```{r exercise_graph_pop,  exercise = TRUE, exercise.eval = FALSE, fig.height=6, fig.align="center"}
+```{r exercise_graph_pop_quad,  exercise = TRUE, exercise.eval = FALSE, fig.height=6, fig.align="center"}
 ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf (bis hier her ist es Code der Aufgabe zuvor!)
      ...                                                             # plotte quadratischen Verlauf
 ```
 
-```{r exercise_graph_pop-solution}
+```{r exercise_graph_pop_quad-solution}
 # Finale Lösung
 ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
