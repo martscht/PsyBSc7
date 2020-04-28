@@ -68,7 +68,7 @@ m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009)
 summary(lm.beta(m1))
 ```
 
-## 1. Prüfen Sie die Annahme der Homoskedastizität 
+## **Aufgabe 1.** Prüfen Sie die Annahme der Homoskedastizität 
 ### a) durch Inspektion der Residuenplots und 
 
 ```{r}
@@ -77,19 +77,16 @@ residualPlots(m1, pch = 16)
 ```
 
 ### b) den Breusch–Pagan Test auf nicht-konstante Varianz
-
-
-# Test For Non-Constant Error Variance
 ```{r}
 ncvTest(m1)
 ```
 
-### Ergebnisinterpretation 1.
+### Ergebnisinterpretation **Aufgabe 1.**
 
 Weder die Grafiken noch der Breusch-Pagan-Test lassen deutliche Verletzungen der Homoskedaszidität erkennen.
 
 
-## 2. Prüfen Sie die Annahme der Linearität 
+## **Aufgabe 2.** Prüfen Sie die Annahme der Linearität 
 ### a) durch Inspektion der partiellen Regressionsplots und 
 ### b) des Tests für quadratische Trends, der mit der Funktion `residualPlots` erzeugt wurde.
 
@@ -100,11 +97,11 @@ avPlots(m1, pch = 16)
 
 ```
 
-### Ergebnisinterpretation 2.
+### Ergebnisinterpretation **Aufgabe 2.**
 
 Die Effekte von Sozialstatus und Büchern werden durch das lineare Modell gut wiedergegeben. Für den Bildungsabschluss der Mutter ist ein leicht nicht-linearer Zusammenhang zu erkennen, der quadratische Trend für die Residuen ist signifikant (entnommen aus den Analysen zu 1.; *Die Null-Hypothese, dass kein quadratischer Trend besteht wird mit einer Irrtumswahrscheinlichkeit von 5% verworfen; der quadratische Effekt ist somit mit dieser Irrtumswahrscheinlichkeit in der Population verschieden von 0*). Der Effekt ist dadurch charakterisiert, dass der Zuwachs der Lesekompetenz im unteren Bereich des mütterlichen Bildungsabschlusses stärker ist und im oberen Bereich abflacht. Dies wird in der nächsten Sitzung näher behandelt.
 
-## 3. Püfen Sie die Normalverteilung der Residuen 
+## **Aufgabe 3.** Püfen Sie die Normalverteilung der Residuen 
 ### a) grafisch (Histogramm, Q-Q-Plot) und 
 ```{r}
 res <- studres(m1) # Studentisierte Residuen als Objekt speichern
@@ -133,11 +130,11 @@ ks.test(res, "pnorm", mean(res), sd(res))
 ```
 
 
-### Ergebnisinterpretation 3.
+### Ergebnisinterpretation **Aufgabe 3.**
 
 Im Histogramm ist zu erkennen, dass die Residuen etwas linksschief / rechtssteil verteilt sind ("zu viele" Werte im unteren negativen, "zu wenige" im oberen positiven Bereich). Dies zeigt sich auch im Q-Q-Diagramm, und auch der Shapiro-Wilks-Test ist signifikant. Nur der Kolmogorov-Smirnov-Test ist nicht signifikant. Zusammenfassend verwerfen wir die Annahme normalverteilter Residuen. 
 
-## 4. Prüfen Sie die Multikollinearität der Prädiktoren im Modell
+## **Aufgabe 4.** Prüfen Sie die Multikollinearität der Prädiktoren im Modell
 ### a) durch Inspektion der bivariaten Korrelationen und
 
 ```{r}
@@ -151,12 +148,12 @@ vif(m1)   # VIF
 1/vif(m1) # Toleranz
 ```
 
-### Ergebnisinterpretation 4.
+### Ergebnisinterpretation **Aufgabe 4.**
 
 Die drei Prädiktoren sind alle substanziell positiv korreliert ($r>.40$). VIF / Toleranzwerte geben aber keine Hinweise auf problematische Multikollinearität.
 
 
-## 5. Ausreißer und einflussreiche Datenpunkte
+## **Aufgabe 5.** Ausreißer und einflussreiche Datenpunkte
 ### a) Inspizieren Sie die Verteilung der Hebelwerten $h_i$
 
 
@@ -199,7 +196,7 @@ round(scale(PISA2009)[IDs,c("Reading", "HISEI", "MotherEdu", "Books")],2)
 
 ```
 
-### Ergebnisinterpretation 5.
+### Ergebnisinterpretation **Aufgabe 5.**
 
 * Nach dem pauschalen Kriterium $4/n$ ist die Hälfte der Hebelwerte auffällig ($h_j>0.027$). * Nach dem großzügigsten Kriterium $3\cdot k / n$ liegen drei Fälle über der Grenze ($h_j>0.06$)
 * Cooks Distanz überschreitet für keinen der Fälle die Grenze von $CD_j>1.0$
