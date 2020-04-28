@@ -37,6 +37,8 @@ Eine Stichprobe von 100 Schülerinnen und Schülern hat einen Lese- und einen Ma
 library(car)
 library(MASS)
 library(ggplot2)
+library(lm.beta) # erforderlich für standardiserte Gewichte
+
 # Datensatz laden
 data("Schulleistungen", package = "PsyBSc7")
 ```
