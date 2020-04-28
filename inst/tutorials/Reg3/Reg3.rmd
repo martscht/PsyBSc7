@@ -210,7 +210,7 @@ data.frame(...)
 
 ```{r test_dataprep-hint-4}
 # Verwenden Sie die Befehle 
-studres(...)
+res <- studres(...)
 # und
 data.frame(...)
 # geben Sie das Objekt des Data.frames zurück (sehen Sie sich dieses an)
