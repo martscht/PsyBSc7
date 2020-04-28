@@ -648,34 +648,34 @@ m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009)
 summary(lm.beta(m1))
 ```
 
-**Aufgabe 1.** Prüfen Sie die Annahme der Homoskedastizität 
+#### **Aufgabe 1.** Prüfen Sie die Annahme der Homoskedastizität 
 
 a) durch Inspektion der Residuenplots und 
 
 b) den Breusch–Pagan Test auf nicht-konstante Varianz
 
 
-**Aufgabe 2.** Prüfen Sie die Annahme der Linearität
+#### **Aufgabe 2.** Prüfen Sie die Annahme der Linearität
 
 a) durch Inspektion der partiellen Regressionsplots und 
 
 b) des Tests für quadratische Trends, der mit der Funktion `residualPlots` erzeugt wurde.
 
-**Aufgabe 3.** Püfen Sie die Normalverteilung der Residuen 
+#### **Aufgabe 3.** Püfen Sie die Normalverteilung der Residuen 
 
 a) grafisch und 
 
 b) über den Shapiro-Wilks-Test sowie den Kolmogorov-Smirnov-Test.
  
 
-**Aufgabe 4.** Prüfen Sie die Multikollinearität der Prädiktoren im Modell
+#### **Aufgabe 4.** Prüfen Sie die Multikollinearität der Prädiktoren im Modell
 
 a) durch Inspektion der bivariaten Korrelationen und
 
 b) Berechnung von VIF und Toleranz.
 
 
-**Aufgabe 5.** Ausreißer und einflussreiche Datenpunkte
+#### **Aufgabe 5.** Ausreißer und einflussreiche Datenpunkte
 
 a) Inspizieren Sie die Verteilung der Hebelwerten $h_i$
 
