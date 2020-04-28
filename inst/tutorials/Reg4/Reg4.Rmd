@@ -1,20 +1,38 @@
 ---
-title: "Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte"
-author: "Julien P. Irmer"
-date: "3/27/2020"
-output: html_document
+title: "Sitzung 6: Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include = FALSE}
+source('setup.R')
+
+library(learnr)       # package to generate interactive HTML
+library(gradethis)    # grade Code from input in HTML
+library(shiny)        # nice appearance in R
+library(fontawesome)  # nice fonts
+library(car)
+library(MASS)
+library(ggplot2)
+library(lm.beta) # erforderlich für standardiserte Gewichte
+
+
+data("PISA2009", package = "PsyBSc7")
+data("WorldPopulation",  package = "PsyBSc7")
+knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 ```
 
-*Statistik für Psychologen: Praktikum PsyBSc 7, Sommersemester 2020*
 
 
 
-### Datensatz (PISA: wie in den Übungen zum letzten Termin) $*$
-$*$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_
+## Datensatz (PISA: wie in den Übungen zum letzten Termin) $*$
+<small> $*$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_ </small>
 
 
 Der Beispieldatensatz enthält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009. 
@@ -25,12 +43,12 @@ library(MASS)
 library(lm.beta) # erforderlich für standardiserte Gewichte
 library(ggplot2)
 # Datensatz laden 
-PISA_2009 <- readRDS("PISA_2009_v2.rda")
+data("PISA2009", package = "PsyBSc7")
 ```
 
 
 
-# Quadratische Verläufe in der Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen $**$
+## Quadratische Verläufe in der Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen $**$
 $**$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_
 
 
@@ -184,18 +202,18 @@ Nun können wir beispielsweise die Entwicklung der Weltbevölkerung von 1800 bis
 Die Dokumentation des Datensatzes mit Datenquellen sind hier einzusehen: [gapminder.org-Dokumentationen](https://www.gapminder.org/data/documentation/gd003/).
 
 ```{r}
-load("WorldPopulation.rda") # Bereits zusammengefasster Datensatz von 1800-2020
-head(pop_data) # Datenstruktur
-ggplot(data = pop_data, aes(x = Year, y = Population))+geom_point()
+data("WorldPopulation", package = "PsyBSc7") # Bereits zusammengefasster Datensatz von 1800-2020
+head(WorldPopulation) # Datenstruktur
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+geom_point()
 ```
 
 Das Diagramm lässt deutlich einen nichtlinearen Anstieg der Weltbevölkerung von 1800 bis 2020 vermuten. Auffällig ist auch der leichte Knick, der um 1950 zu vermuten ist und ab welchem die Bevölkerung, deskriptiv gesehen, noch stärker wächst. Dieser Knick ist zum Teil durch das Ende des Krieges, aber auch durch modernere Landwirtschaft und das Aufkommen von neuen Medikamenten (z.B. Penezilin) zu erklären. 
 
 
 ```{r}
-ggplot(data = pop_data, aes(x = Year, y = Population))+
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")         # plotte linearen Verlauf 
-m_l <- lm(Population ~ Year, data = pop_data) # linearer Verlauf
+m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
 summary(m_l)  
 res <- studres(m_l) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
@@ -212,7 +230,7 @@ ggplot(data = df_res, aes(x = res)) +
 Obwohl ein linearer Verlauf sehr unwahrscheinlich wirkt, können hier bereits `r round(summary(m_l)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte durch die Jahreszahl eklären. Wie der Grafik deutlich zu entnehmen ist, sind die Residuen in dieser Regressionanalyse stark abhängig von der Jahreszahl (negatives Residuum von von a. 1860-1970 und positive Residuen sonst; Wiederholung: $\varepsilon_i=Y_i-\hat{Y}_i$, wobei $\hat{Y}_i$ der vorhergesagte Wert ist). Auch wenn wir uns das zugehörige Histogramm der Residuen ansehen, widerspricht dieses der Annahme auf Normalverteilung. Vielleicht ist auch hier ein quadratischer Effekt versteckt? Wir möchten dem auf den Grund gehen und nutzen wieder die Funktion `poly`, um ein Polynom 2. Grades (eine quadratische Funktion) der Jahreszahl in unsere Analysen mit aufzunehmen.
 
 ```{r}
-m_q <- lm(Population ~ poly(Year,2), data = pop_data) # quadratischer Verlauf
+m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
 summary(m_q)
 summary(m_q)$r.squared - summary(m_l)$r.squared  # Inkrement      
 anova(m_l, m_q)
@@ -231,7 +249,7 @@ ggplot(data = df_res, aes(x = res)) +
      stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
      labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das quadratische Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
 
-ggplot(data = pop_data, aes(x = Year, y = Population))+
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
      geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")  # plotte quadratischen Verlauf
 ```
@@ -243,13 +261,13 @@ Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besse
 
 
 ```{r}
-pop_data$log_Population <- log(pop_data$Population) # Logarithmus der Weltbevölkerung
-m_log <- lm(log_Population ~ Year, data = pop_data) # lineares Modell mit log(y) als AV (logarithmische Skala)
+WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
+m_log <- lm(log_Population ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
 summary(m_log)
 
-pop_data$pred_Pop_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
+WorldPopulation$pred_Pop_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
 
-ggplot(data = pop_data, aes(x = Year, y = Population))+
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
      geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")+  # plotte quadratischen Verlauf
      geom_line(aes(x = Year, y = pred_Pop_exp), col = "red", lwd = 1.5)
@@ -270,7 +288,7 @@ ggplot(data = df_res, aes(x = res)) +
 Das lineare Modell für die logarithmierte Bevölkerunsdichte scheint gut zu den Daten zu passen. Insgesamt können `r round(summary(m_log)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden; etwas weniger als durch das quadratische Wachstum, durch welches `r round(summary(m_q)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden konnten. Das Diagramm der retransformierten vorhergesagten Werten signalisiert, dass ein exponentielles Wachstumsmodell die Daten gut beschreibt, allerdings scheint der quadratische Trend vor allem ab ca. 1975 die Daten besser zu beschreiben. Das Histogramm der Residuen des logarithmierten Modells spricht deutlich gegen die Normalverteilungsannahme. Um das Modell genauer zu untersuchen, schauen wir uns den Plot der logarithmierten Bevölkerungsdichte an: 
 
 ```{r}
-ggplot(data = pop_data, aes(x = Year, y = log_Population))+
+ggplot(data = WorldPopulation, aes(x = Year, y = log_Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")+      # plotte linearen Verlauf 
      geom_smooth(method="lm", formula = "y~poly(x,2)", col = "gold3")
 
@@ -281,11 +299,11 @@ Vielleicht wächst die Bevölkerung sogar schneller als exponentiell? Die gelbe 
 
 
 ```{r}
-m_log_quad <- lm(log_Population ~ poly(Year,2), data = pop_data)
+m_log_quad <- lm(log_Population ~ poly(Year,2), data = WorldPopulation)
 summary(m_log_quad)
 anova(m_log, m_log_quad)
-pop_data$pred_Pop_exp_quad <- exp(predict(m_log_quad))
-ggplot(data = pop_data, aes(x = Year, y = Population))+
+WorldPopulation$pred_Pop_exp_quad <- exp(predict(m_log_quad))
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
      geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")+  # plotte quadratischen Verlauf
      geom_line(aes(x = Year, y = pred_Pop_exp), col = "red", lwd = 1.5)+
@@ -344,3 +362,9 @@ Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich v
 * **Logarithmisches Modell**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i + \varepsilon_i} = e^{\beta_0 + \beta_1t_i} \ e^{\varepsilon_i}$. Diesem Modell ist zu entnehmen, dass der Fehler in Abhängigkeit von der Ausprägung der unabhängigen Variablen (hier: $t_i$) sich unterschiedlich stark auf das Kriterium (die abhängige Variable, hier die Bevölkerungszahl) auswirkt - er hängt also mit der Ausprägung der unabhängigen Variable zusammen. Dies ist im logarithmierten Modell nicht mehr der Fall; es handelt sich hier bis auf die Transformation der abhängigen Variable um ein "normales" Regressionsmodell: Hier verliert sich diese Beziehung zwischen unabhängiger Variable und Fehler!
 
 * **Logarithmisches Modell mit quadratischem Term**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i}$.
+
+## Literatur
+[Eid, M., Gollwitzer, M., & Schmitt, M. (2017).](https://hds.hebis.de/ubffm/Record/HEB366849158) *Statistik und Forschungsmethoden* (5. Auflage, 1. Auflage: 2010). Weinheim: Beltz. 
+
+
+* <small> *Blau hinterlegte Autorenangaben führen Sie direkt zur universitätsinternen Ressource.*
