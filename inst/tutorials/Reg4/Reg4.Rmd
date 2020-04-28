@@ -115,13 +115,13 @@ lm(...~...) # sowie innerhalb von lm
 poly(..., 2)
 ```
 
-```{r exercise_lm_quad-hint-2}
+```{r exercise_lm_quad-hint-3}
 # Verwenden Sie den Befehl
 lm(...~...) # sowie innerhalb von lm
 poly(..., 2) # wenden Sie dies auf MotherEdu an
 ```
 
-```{r exercise_lm_quad-hint-3}
+```{r exercise_lm_quad-hint-4}
 # Verwenden Sie den Befehl
 lm(...~...) # sowie innerhalb von lm
 poly(..., 2) # wenden Sie dies auf MotherEdu an
