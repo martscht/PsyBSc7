@@ -528,6 +528,11 @@ Was ist an den fünf identifizierten Fällen konkret auffällig?
 
 Die Entscheidung, ob Ausreißer oder auffällige Datenpunkte aus Analysen ausgeschlossen werden, ist schwierig und kann nicht pauschal beantwortet werden. Im vorliegenden Fall wäre z.B. zu Überlegen, ob die Intelligenztestwerte der Fälle 80 und 99, die im Bereich von Lernbehinderung oder sogar geistiger Behinderung liegen, in einer Stichprobe von Schülern/innen aus Regelschulen als glaubwürdige Messungen interpretiert werden können oder als Hinweise auf mangelndes Commitment bei der Beantwortung.
 
+
+#### Aufgaben
+*Die Aufgaben zu dieser Sitzung finden Sie im [Appendix B](#AppendixB).*
+
+
 ## Appendix A {#AppendixA}
 ### Multikolinearität und Standardfehler
 Im Folgenden stehen $\beta$s für _**unstandardisierte**_ Regressionskoeffizienten.
@@ -598,6 +603,76 @@ sqrt(diag(I_3)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_
 Dieser Exkurs zeigt, wie sich die Multikolinearität auf die Standardfehler und damit auf die Präzision der Parameterschätzung auswirkt. Inhaltlich bedeutet dies, dass die Prädiktoren redundant sind und nicht klar ist, welchem Prädiktor die Effekte zugeschrieben werden können.
 
 *Die Matrix $I$ wird im Zusammenhang mit der Maximum-Likelihood-Schätzung auch die Inverse der Fischer-Information genannt und enthält die Informationen der Kovariationen der Parameterschätzer (diese Informationen enthält sie hier im Übrigen auch!).*
+
+## Appendix B {#AppendixB}
+### Aufgaben
+#### Datensatz (wie beim letzten Termin)
+
+Der Beispieldatensatz enthält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009. Gegenüber dem letzten Termin sind in dieser Version noch mehr Variablen enthalten, insbesondere über die Eltern und Besitztümer im Elternhaus. 
+
+```{r data}
+library(car)
+library(MASS)
+library(lm.beta) # erforderlich für standardiserte Gewichte
+# Datensatz laden 
+
+data("PISA2009", package = "PsyBSc7")
+```
+
+Im Einzelnen enthält der Datensatz die folgenden Variablen:
+
+* Klassenstufe (`Grade`)
+* Alter in Jahren (`Age`)
+* Geschlecht (`Female`, 0=m / 1=w)
+* Lesekompetenz (`Reading`)
+* Lesefreude (`JoyRead`)
+* Lernzeit in Minuten für Deutsch (`LearnMins`)
+* Sozialstatus (`HISEI`, "highest international socio-economic index of occupational status")
+* Fragebogen-Score für kulturelle Besitztümer zu Hause (`CultPoss`, z. B. klassische Literatur, Kunstwerke)
+* Anzahl Bücher zu Hause (`Books`, eigentlich eine ordinale Ratingskala)
+* Anzahl Fernseher zu Hause (`TVs`)
+* Anzahl Computer zu Hause (`Computers`)
+* Anzahl Autos zu Hause (`Cars`)
+* Migrationshintergrund (`MigHintergrund`, 0=beide Eltern in D geboren, 1=min. 1 Elternteil im Ausland geboren)
+* Bildungsabschluss des Vaters (`FatherEdu`, International Standard Classification of Education)
+* Bildungsabschluss der Mutter (`MotherEdu`, International Standard Classification of Education)
+
+## Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen
+
+In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`), der Bildungsabschluss der Mutter (`MotherEdu`) und die Zahl der Bücher zu Hause (`Books`) bedeutsame Prädiktoren für die Lesekompetenz der Schüler/innen sind. Berechnen Sie diese Modell erneut.
+
+
+```{r}
+# Berechnung des Modells und Ausgabe der Ergebnisse
+m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009)
+summary(lm.beta(m1))
+```
+
+**Aufgabe 1.** Prüfen Sie die Annahme der Homoskedastizität 
+a) durch Inspektion der Residuenplots und 
+b) den Breusch–Pagan Test auf nicht-konstante Varianz
+
+
+**Aufgabe 2.** Prüfen Sie die Annahme der Linearität 
+a) durch Inspektion der partiellen Regressionsplots und 
+b) des Tests für quadratische Trends, der mit der Funktion `residualPlots` erzeugt wurde.
+
+**Aufgabe 3.** Püfen Sie die Normalverteilung der Residuen 
+a) grafisch und 
+b) über den Shapiro-Wilks-Test sowie den Kolmogorov-Smirnov-Test.
+ 
+
+**Aufgabe 4.** Prüfen Sie die Multikollinearität der Prädiktoren im Modell
+a) durch Inspektion der bivariaten Korrelationen und
+b) Berechnung von VIF und Toleranz.
+
+
+**Aufgabe 5.** Ausreißer und einflussreiche Datenpunkte
+a) Inspizieren Sie die Verteilung der Hebelwerten $h_i$
+b) Inspizieren Sie die Verteilung von Cooks Distanz $CD_i$
+c) Sichten Sie die Rohdaten und standardisierten Werte auffälliger Fälle (verwenden Sie die Funktion `influencePlot`).
+
+
 
 ## Literatur
 [Eid, M., Gollwitzer, M., & Schmitt, M. (2017).](https://hds.hebis.de/ubffm/Record/HEB366849158) *Statistik und Forschungsmethoden* (5. Auflage, 1. Auflage: 2010). Weinheim: Beltz. 
