@@ -31,10 +31,10 @@ knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 
 
 
-## Datensatz (PISA: wie in den Übungen zum letzten Termin) <small> $*$ </small>
+## Einleitung und Datensatz (PISA: wie in den Übungen zum letzten Termin) 
 <small> $*$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_ </small>
 
-
+In dieser Sitzung werden wir uns weitere nichtlineare Effekte in Regressionsmodellen ansehen. Dazu verwenden wir zunächst den Datensatz aus der Übung zur `PsyBSc7::Sitzung_6`, welcher in den Aufgaben verwendet wurde und dessen Analysen in `PsyBsc7::Loesung_7` mit dem richtigen Passwort einsehbar waren. 
 Der Beispieldatensatz enthält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009. 
 
 ```{r data}
@@ -48,12 +48,11 @@ data("PISA2009", package = "PsyBSc7")
 
 
 
-## Quadratische Verläufe in der Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen <small> $**$ </small>
+## Quadratische Verläufe in der Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen 
 <small> $**$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_ </small>
 
 
-In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`), der Bildungsabschluss der Mutter (`MotherEdu`) und die Zahl der Bücher zu Hause (`Books`) bedeutsame Prädiktoren für die Lesekompetenz der Schüler/innen sind, allerdings zeigten Analysen, dass nicht alle Voraussetzungen erfüllt waren:
-
+In der Übung zur letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`), der Bildungsabschluss der Mutter (`MotherEdu`) und die Zahl der Bücher zu Hause (`Books`) bedeutsame Prädiktoren für die Lesekompetenz der Schüler/innen sind, allerdings zeigten Analysen, dass nicht alle Voraussetzungen erfüllt waren:
 
 ```{r}
 # Berechnung des Modells und Ausgabe der Ergebnisse
@@ -68,8 +67,7 @@ Die Residuenplots sowie die Testung auf quadratische Trends zeigen an, dass für
 residualPlots(m1, pch = 16)
 ```
 
-
-Die Effekte von Sozialstatus und Büchern werden durch das lineare Modell gut wiedergegeben. Für den Bildungsabschluss der Mutter ist ein leicht nicht-linearer Zusammenhang zu erkennen, der quadratische Trend für die Residuen ist signifikant (signifikantes Ergebnis für den Bildungsabschluss der Mutter). Der Effekt ist dadurch charakterisiert, dass der Zuwachs der Lesekompetenz im unteren Bereich des mütterlichen Bildungsabschlusses stärker ist und im oberen Bereich abflacht. 
+Die Effekte von Sozialstatus und Büchern werden durch das lineare Modell gut wiedergegeben. Für den Bildungsabschluss der Mutter ist ein leicht nicht-linearer Zusammenhang zu erkennen, der quadratische Trend für die Residuen ist signifikant (*signifikantes Ergebnis für den Bildungsabschluss der Mutter*). Der Effekt ist dadurch charakterisiert, dass der Zuwachs der Lesekompetenz im unteren Bereich des mütterlichen Bildungsabschlusses stärker ist und im oberen Bereich abflacht. 
 
 Auch dem Histogramm war eine Schiefe zu entnehmen, welche durch nichtlineare Terme entstehen können (im niederen Bereich liegen mehr Werte; eine Linksschiefe/Rechtssteile ist zu erkennen). 
 
@@ -94,20 +92,90 @@ Die Frage ist nun, woher die Verstöße gegen die Normalverteilungsannahme komme
 
 
 
-## Aufnahme eines quadratischen Effekts <small> $***$ </small>
+## Aufnahme eines quadratischen Effekts 
 <small> $***$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_ </small>
 
 
-Wird für den Bildungsabschluss der Mutter mit der Funktion `poly` ein linearer und qudratischer Trend in das Regressionsmodell aufgenommen, wird der quadratische Trend signifikant und das Modell erklärt signifikant mehr Varianz als ohne den quadratischen Trend:
+Wird für den Bildungsabschluss der Mutter mit der Funktion `poly` ein linearer und qudratischer Trend in das Regressionsmodell aufgenommen, wird der quadratische Trend signifikant und das Modell erklärt signifikant mehr Varianz als ohne den quadratischen Trend: Um diese Ergebnisse zu sehen müssen wir zunächst ein quadratisches Regressionsmodell schätzen. Wir interessieren uns anschließend für die standardisierten Ergebnisse (`summary` und `lm.beta`). Den quadratischen Verlauf erhalten wir, indem wir `poly` auf den Bildungsstatus der Mutter anwenden. `poly` nimmt als zweites Argument die Potenz, für welche wir uns interessieren; hier 2:
 
-```{r}
+```{r exercise_lm_quad, exercise = TRUE, exercise.eval = FALSE}
 # Modell mit linearem + quadratischem Trend für MotherEdu:
+m1.b <- 
+...
+```
+
+```{r exercise_lm_quad-hint-1}
+# Verwenden Sie den Befehl
+lm(...~...)
+```
+
+```{r exercise_lm_quad-hint-2}
+# Verwenden Sie den Befehl
+lm(...~...) # sowie innerhalb von lm
+poly(..., 2)
+```
+
+```{r exercise_lm_quad-hint-2}
+# Verwenden Sie den Befehl
+lm(...~...) # sowie innerhalb von lm
+poly(..., 2) # wenden Sie dies auf MotherEdu an
+```
+
+```{r exercise_lm_quad-hint-3}
+# Verwenden Sie den Befehl
+lm(...~...) # sowie innerhalb von lm
+poly(..., 2) # wenden Sie dies auf MotherEdu an
+# wenden Sie anschließend 
+summary(lm.beta(...)) # an
+```
+
+```{r exercise_lm_quad-solution}
+# Finale Lösung
 m1.b <- lm(Reading ~ HISEI + poly(MotherEdu, 2) + Books, data = PISA2009)
 summary(lm.beta(m1.b))
+```
+
+```{r exercise_setup1, echo = F}
+# For further use in exercises
+m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009)
+m1.b <- lm(Reading ~ HISEI + poly(MotherEdu, 2) + Books, data = PISA2009)
+```
+
+Mit dem folgenden Befehl können wir auf eine simple Weise das Inkrement bestimmen.
+```{r}
 # Vergleich mit Modell ohne quadratischen Trend
 summary(m1.b)$r.squared - summary(m1)$r.squared # Inkrement
-anova(m1, m1.b)
 ```
+
+Wir möchten dieses Inkrement auf Signifikanz prüfen. Dies ging mit dem `anova` Befehl.
+
+
+```{r test_anova, exercise = TRUE, exercise.setup = "exercise_setup1", exercise.eval = FALSE}
+
+```
+
+```{r test_anova-check}
+# Intro into excercise
+m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009)
+m1.b <- lm(Reading ~ HISEI + poly(MotherEdu, 2) + Books, data = PISA2009)
+
+# Begin grading:
+res <- anova(m1, m1.b)
+sol2 <- anova(m1.b, m1)
+
+grade_result(
+  fail_if(~ (!identical(.result, res) & !identical(.result, sol2)), 'Der Befehl anova muss in diesem Zusammenhang zwei Argumente entgegennehmen: die zwei Regressions-Objekte, die wir zuvor abgespeichert hatten. Schauen Sie in der Übung zuvor an, wie dieses Modell hieß, falls Sie sich nicht sicher sind.'),
+    fail_if(~ (identical(.result, sol2)), 'Das ist an sich RICHTIG, allerdings sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m1, da sonst die df negativ sein können und auch die Änderung in R^2 negativ sein könnte!'),
+  pass_if(~ identical(.result, res)),
+  correct = 'Sehr gut! Dies ist der Modellvergleich des ein- und zweifaktoriellen Modells. Hier sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m1, da sonst die df negativ sein können und auch die Änderung in R^2 negativ sein könnte!',
+  incorrect = 'Leider falsch.',
+  glue_correct = '{.correct}',
+  glue_incorrect = '{.incorrect} {.message}')
+```
+
+
+
+
 
 Erzeugt man für das erweiterte Modell Residuenplots, ist der quadratische Trend beim Bildungsabschluss komplett verschwunden - er ist ja schon im Modell enthalten:
 
