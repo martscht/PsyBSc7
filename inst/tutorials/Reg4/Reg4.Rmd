@@ -201,10 +201,22 @@ Ein sehr wichtiges Vorhersagemodell zu Zeiten der Corona-Pandemie oder dem stark
 
 ```{r letter-a, echo=FALSE}
 question("Welche Aussagen über Logarithmen bzw. Exponenten stimmen?",
-  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $\\log_{10}(100)$ berechnen. Die Antwort ist 2.", correct = T),
-  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $\\log_{10}(100)$ berechnen. Die Antwort ist 3.")
+  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $log_{10}(100)$ berechnen. Die Antwort ist 2.", correct = T),
+  answer("Die Gleichung $10^x = 100$ können wir bspw. mit dem 10er-Logarithmus $log_{10}(100)$ berechnen. Die Antwort ist 3."),
+  answer("Logarithmen können NICHT in einander umgerechnet werden."),
+  answer("Es gilt: $log(a+b)=log(a)log(b)$."),
+  answer("Es gilt: $log(ab)=log(a)+log(b)$.", correct=T),
+  answer("$log_a(x)$ ist die Umkehrfunktion zu $a^x$. Dies bedeutet, dass $log_a(a^x)=x.$", correct = T),
+  answer("Es gilt: $a^{c+d}=a^c+a^d$."),
+  answer("Es gilt: $a^{c+d}=a^ca^d$."),
+  answer("Es gilt immer $a^x < b^x$ für $a<b$ und alle $x$."),
+  answer("Es gilt immer $a^x < b^x$ für $1<a<b$ und alle $x$.", correct = T),
+  answer("Es gilt immer $a^x > b^x$ für $0<a<b<1$ und alle $x$.", correct = T), 
+  answer("Es gilt immer $a^x < b^x$ für $0<a<b<1$ und alle $x$.", correct = T)
 )
 ```
+Im folgenden Exkurs haben Sie die Möglichkeit Ihr Wissen nochmal aufzufrischen und zu erweitern. Ihnen werden Quellen genannt, in welchen Sie weitere Inhalte nachlesen können.
+
 
 ### Exkurs: Exponenten und Logarithmen
 
