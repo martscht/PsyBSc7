@@ -663,7 +663,7 @@ b) des Tests für quadratische Trends, der mit der Funktion `residualPlots` erze
 
 #### **Aufgabe 3.** Püfen Sie die Normalverteilung der Residuen 
 
-a) grafisch und 
+a) grafisch (Histogramm, Q-Q-Plot) und 
 
 b) über den Shapiro-Wilks-Test sowie den Kolmogorov-Smirnov-Test.
  

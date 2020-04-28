@@ -105,7 +105,7 @@ avPlots(m1, pch = 16)
 Die Effekte von Sozialstatus und Büchern werden durch das lineare Modell gut wiedergegeben. Für den Bildungsabschluss der Mutter ist ein leicht nicht-linearer Zusammenhang zu erkennen, der quadratische Trend für die Residuen ist signifikant (entnommen aus den Analysen zu 1.; *Die Null-Hypothese, dass kein quadratischer Trend besteht wird mit einer Irrtumswahrscheinlichkeit von 5% verworfen; der quadratische Effekt ist somit mit dieser Irrtumswahrscheinlichkeit in der Population verschieden von 0*). Der Effekt ist dadurch charakterisiert, dass der Zuwachs der Lesekompetenz im unteren Bereich des mütterlichen Bildungsabschlusses stärker ist und im oberen Bereich abflacht. Dies wird in der nächsten Sitzung näher behandelt.
 
 ## 3. Püfen Sie die Normalverteilung der Residuen 
-### a) grafisch und 
+### a) grafisch (Histogramm, Q-Q-Plot) und 
 ```{r}
 res <- studres(m1) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
