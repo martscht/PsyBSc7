@@ -343,7 +343,7 @@ m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Ver
 summary(m_q)
 ```
 
-```{r "exercise_setup2", include = F}
+```{r exercise_setup2, include = F}
 m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
 m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
 ```
@@ -360,7 +360,7 @@ summary(m_q)$r.squared - summary(m_l)$r.squared  # Inkrement
 
 Testen Sie dieses auf Signifikanz mit `anova`.
 
-```{r test_anova_pop,  exercise = TRUE, exercise.eval = FALSE, setup="exercise_setup2"}
+```{r test_anova_pop,  exercise = TRUE, exercise.eval = FALSE, exercise.setup="exercise_setup2"}
 
 ```
 
