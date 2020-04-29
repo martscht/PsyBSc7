@@ -384,23 +384,7 @@ grade_result(
   glue_incorrect = '{.incorrect} {.message}')
 ```
 
-
-
-
-```{r}
-res <- studres(m_q) # Studentisierte Residuen als Objekt speichern
-df_res <- data.frame(res) # als Data.Frame für ggplot
-# Grafisch: Histogramm mit Normalverteilungskurve
-ggplot(data = df_res, aes(x = res)) + 
-     geom_histogram(aes(y =..density..),
-                    bins = 10,                    # Wie viele Balken sollen gezeichnet werden?
-                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
-                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
-     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
-     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das quadratische Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
-```
-
-Auch dem `geom_smooth` Befehl kann einfach das modifizierte Regressionsmodell übergeben werden. Stellen Sie die Weltbevölkerung sowie das lineare und das quadratische Modell dar.
+Auch dem `geom_smooth` Befehl kann einfach das modifizierte Regressionsmodell übergeben werden. Stellen Sie die Weltbevölkerung sowie das lineare und das quadratische Modell dar und färben Sie die Kurve in dunkelblau (`col = "darkblue"`).
 ```{r exercise_graph_pop_quad,  exercise = TRUE, exercise.eval = FALSE, fig.height=6, fig.align="center"}
 ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf (bis hier her ist es Code der Aufgabe zuvor!)
@@ -414,19 +398,127 @@ ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")  # plotte quadratischen Verlauf
 ```
 
-Durch den quadratischen Verlauf lassen sich `r round(summary(m_q)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_q)$r.squared*100 - summary(m_l)$r.squared*100, 2)`% entspricht (*mit einer Irrtumswahrscheinlichkeit von 5% ist das Inkrement in der Population nicht null.* Dies ist äquivialent zu folgdender Aussage: *mit einer Irrtumswahrscheinlichkeit von 5% ist der Effektsparameter (der Regressionkoeffizient) des quadratischen Verlaufs in der Population nicht null*; dies spricht folglich für einen quadratischen im Gegensatz zu einem linearen Verlauf). Das Histogramm spricht nicht für Normalverteilung der Residuen. Allerdings ist der Grafik deutlich zu entnehmen, dass der quadratische Verlauf nicht weit vom empirischen entfernt liegt.
+Durch den quadratischen Verlauf lassen sich `r round(summary(m_q)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_q)$r.squared*100 - summary(m_l)$r.squared*100, 2)`% entspricht (*mit einer Irrtumswahrscheinlichkeit von 5% ist das Inkrement in der Population nicht null.* Dies ist äquivialent zu folgdender Aussage: *mit einer Irrtumswahrscheinlichkeit von 5% ist der Effektsparameter (der Regressionkoeffizient) des quadratischen Verlaufs in der Population nicht null*; dies spricht folglich für einen quadratischen im Gegensatz zu einem linearen Verlauf). Der Grafik ist deutlich zu entnehmen, dass der quadratische Verlauf nicht weit vom empirischen entfernt liegt.
 
-Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besser beschreibt. Dazu müssen wir zunächst die Weltpopulation logarithmieren und können anschließend ein lineares Modell verwenden.
+Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besser beschreibt. Dazu müssen wir zunächst die Weltpopulation logarithmieren und können anschließend ein lineares Modell verwenden. Transformieren Sie hierzu die Variablen und speichern diese als weitere Spalte in unserem Datensatz ab.
 
+
+
+
+```{r test_log_Pop,  exercise = TRUE, exercise.eval = FALSE}
+
+```
+
+
+```{r test_log_Pop-check}
+# Intro into excercise
+
+# Begin grading:
+res <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
+
+
+grade_result(
+  fail_if(~ (!identical(.result, res)), 'Sie müssen den Befehl `log` verwenden.'),
+  pass_if(~ identical(.result, res)),
+  correct = 'Sehr gut! Sie haben die logarithmierte Weltbevölkerung unserem Datensatz hinzugefügt.',
+  incorrect = 'Leider falsch.',
+  glue_correct = '{.correct}',
+  glue_incorrect = '{.incorrect} {.message}')
+```
+
+```{r, include = F}
+WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
+```
+
+```{r exercise_setup3, include = F}
+m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
+m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
+WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
+```
+
+Wir wollen anschließend ein einfaches Regressionsmodell schätzen, in welchem die logarithmierte Bevölkerungszahl die abhängige Variable darstellt. Geben Sie die `summary` aus.
+
+```{r test_log_Pop_reg,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup3"}
+
+```
+
+
+```{r test_log_Pop_reg-check}
+# Intro into excercise
+WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
+
+
+# Begin grading:
+m_log <- lm(log_Population ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
+res <- summary(m_log)
+
+grade_result(
+  fail_if(~ (!identical(.result, res)), 'Sie müssen den Befehl `log` verwenden.'),
+  pass_if(~ identical(.result, res)),
+  correct = 'Sehr gut! Sie haben die logarithmierte Weltbevölkerung unserem Datensatz hinzugefügt.',
+  incorrect = 'Leider falsch.',
+  glue_correct = '{.correct}',
+  glue_incorrect = '{.incorrect} {.message}')
+```
+
+```{r, include = F}
+m_log <- lm(log_Population ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
+```
+
+```{r exercise_setup4, include = F}
+m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
+m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
+WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
+m_log <- lm(log_Population ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
+```
+
+Das lineare Modell für die logarithmierte Bevölkerunsdichte scheint gut zu den Daten zu passen. Insgesamt können `r round(summary(m_log)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden; etwas weniger als durch das quadratische Wachstum, durch welches `r round(summary(m_q)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden konnten. Die zugehörige Grafik sieht so aus:
+
+```{r, fig.height=6, fig.align="center"}
+ggplot(data = WorldPopulation, aes(x = Year, y = log_Population))+
+     geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")+
+  labs(titel = "Logarithmierte Weltbevölkerung vs. Jahr")
+```
+
+
+Wir wollen die Vorhersage nun auch noch retransformiert plotten, um sie mit dem quadratischen Verlauf vergleichen zu können. Dazu müssen wir die vorhergesagten Werte unseres logarithmischen Modells verwenden und mit mit der Umkehrfunktion des Logarithmus retransformieren. Diese können wir einem `lm`-Objekt mit `predict` entlocken.
+
+
+```{r excercise_log_Pop_reg_predict,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup4"}
+WorldPopulation$pred_Pop_exp <- ... # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
+WorldPopulation$pred_Pop_exp
+```
+
+```{r excercise_log_Pop_reg_predict-hint-1}
+# Verwenden Sie
+predict(...)
+```
+
+```{r excercise_log_Pop_reg_predict-hint-2}
+# Verwenden Sie
+predict(...) # und transformieren Sie mit 
+exp(...)
+```
+
+```{r excercise_log_Pop_reg_predict-solution}
+WorldPopulation$pred_Pop_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
+WorldPopulation$pred_Pop_exp
+```
+
+```{r, include=F}
+WorldPopulation$pred_Pop_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
+```
+
+```{r exercise_setup4, include = F}
+m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
+m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
+WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
+m_log <- lm(log_Population ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
+WorldPopulation$pred_Pop_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
+```
 
 
 ```{r, fig.height=6, fig.align="center"}
-WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
-m_log <- lm(log_Population ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
-summary(m_log)
-
-WorldPopulation$pred_Pop_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
-
 ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")+         # plotte linearen Verlauf 
      geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")+  # plotte quadratischen Verlauf
@@ -445,7 +537,7 @@ ggplot(data = df_res, aes(x = res)) +
      labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das logarithmierte Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
 ```
 
-Das lineare Modell für die logarithmierte Bevölkerunsdichte scheint gut zu den Daten zu passen. Insgesamt können `r round(summary(m_log)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden; etwas weniger als durch das quadratische Wachstum, durch welches `r round(summary(m_q)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden konnten. Das Diagramm der retransformierten vorhergesagten Werten signalisiert, dass ein exponentielles Wachstumsmodell die Daten gut beschreibt, allerdings scheint der quadratische Trend vor allem ab ca. 1975 die Daten besser zu beschreiben. Das Histogramm der Residuen des logarithmierten Modells spricht deutlich gegen die Normalverteilungsannahme. Um das Modell genauer zu untersuchen, schauen wir uns den Plot der logarithmierten Bevölkerungsdichte an: 
+ Das Diagramm der retransformierten vorhergesagten Werten signalisiert, dass ein exponentielles Wachstumsmodell die Daten gut beschreibt, allerdings scheint der quadratische Trend vor allem ab ca. 1975 die Daten besser zu beschreiben. Das Histogramm der Residuen des logarithmierten Modells spricht deutlich gegen die Normalverteilungsannahme. Um das Modell genauer zu untersuchen, schauen wir uns den Plot der logarithmierten Bevölkerungsdichte an: 
 
 ```{r, fig.height=6, fig.align="center"}
 ggplot(data = WorldPopulation, aes(x = Year, y = log_Population))+
