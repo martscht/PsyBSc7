@@ -509,7 +509,7 @@ WorldPopulation$pred_Pop_exp
 WorldPopulation$pred_Pop_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
 ```
 
-```{r exercise_setup4, include = F}
+```{r exercise_setup5, include = F}
 m_l <- lm(Population ~ Year, data = WorldPopulation) # linearer Verlauf
 m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Verlauf
 WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
