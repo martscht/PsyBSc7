@@ -480,7 +480,6 @@ ggplot(data = WorldPopulation, aes(x = Year, y = log_Population))+
   labs(titel = "Logarithmierte Weltbevölkerung vs. Jahr")
 ```
 
-
 Wir wollen die Vorhersage nun auch noch retransformiert plotten, um sie mit dem quadratischen Verlauf vergleichen zu können. Dazu müssen wir die vorhergesagten Werte unseres logarithmischen Modells verwenden und mit mit der Umkehrfunktion des Logarithmus retransformieren. Diese können wir einem `lm`-Objekt mit `predict` entlocken.
 
 
