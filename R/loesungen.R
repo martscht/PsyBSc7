@@ -14,6 +14,10 @@ Loesungen_1 <- function(password) {
   if (digest::digest(password) != '92195e95ce62da2d8a449c0739e459ca') {
     stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
+    library(learnr)
+    if (!('fontawesome' %in% rownames(installed.packages()))) {
+      devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+    }
     compile('Wiederholung_lo')
   }
 }
@@ -24,6 +28,13 @@ Loesungen_2 <- function(password) {
   if (digest::digest(password) != '7d689a7a901bab794ff188043f8ee47d') {
     stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
+    library(learnr)
+    if (!('fontawesome' %in% rownames(installed.packages()))) {
+      devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+    }
+    if (!('gradethis' %in% rownames(installed.packages()))) {
+      devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+    }
     compile('ggplot_lo')
   }
 }
@@ -35,6 +46,10 @@ Loesungen_3 <- function(password) {
   if (digest::digest(password) != 'bceb7f9cf226a3f0de2f62f1ebc6645e') {
     stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
+    library(learnr)
+    if (!('gradethis' %in% rownames(installed.packages()))) {
+      devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+    }
     compile('loops_lo')
   }
 }
