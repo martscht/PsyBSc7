@@ -21,7 +21,7 @@
 #' @export
 Loesungen_1 <- function(password) {
   if (digest::digest(password) != '92195e95ce62da2d8a449c0739e459ca') {
-    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     compile('Wiederholung_lo')
   }
@@ -31,7 +31,7 @@ Loesungen_1 <- function(password) {
 #' @export
 Loesungen_2 <- function(password) {
   if (digest::digest(password) != '7d689a7a901bab794ff188043f8ee47d') {
-    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     compile('ggplot_lo')
   }
@@ -51,7 +51,7 @@ Loesungen_3 <- function() {
   library(gradethis)
   
   if (digest::digest(password) != 'bceb7f9cf226a3f0de2f62f1ebc6645e') {
-    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     compile('loops_lo')
   }
@@ -71,7 +71,7 @@ Loesungen_4 <- function() {
   library(gradethis)
   
   if (digest::digest(password) != '???') {
-    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     message('Leider ist die Lösung noch nicht fertig :(.')
   }
@@ -90,7 +90,7 @@ Loesungen_5 <- function() {
   library(gradethis)
   
   if (digest::digest(password) != '???') {
-    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     message('Leider ist die Lösung noch nicht fertig :(.')
   }
@@ -109,7 +109,7 @@ Loesungen_6 <- function() {
   library(gradethis)
   
   if (digest::digest(password) != "6adb4894cab39c7d479b5284a1a907b2") {
-    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     compile("Reg3_lo")
   }
@@ -129,7 +129,7 @@ Loesungen_7 <- function() {
   library(gradethis)
   
   if (digest::digest(password) != "6a1832c69beaea1033bd63fb0387a58a") {
-    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     message('Leider ist die Lösung noch nicht fertig :(.')
   }
@@ -149,7 +149,7 @@ Loesungen_8 <- function() {
   library(gradethis)
   
   if (digest::digest(password) != '???') {
-    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     message('Leider ist die Lösung noch nicht fertig :(.')
   }
@@ -169,7 +169,7 @@ Loesungen_9 <- function() {
   library(gradethis)
   
   if (digest::digest(password) != '???') {
-    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     message('Leider ist die Lösung noch nicht fertig :(.')
   }
@@ -189,7 +189,7 @@ Loesungen_10 <- function() {
   library(gradethis)
   
   if (digest::digest(password) != '???') {
-    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     library(learnr)
     if (!('gradethis' %in% rownames(installed.packages()))) {
