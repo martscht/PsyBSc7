@@ -33,6 +33,7 @@ Sitzung_2 <- function() {
   learnr::run_tutorial('ggplot', package = 'PsyBSc7')
 }
 
+
 #' @rdname Sitzungen
 #' @export
 Sitzung_3 <- function() {
@@ -43,3 +44,54 @@ Sitzung_3 <- function() {
   library(gradethis)
   learnr::run_tutorial('loops', package = 'PsyBSc7')
 }
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_4 <- function() {
+  library(learnr)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_5 <- function() {
+  library(learnr)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_6 <- function() {
+  library(learnr)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_7 <- function() {
+  library(learnr)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_8 <- function() {
+  library(learnr)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_9 <- function() {
+  library(learnr)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+
+#' @rdname Sitzungen
+#' @export
+Sitzung_10 <- function() {
+  library(learnr)
+  message('Leider ist die Sitzung noch nicht fertig :(.')
+}
+

@@ -28,6 +28,7 @@ Loesungen_2 <- function(password) {
   }
 }
 
+
 #' @rdname Loesungen
 #' @export
 Loesungen_3 <- function(password) {
@@ -37,6 +38,7 @@ Loesungen_3 <- function(password) {
     compile('loops_lo')
   }
 }
+
 
 
 #### Kompilieren ####

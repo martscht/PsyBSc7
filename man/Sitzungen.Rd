@@ -5,6 +5,13 @@
 \alias{Sitzung_1}
 \alias{Sitzung_2}
 \alias{Sitzung_3}
+\alias{Sitzung_4}
+\alias{Sitzung_5}
+\alias{Sitzung_6}
+\alias{Sitzung_7}
+\alias{Sitzung_8}
+\alias{Sitzung_9}
+\alias{Sitzung_10}
 \title{Übungen für das Praktikum in PsyBSc 7, Sommersemester 2020
 
 Mit diesen Funktionen können Sie die Übungen zu den einzelnen Sitzungen aufrufen. Die Funktionen nehmen keine Argumente entgegen.}
@@ -14,6 +21,20 @@ Sitzung_1()
 Sitzung_2()
 
 Sitzung_3()
+
+Sitzung_4()
+
+Sitzung_5()
+
+Sitzung_6()
+
+Sitzung_7()
+
+Sitzung_8()
+
+Sitzung_9()
+
+Sitzung_10()
 }
 \description{
 Übungen für das Praktikum in PsyBSc 7, Sommersemester 2020
