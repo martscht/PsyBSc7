@@ -50,10 +50,10 @@ Loesungen_3 <- function() {
   }
   library(gradethis)
   
-  if (digest::digest(password) != '???') {
+  if (digest::digest(password) != 'bceb7f9cf226a3f0de2f62f1ebc6645e') {
     stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
-    message('Leider ist die Lösung noch nicht fertig :(.')
+    compile('loops_lo')
   }
 }
 
