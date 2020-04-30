@@ -2,7 +2,7 @@
 title: "Sitzung 2: Grafiken mit ggplot2"
 output: 
   learnr::tutorial:
-    progressive: false
+    progressive: true
     allow_skip: true
     includes:
       after_body: footer.html
