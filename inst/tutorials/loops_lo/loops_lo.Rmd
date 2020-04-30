@@ -1,0 +1,135 @@
+---
+title: "Loops und Funktionen"
+output: 
+  learnr::tutorial:
+  progressive: false
+  allow_skip: true
+  includes:
+    after_body: footer.html
+    in_header: header.html
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+data(mdbf, package = 'PsyBSc7')
+knitr::opts_chunk$set(echo = FALSE)
+learnr::tutorial_options(exercise.eval = FALSE)
+```
+
+## Aufgaben
+
+*Zur Bearbeitung der Aufgaben öffnen Sie bitte ein neues RStudio-Fenster. Nutzen Sie für die Aufgaben den Datensatz `mdbf.rds`. Die Daten können mittels des `PsyBSc7::Aufgaben_3()`-Befehls geladen werden. Der Datensatz enthält 98 Beobachtungen auf 12 Variablen, allesamt Items des **M**ehr**d**imensionalen **B**efindlichkeits**f**ragebogens. In diesem Fragebogen werden Adjektive zur Beschreibung der aktuellen Stimmung genutzt um die drei Dimensionen der Stimmung - Gut vs. Schlecht, Wach vs. Müde und Ruhig vs. Unruhig - zu erheben.*
+
+
+
+Variable | Adjektiv | Richtung | Dimension 
+-------- | -------- | -------- | --------- 
+`stim1` | zufrieden | positiv | Gut vs. Schlecht
+`stim2` | ausgeruht | positiv | Wach vs. Müde
+`stim3` | ruhelos | negativ | Ruhig vs. Unruhig
+`stim4` | schlecht | negativ | Gut vs. Schlecht
+`stim5` | schlapp | negativ | Wach vs. Müde
+`stim6` | gelassen | positiv | Ruhig vs. Unruhig
+`stim7` | müde | negativ | Wach vs. Müde
+`stim8` | gut | positiv | Gut vs. Schlecht
+`stim9` | unruhig | negativ | Ruhig vs. Unruhig
+`stim10` | munter | positiv | Wach vs. Müde
+`stim11` | unwohl | negativ | Gut vs. Schlecht
+`stim12` | entspannt | positiv | Ruhig vs. Unruhig
+
+
+*Schreiben Sie eine Funktion, die für alle Variablen in einem beliebigen Datensatz gleichzeitig jeweils die univariate Normalverteilung mit dem Shapiro-Wilk-Test prüft und die Verteilungen grafisch darstellt. Ermöglichen Sie dabei durch ein Argument die Wahl zwischen Histogramm und QQ-Plot und legen Sie dafür eine Voreinstellung fest. Wenden Sie die Funtion zum Schluss auf den Datensatz `mdbf` an. Vergessen nicht, den Datensatz hierfür aber vorher zu laden.*
+
+**Bonus**:
+
+*- Nutzen Sie das `main`-Argument um die Abbildungen mit den korrekten Namen der dargestellten Variablen zu versehen.*
+*- Geben Sie die Ergebnisse der Shapiro-Tests als `data.frame` mit den Spalten Variablenname, Teststatistik und $p$-Wert aus.*
+
+*Für die einfache Variante:*
+
+```{r}
+# Definition der Funktion
+normal <- function(data, hist = TRUE) {
+  
+  # Leere Ergebnisse anlegen
+  shap <- list()
+  
+  # Loop
+  for (i in 1:ncol(data)) {
+    # Shapiro
+    shap[[i]] <- shapiro.test(data[, i])
+    
+    # Plot Wahl
+    if (hist) {
+      hist(data[, i])
+    } else {
+      qqnorm(data[, i])
+      qqline(data[, i])
+    }
+  }
+
+  return(shap)
+}
+
+# Anwendung
+normal(mdbf)
+```
+
+*Tipp:*
+
+*Legen Sie eine leere Liste an (mit `<- list()`), in der schrittweise die Ergebnisse des Shapiro-Wilk-Tests abgelegt werden können.*
+
+*Die Schleife muss durch alle items im Datensatz durchlaufen. Man benötigt also eine hierzu eine Information über die anzahl der Spalten.*
+
+*QQ-Plots können mit `qqnorm` erstellt werden. Die diagonale Linie kann zudem mit `qqline` hinzugefügt werden.*
+
+*Mittels `if` kann ein optionaler plot als histogram oder QQ-plot hinzugefüht werden.*
+
+
+
+*Mit den Bonus-Aufgaben:*
+
+```{r}
+# Lade Datensatz
+# mdbf <- readRDS("PFAD ZUM ORDNER MIT DEM DATENSATZ")
+
+# Definition der Funktion
+normal <- function(data, hist = TRUE) {
+  
+  # Leere Ergebnisse anlegen
+  shap <- data.frame(variable = NA, statistic = NA, p.value = NA)
+  
+  # Loop
+  for (i in 1:ncol(data)) {
+    # Shapiro
+    test <- shapiro.test(data[, i])
+    shap[i, ] <- c(names(data)[i], test$statistic, test$p.value)
+    
+    # Plot Wahl
+    if (hist) {
+      hist(data[, i], main = names(data)[i])
+    } else {
+      qqnorm(data[, i], main = names(data)[i])
+      qqline(data[, i])
+    }
+  }
+
+  return(shap)
+}
+
+# Anwendung
+normal(mdbf)
+```
+
+*Tipp:*
+
+*Legen Sie eine leere Liste an (mit `<- list()`), in der schrittweise die Ergebnisse des Shapiro-Wilk-Tests abgelegt werden können.*
+
+*Die Schleife muss durch alle items im Datensatz durchlaufen. Man benötigt also eine hierzu eine Information über die anzahl der Spalten.*
+
+*QQ-Plots können mit `qqnorm` erstellt werden. Die diagonale Linie kann zudem mit `qqline` hinzugefügt werden.*
+
+*Mittels `if` kann ein optionaler plot als histogram oder QQ-plot hinzugefüht werden.* 
+
+*Die `data.frame` Funktion erlaubt es, ein data frame anzulegen.*
