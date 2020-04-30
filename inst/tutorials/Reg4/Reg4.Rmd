@@ -635,7 +635,7 @@ grade_result(
   glue_incorrect = '{.incorrect} {.message}')
 ```
 
-Durch den quadratisch-exponentiellen Verlauf lassen sich `r round(summary(m_log_quad)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_log_quad)$r.squared*100 - summary(m_log)$r.squared*100, 2)`% im Vergleich zum reinen exponentiellen Verlaufsmodell entspricht. Interessant zu sehen ist, dass fast 100% der Variation im Datensatz erklärbar ist. 
+Durch den quadratisch-exponentiellen Verlauf lassen sich `r round(summary(m_log_quad)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_log_quad)$r.squared*100 - summary(m_log)$r.squared*100, 2)`% im Vergleich zum reinen exponentiellen Verlaufsmodell entspricht. Interessant zu sehen ist, dass fast 100% der Variation im Datensatz erklärbar ist. Eine Übersicht über $R^2$ in den vier Modellen ist in [Appendix B](#AppendixB) einzusehen.
 
 
 Stellen wir dies grafisch dar. Dazu müssen wir wieder die Vorhersage abspeichern. Diese können wir einem `lm`-Objekt mit `predict` entlocken.
@@ -710,12 +710,15 @@ Da die Modelle des quadratischen und des quadratisch-exponentiellen Verlaufs nic
 
 ### Parameterinterpretation des quadratisch-exponentielles Modell für das Bevölkerungswachstum
 
-Was bedeuten nun die Parameter in unserem quadratisch-exponentiellen Modell? Der Regressionskoeffizient des linearen Trends von `poly` liegt bei `r round(coef(m_log_quad)[2], 2)` und der Koeffizient des quadratischen Trends bei `r round(coef(m_log_quad)[3], 2)`. Dies spricht für ein **beschläunigtes exponentielles Wachstum**. Nach diesem Vorhersagemodel scheinen die Menschen sich schneller als exponentiell zu vermehren (zumindest von 1800 bis 2020).
+Was bedeuten nun die Parameter in unserem quadratisch-exponentiellen Modell? Der Regressionskoeffizient des linearen Trends von `poly` liegt bei `r round(coef(m_log_quad)[2], 2)` und der Koeffizient des quadratischen Trends bei `r round(coef(m_log_quad)[3], 2)`. Dies spricht für ein **beschläunigtes exponentielles Wachstum**. Nach diesem Vorhersagemodel scheinen die Menschen sich schneller als exponentiell zu vermehren (zumindest von 1800 bis 2020). Eine Übersicht über die Modelle sehen Sie in [Appendix C](#AppendixC).
 
 Wären beide Koeffizienten negativ, so würde dies für *beschleunigtes exponentiellen Zerfall/Abnahme* sprechen. Ist der Koeffizient des quadratische Trends negativ, wird von *exponentiellen Wachstum mit Dämpfung* gesprochen. 
 
 Final ist zu sagen, dass die Menschheit am wahrscheinlichsten  exponentiell wächst. Ein quadratisches Modell ist im Allgemeinen nicht sinnvoll. Da wir uns in dieser Übung nur einen kleine Zeitausschnitt angesehen haben, kam es zu diesen Abweichungen. Allerdings würde das geschätzte quadratische Modell für das Jahr `0` eine Bevölkerungszahl von `r predict(object = m_q, newdata = data.frame(Year=c(0)))`, was absolut nicht sinnvoll ist. 
 
+
+#### Aufgaben
+*Die Aufgaben zu dieser Sitzung finden Sie im [Appendix D](#AppendixD).*
 
 ## Appendix A {#AppendixA}
 ### Exkurs: Was genau macht `poly`?
@@ -784,6 +787,84 @@ Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich v
 * **Logarithmisches Modell**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i + \varepsilon_i} = e^{\beta_0 + \beta_1t_i} \ e^{\varepsilon_i}$. Diesem Modell ist zu entnehmen, dass der Fehler in Abhängigkeit von der Ausprägung der unabhängigen Variablen (hier: $t_i$) sich unterschiedlich stark auf das Kriterium (die abhängige Variable, hier die Bevölkerungszahl) auswirkt - er hängt also mit der Ausprägung der unabhängigen Variable zusammen. Dies ist im logarithmierten Modell nicht mehr der Fall; es handelt sich hier bis auf die Transformation der abhängigen Variable um ein "normales" Regressionsmodell: Hier verliert sich diese Beziehung zwischen unabhängiger Variable und Fehler!
 
 * **Logarithmisches Modell mit quadratischem Term**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i}$.
+
+
+## Appendix D {#AppendixD}
+### Aufgaben
+#### Corona-Datensatz (wie in der ggplot2-Sitzung; `PsyBSc7::Sitzung_2()`)
+
+Zur Vorbereitung laden Sie die Daten ein. Entweder via folgendem Code
+
+```{r}
+library(ggplot2)
+library(car)
+library(MASS)
+
+### Datensatz: Corona-Pandemie 2020
+confirmed <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
+deaths <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
+
+### Long format ---
+confirmed_long <- reshape(confirmed,
+  varying = names(confirmed)[-c(1:4)],
+  v.names = 'Confirmed',
+  timevar = 'Day',
+  idvar = names(confirmed)[1:4],
+  direction = 'long')
+
+deaths_long <- reshape(deaths,
+  varying = names(deaths)[-c(1:4)],
+  v.names = 'Deaths',
+  timevar = 'Day',
+  idvar = names(deaths)[1:4],
+  direction = 'long')
+
+### Merged data ----
+long <- merge(confirmed_long, deaths_long,
+  by = c('Province.State', 'Country.Region', 'Lat', 'Long', 'Day'))
+
+### Full data ----
+covid <- aggregate(cbind(Confirmed, Deaths) ~ Country.Region + Day, data = long, FUN = 'sum')
+
+### Subsets ----
+covid_de <- covid[covid$Country.Region == 'Germany', ]
+covid_sel <- covid[covid$Country.Region %in% c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom'), ]
+covid_today <- covid_sel[covid_sel$Day == max(covid_sel$Day), ]
+covid_global <- covid[covid$Day == max(covid$Day), ]
+```
+
+oder via `PsyBSc7::Aufgabe_2()`.
+
+
+#### **Aufgabe 1.**  Verschaffen Sie sich einen Überblick über die Daten durch
+
+a)  Stellen Sie die Verläufe der bestätigten Fälle in den Ländern Frankreich, Deutschland, Italien, Spanien und Groß Britannien gegen die Zeit dar  *(Subdatensatz `covid_sel`)*
+
+b) Stellen Sie nur den Verlauf der bestätigten Fälle von Deutschland grafisch dar  *(Subdatensatz `covid_de`)* 
+
+c) Stellen Sie den logarithmierten Verlauf der bestätigten Fälle von Deutschland grafisch dar 
+Tipp: der Logarithmus von 0 ist nicht definiert (`log(0) = -Inf`); diese Werte machen in einer Regressionsanalyse keinen sind, weswegen Sie diese durch fehlende Werte (`NA`) ersetzten müssen *(Subdatensatz `covid_de`)* 
+
+d) Löschen Sie die Tage aus dem Datensatz heraus, an welchen noch keine bestätigten Fälle in Deutschland aufgetreten sind
+Tipp:  `is.na(...)` fragt ab, ob Einträge in einem Element fehlen. Entsprechend können mit `!is.na(...)` jene Fälle angesprochen werden, die vorhanden sind. *(Subdatensatz `covid_de`)* 
+
+
+
+#### **Aufgabe 2.** Schauen Sie sich den Verlauf der bestätigten Infektion in Deutschland genauer an durch
+
+a) durch lineare und quadratische Regression
+
+b) lineare Regression der logarithmierten "Confirmed" Cases
+
+c) Passt das Modell zu den Daten? Analysieren Sie die Voraussetzungen 
+
+d) Stellen den logarithmierten sowie den retransformierten Verlauf dar
+
+#### **Aufgabe 3.** Prüfen Sie nun, ob sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können
+
+
+#### **Bonusaufgabe.**: Vergleichen Sie die Koeffizienten des exponentiellen Wachstums zwischen den Ländern (*Diese Aufgabe ist komplett freiwillig und muss nicht gelöst werden, um die Studienleistung zu bekommen.*)
+
 
 ## Literatur
 [Eid, M., Gollwitzer, M., & Schmitt, M. (2017).](https://hds.hebis.de/ubffm/Record/HEB366849158) *Statistik und Forschungsmethoden* (5. Auflage, 1. Auflage: 2010). Weinheim: Beltz. 
