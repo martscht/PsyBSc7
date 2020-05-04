@@ -1,15 +1,20 @@
 ---
-title: "Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte -- Aufgaben mit Lösungen"
-author: "Julien P. Irmer"
-date: "3/27/2020"
-output: html_document
+title: "Sitzung 7: Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte --- Aufgaben mit Lösungen"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-*Statistik für Psychologen: Praktikum PsyBSc 7, Sommersemester 2020*
+## Daten einlesen
 
 
 ```{r}
@@ -51,8 +56,8 @@ covid_global <- covid[covid$Day == max(covid$Day), ]
 ```
 
 
-# 1. Verschaffen Sie sich einen Überblick über die Daten durch
-## a)  Stellen Sie die Verläufe der bestätigten Fälle in den Ländern Frankreich, Deutschland, Italien, Spanien und Groß Britannien gegen die Zeit dar 
+## **Aufgabe 1.** Verschaffen Sie sich einen Überblick über die Daten durch
+### a)  Stellen Sie die Verläufe der bestätigten Fälle in den Ländern Frankreich, Deutschland, Italien, Spanien und Groß Britannien gegen die Zeit dar 
 #### *(Subdatensatz covid_sel)*
 
 ```{r}
@@ -61,7 +66,7 @@ ggplot(covid_sel, aes(x = Day, y = Confirmed, col = Country.Region))+geom_line(l
 
 
 
-## b) Stellen Sie nur den Verlauf der bestätigten Fälle von Deutschland grafisch dar 
+### b) Stellen Sie nur den Verlauf der bestätigten Fälle von Deutschland grafisch dar 
 #### *(Subdatensatz covid_de)* 
 
 
@@ -70,7 +75,7 @@ ggplot(covid_de, aes(x = Day, y = Confirmed))+geom_point()
 ```
 
 
-## c) Stellen Sie den logarithmierten Verlauf der bestätigten Fälle von Deutschland grafisch dar 
+### c) Stellen Sie den logarithmierten Verlauf der bestätigten Fälle von Deutschland grafisch dar 
 #### Tipp: der Logarithmus von 0 ist nicht definiert (`log(0) = -Inf`); diese Werte machen in einer Regressionsanalyse keinen sind, weswegen Sie diese durch fehlende Werte (`NA`) ersetzten müssen 
 #### *(Subdatensatz covid_de)* 
 
@@ -80,7 +85,7 @@ covid_de$log_Confirmed[covid_de$log_Confirmed == -Inf] <- NA    # Ersetzen von -
 ggplot(covid_de, aes(x = Day, y = log_Confirmed))+geom_point()
 ```
 
-## d) Löschen Sie die Tage aus dem Datensatz heraus, an welchen noch keine bestätigten Fälle in Deutschland aufgetreten sind
+### d) Löschen Sie die Tage aus dem Datensatz heraus, an welchen noch keine bestätigten Fälle in Deutschland aufgetreten sind
 #### Tipp:  `is.na(...)` fragt ab, ob Einträge in einem Element fehlen. Entsprechend können mit `!is.na(...)` jene Fälle angesprochen werden, die vorhanden sind.
 #### *(Subdatensatz covid_de)* 
 ```{r}
@@ -89,14 +94,14 @@ covid_de <- covid_de[!is.na(covid_de$log_Confirmed),] # Löschen aller Fälle, i
 head(covid_de) # Datensatz ohne Tage, an denen in Deutschland keine Corona-Fölle beobachetet waren
 ```
 
-## Ergebnisinterpretation 1.
+### Ergebnisinterpretation **Aufgabe 1.**
 **a)** Bei allen Verläufen lässt sich ein exponentielles-Wachstum vermuten. Vielleicht unterscheiden sich die Raten des Wachstums oder zeitliche Einstieg der Epedimien pro Land.
 
 **b) + c) + d)** Aus den beiden Grafiken ist ersichtlich, dass sich ein exponentielles Wachstum für die bestätigten Fälle der Corona-Infektionen in Deutschland vermuten lässt. Im Vergleich zu allen andern Ländern wurde der erste Corona-Fall in Deutschland am *6. Tag* der Datenerhebung registiert.
 
 
-# 2. Schauen Sie sich den Verlauf der bestätigten Infektion in Deutschland genauer an durch
-## a) durch lineare und quadratische Regression
+## **Aufgabe 2.** Schauen Sie sich den Verlauf der bestätigten Infektion in Deutschland genauer an durch
+### a) durch lineare und quadratische Regression
 ```{r}
 ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")         # plotte linearen Verlauf 
@@ -141,13 +146,13 @@ ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
      geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")  # plotte quadratischen Verlauf
 ```
 
-## b) lineare Regression der logarithmierten "Confirmed" Cases
+### b) lineare Regression der logarithmierten "Confirmed" Cases
 ```{r}
 m_log <- lm(log_Confirmed ~ Day, data = covid_de) # lineares Modell mit log(y) als AV (logarithmische Skala)
 summary(m_log)
 ```
 
-## c) Passt das Modell zu den Daten? Analysieren Sie die Voraussetzungen 
+### c) Passt das Modell zu den Daten? Analysieren Sie die Voraussetzungen 
 ```{r}
 residualPlot(m_log)
 avPlots(m_log)
@@ -164,7 +169,7 @@ ggplot(data = df_res, aes(x = res)) +
         labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das logarithmierte Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
 ```
 
-## d) Stellen den logarithmierten sowie den retransformierten Verlauf dar
+### d) Stellen den logarithmierten sowie den retransformierten Verlauf dar
 ```{r}
 ggplot(covid_de, aes(x = Day, y = log_Confirmed))+geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")
 
@@ -175,7 +180,7 @@ ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
         geom_point()+geom_line(aes(x = Day, y = pred_Confirmed_exp), col = "red", lwd = 1.5)
 ```
 
-## Ergebnisinterpretation 2.
+### Ergebnisinterpretation **Aufgabe 2.**
 **a)** Obwohl ein linearer Verlauf sehr unwahrscheinlich wirkt, können so bereits `r round(summary(m_l)$r.squared*100, 2)`% der Variation der bestätigten Corona-Fälle in Deutschland durch die Zeit eklärt werden. Wie der Grafik deutlich zu entnehmen ist, sind die Residuen in dieser Regressionanalyse stark abhängig von der Zeit (negatives Residuum von von ca. Tag 22 bis Tag 62 und positive Residuen sonst; Wiederholung: $\varepsilon_i=Y_i-\hat{Y}_i$, wobei $\hat{Y}_i$ der vorhergesagte Wert ist). Auch wenn wir uns das zugehörige Histogramm der Residuen ansehen, widerspricht dieses der Annahme auf Normalverteilung. Ist hier ein quadratischer Effekt versteckt? Wir möchten dem auf den Grund gehen und nutzen wieder die Funktion `poly`, um sein Polynom 2. Grades (eine quadratische Funktion) der Jahreszahl in unsere Analysen mit aufzunehmen.
 
 Durch den quadratischen Verlauf lassen sich `r round(summary(m_q)$r.squared*100, 2)`% der Variation der bestätigten Corona-Fälle in Deutschland durch die Zeit erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_q)$r.squared*100 - summary(m_l)$r.squared*100, 2)`% entspricht (*mit einer Irrtumswahrscheinlichkeit von 5% ist das Inkrement in der Population nicht null.* Dies ist äquivialent zu folgdender Aussage: *mit einer Irrtumswahrscheinlichkeit von 5% ist der Effektsparameter (der Regressionkoeffizient) des quadratischen Verlaufs in der Population nicht null*; dies spricht folglich für einen quadratischen im Gegensatz zu einem linearen Verlauf). Das Histogramm spricht nicht für Normalverteilung der Residuen. Allerdings ist der Grafik deutlich zu entnehmen, dass der quadratische Verlauf nicht weit vom empirischen entfernt liegt.
@@ -192,7 +197,7 @@ Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besse
 
 
 
-# 2. Prüfen Sie nun, ob sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können
+## **Aufgabe 3.** Prüfen Sie nun, ob sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können
 
 
 ```{r}
@@ -222,7 +227,7 @@ residualPlot(m_log_quad)
 ```
 
 
-## Ergebnisinterpretation 3
+### Ergebnisinterpretation 3
 
 Durch den quadratisch-exponentiellen Verlauf lassen sich `r round(summary(m_log_quad)$r.squared*100, 2)`% der Variation der  bestätigten Corona-Fälle in Deutschland erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_log_quad)$r.squared*100 - summary(m_log)$r.squared*100, 2)`% im Vergleich zum reinen exponentiellen Verlaufsmodell entspricht. Interessant zu sehen ist, dass fast 100% der Variation im Datensatz erklärbar ist. 
 Das Histogramm der Residuen des logarithmierten quadratischen Modells (welches das quadratisch-exponentielle Wachstum der  bestätigten Corona-Fälle in Deutschland darstellt) ist etwas rechts-schief/links-steil. Die Residuenplots zeigen außerdem, dass auch hier die Residuen nicht vollständig unsystematisch sind. Dennoch ist die Resiudalvarianz sehr klein.
@@ -245,7 +250,7 @@ var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp) < var(covid_de$log_Con
 
 
 ## Appendix zu den Analysen in Deutschland
-#### __Appendix A:__ Übersicht über erklärte Varianzanteile
+### __Appendix A:__ Übersicht über erklärte Varianzanteile
 
 Hier sind nochmals die Anteile erklärter Varianz der Bevölkerungsdichte über die Zeit in den vier betrachteten Modellen dargestellt:
 
@@ -260,7 +265,7 @@ round(R2, 4)
 ```
 
 
-#### __Appendix B:__ Übersicht über die Modelle
+### __Appendix B:__ Übersicht über die Modelle
 
 Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich verschieden. Insbesondere der Regressionfehler ist an einer anderen Stelle:
 
@@ -278,7 +283,7 @@ Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich v
 
 
 
-# Bonusaufgaben: Vergleichen Sie die Koeffizienten des exponentiellen Wachstums zwischen den Ländern
+## Bonusaufgaben: Vergleichen Sie die Koeffizienten des exponentiellen Wachstums zwischen den Ländern
 
 ```{r}
 

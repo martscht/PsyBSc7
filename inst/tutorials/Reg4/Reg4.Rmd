@@ -860,10 +860,12 @@ c) Passt das Modell zu den Daten? Analysieren Sie die Voraussetzungen
 
 d) Stellen den logarithmierten sowie den retransformierten Verlauf dar
 
-#### **Aufgabe 3.** Prüfen Sie nun, ob sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können
+#### **Aufgabe 3.** Prüfen Sie nun, ob sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können indem Sie einen quadratischen Trend der Zeit aufnehmen und die Modelle vergleichen
 
 
-#### **Bonusaufgabe.**: Vergleichen Sie die Koeffizienten des exponentiellen Wachstums zwischen den Ländern (*Diese Aufgabe ist komplett freiwillig und muss nicht gelöst werden, um die Studienleistung zu bekommen.*)
+#### **Bonusaufgabe.**: Vergleichen Sie die Koeffizienten des exponentiellen Wachstums zwischen den Ländern 
+
+(*Die Bonusaufgabe ist komplett freiwillig und muss nicht gelöst werden, um die Studienleistung zu erbringen.*)
 
 
 ## Literatur
