@@ -132,6 +132,7 @@ Loesungen_7 <- function(password) {
     stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     compile("Reg4_lo")
+  }
 }
 
 
