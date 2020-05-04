@@ -1,6 +1,6 @@
 ---
 title: "Sitzung 2: Grafiken mit ggplot2"
-output: 
+output:
   learnr::tutorial:
     progressive: false
     allow_skip: true
@@ -16,7 +16,7 @@ source('setup.R')
 
 ## Einleitung
 
-Das Paket `ggplot2` ist das umfangreichste und am weitesten verbreitete Paket zur Grafikerstellung in R. Allein in der vergangenen Woche wurde es `r format(sum(cranlogs::cran_downloads('ggplot2', 'last-week')$count), scientific = FALSE)` mal heruntergeladen. Seine Beliebtheit liegt vor allem an zwei Dingen: Es ist sehr eng mit der kommerziellen Seite von RStudio verwoben (Autor ist auch hier Hadley Wickham) und es folgt stringent einer "Grammatik der Grafikerstellung". Aus dem zweiten Punkt leitet sich auch sein Name ab: das "gg" steht für "Grammar of Graphics" und geht auf das gleichnamige Buch von Leland Wilkinson zurück, in dem auf 700 kurzen Seiten eine grammatikalische Grundstruktur für das Erstellen von Grafiken zur Datendarstellung hergeleitet und detailliert erklärt wird.
+Das Paket `ggplot2` ist das umfangreichste und am weitesten verbreitete Paket zur Grafikerstellung in R.  Seine Beliebtheit liegt vor allem an zwei Dingen: Es ist sehr eng mit der kommerziellen Seite von RStudio verwoben (Autor ist auch hier Hadley Wickham) und es folgt stringent einer "Grammatik der Grafikerstellung". Aus dem zweiten Punkt leitet sich auch sein Name ab: das "gg" steht für "Grammar of Graphics" und geht auf das gleichnamige Buch von Leland Wilkinson zurück, in dem auf 700 kurzen Seiten eine grammatikalische Grundstruktur für das Erstellen von Grafiken zur Datendarstellung hergeleitet und detailliert erklärt wird.
 
 Weil `ggplot2` so beliebt ist, gibt es online tausende von Quellen mit Tutorials, Beispielen und innovativen Ansätzen zur Datenvisualisierung. Vom Autor des Pakets selbst gibt es ein [Überblickswerk über Data-Science als e-Book](https://r4ds.had.co.nz/), in dem sich auch [ein Kapitel](https://r4ds.had.co.nz/data-visualisation.html) mit `ggplot2` befasst.
 
@@ -257,7 +257,7 @@ ggplot(covid_sel, aes(x = Day, y = Confirmed)) + geom_point(aes(color = Country.
 Wie Sie sehen ergibt sich automatisch eine Legende auf der rechten Seite, die jedem Land eine Farbe zuweist. Wir können auch hier wieder eine Kombination aus Punkten und Linien nutzen:
 
 ```{r, fig=TRUE}
-ggplot(covid_sel, aes(x = Day, y = Confirmed)) + 
+ggplot(covid_sel, aes(x = Day, y = Confirmed)) +
   geom_point(aes(color = Country.Region)) +
   geom_line(aes(color = Country.Region))
 ```
@@ -265,11 +265,11 @@ ggplot(covid_sel, aes(x = Day, y = Confirmed)) +
 Das Problem ist hier, dass wir die Ästhetik für jede Geomtrie wiederholen müssen. Stattdessen können wir in `ggplot` auch allgemein eine Gruppierung vornehmen, die für alle Geometrien übernommen wird:
 
 ```{r, fig=TRUE}
-ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
   geom_point() + geom_line()
 ```
 
-Wenn Sie das Ganze auch mit anderen Ländern ausprobieren möchten, können Sie das folgende Feld nutzen um erst Daten auszuwählen und dann einen Plot zu erstellen. 
+Wenn Sie das Ganze auch mit anderen Ländern ausprobieren möchten, können Sie das folgende Feld nutzen um erst Daten auszuwählen und dann einen Plot zu erstellen.
 
 *Mit "Hint" können Sie sich ein paar Hinweise ausgeben lassen.*
 
@@ -295,7 +295,7 @@ covid_10 <- covid[covid$Country.Region %in% filt, ]
 Alle Länder in der gleichen Abbildung darzustellen kann mitunter sehr unübersichtlich werden. Eine Möglichkeit, Übersichtlichkeit zu bewahren ist das sogenannte Faceting. Dabei wird eine Abbildung anhand von Ausprägungen auf einer oder mehr Variablen in verschiedene Abbildungen unterteilt. Mit dem gleichen Datensatz aus Deutschland, Italien, Frankreich, dem Vereinigten Königreich und Spanien können wir die Abbildung anhand des Landes einteilen:
 
 ```{r, fig=TRUE}
-ggplot(covid_sel, aes(x = Day, y = Confirmed)) + 
+ggplot(covid_sel, aes(x = Day, y = Confirmed)) +
   geom_point() + geom_line() +
   facet_wrap(~ Country.Region)
 ```
@@ -309,8 +309,8 @@ Per Voreinstellung wird beim Faceting eine gemeinsame Skalierung der x- und y-Ac
 Bisher haben wir auf der x-Achse nur die Zeit und auf der y-Achse nur die bestätigten Fälle betrachtet. Durch das Schicht-System können wir auf unsere bisherigen Abbildungen aber auch zusätzliche Variablen - oder sogar komplett andere Datensätze - abbilden. Wenn wir uns z.B. die bestätigten und die Todesfälle in Deutschland angucken wollen, können wir wie folgt vorgehen:
 
 ```{r, fig=TRUE}
-ggplot(covid_de, aes(x = Day)) + 
-  geom_line(aes(y = Confirmed), color = 'darkblue') + 
+ggplot(covid_de, aes(x = Day)) +
+  geom_line(aes(y = Confirmed), color = 'darkblue') +
   geom_line(aes(y = Deaths), color = 'darkred')
 ```
 
@@ -325,7 +325,7 @@ In `ggplot2` werden die Grundeigenschaften von Abbildungen in "Themes" zusammeng
 Um das Theme einer Abbildung zu verändern, können Sie es - wie Geometrie - mit dem `+` hinzufügen. Probieren Sie unten ein paar Themes aus und finden Sie Ihren Liebling!
 
 ```{r theme, exercise = TRUE, exercise.eval = TRUE}
-ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
   geom_line() + geom_point() +
   theme_light()
 ```
@@ -339,10 +339,10 @@ Eine der wichtigsten Komponenten jeder Abbildung ist die Beschriftung. Nur wenn 
 Zunächst ist es sinnvoll die Achsen ordentlich zu beschriften. Per Voreinstellung werden hierzu die Namen der Variablen genutzt. Wir können also eine nützliche Beschriftung schon früh dadurch erzwingen, dass wir die Variablen im Datensatz ordentlich benennen. Besonders wenn die Achsen aber Zusatzinformationen (wie z.B. "(in %)") enthalten sollen, ist es aber unumgänglich die Benennung hinterher zu ergänzen. Darüber hinaus kann es sinnvoll sein, einer Grafik Titel und Untertitel zu geben.
 
 ```{r}
-ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
   geom_line() + geom_point() +
   theme_light() +
-  labs(x = 'Tage seit dem 22.1.', y = 'Bestätigte Fälle') + 
+  labs(x = 'Tage seit dem 22.1.', y = 'Bestätigte Fälle') +
   ggtitle('COVID-19 Infektionen', paste('Stand:', Sys.Date()))
 ```
 
@@ -351,31 +351,31 @@ Im Untertitel ist dargestellt, dass wir auch für Beschriftungen wieder Objekte 
 Der Befehl `labs` bezieht sich auf die Beschriftung von jeder Ästhetik in der Abbildung. In der aktuellen Variante ist die Legende der Länder mit `Country.Region` nicht sonderlich schön benannt. Versuchen Sie unten diese Beschriftung über den `labs` Befehl in etwas Sinnvolleres zu ändern!
 
 ```{r labs, exercise = TRUE, exercise.eval = FALSE}
-ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
   geom_line() + geom_point() +
   theme_light() +
-  labs(x = 'Tage seit dem 22.1.', y = 'Bestätigte Fälle') + 
+  labs(x = 'Tage seit dem 22.1.', y = 'Bestätigte Fälle') +
   ggtitle('COVID-19 Infektionen', paste('Stand:', Sys.Date()))
 ```
 
 ### Farbpaletten
 
-In `ggplot2` wird die Vergabe von Farben in der Ästhetik anhand von zwei Dingen unterschieden: der Geometrie und dem Skalenniveau der Variable, die die Färbung vorgibt. 
+In `ggplot2` wird die Vergabe von Farben in der Ästhetik anhand von zwei Dingen unterschieden: der Geometrie und dem Skalenniveau der Variable, die die Färbung vorgibt.
 
-In den bisherigen Beispielen im Abschnitt [Farben und Ästhetik](#Farben) haben wir die Unterschiede bezüglich des Skalenniveaus schon gesehen: Kontinuierliche Variablen (Variablen, die in R als `numeric` definiert sind) werden anhand eines Blau-Farbverlaufs dargestellt, diskrete Variablen (Variablen, die in R als `factor` definiert sind) anhand eines vordefinierten Schemas unterschiedlicher Farben. Dieses Schema ist das [Brewer Farbschema](http://colorbrewer2.org/), welches usprünglich für Kartendarstellungen entwickelt wurde. 
+In den bisherigen Beispielen im Abschnitt [Farben und Ästhetik](#Farben) haben wir die Unterschiede bezüglich des Skalenniveaus schon gesehen: Kontinuierliche Variablen (Variablen, die in R als `numeric` definiert sind) werden anhand eines Blau-Farbverlaufs dargestellt, diskrete Variablen (Variablen, die in R als `factor` definiert sind) anhand eines vordefinierten Schemas unterschiedlicher Farben. Dieses Schema ist das [Brewer Farbschema](http://colorbrewer2.org/), welches usprünglich für Kartendarstellungen entwickelt wurde.
 
 Bezüglich Geometrie wird bei der Färbung zwischen `fill` und `color` unterschieden - also ob eine Geometrie mit einer Farbe gefüllt wird oder ihr Rand mit dieser Farbe gezeichnet wird. In den bisherigen Abbildungen haben wir noch kein Beispiel gehabt, in dem etwas gefüllt werden könnte, aber in den Aufgaben zu dieser Sitzung könnte das noch relevant werden.
 
 Nehmen wir an, dass wir unsere Abbildung irgendwo drucken möchten - Farbdruck ist wahnsinnig teuer. Um mit Grautönen zu arbeiten, können wir z.B. `scale_color_grey` benutzen:
 
 ```{r}
-ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
   geom_line() + geom_point() +
   theme_light() +
   scale_color_grey()
 ```
 
-Das bei den [Themes](#Themes) erwähnte Paket `ggthemes` enthält auch weitere Farbpaletten, die Sie nutzen können, um Ihren Plot nach Ihren Vorlieben zu gestalten. Wichtig ist beispielsweise, dass es eine Palette namens `colorblind` hat, die Farben so auswählt, dass sie auch von Personen mit Farbblindheit differenziert werden können. In Fällen mit 6 oder weniger Gruppen bietet sich darüber hinaus in solchen Fällen an mit der Ästhetik `pch` (für **p**lot**ch**aracter). Darüber hinaus gibt es für Fans der Filme von Wes Anderson z.B. das Paket `wesanderson`, welches für jeden seiner Filme die Farbpalette parat hat. Darüber hinaus können wir aber natürlich auch unsere ganz eigene Farbpalette definieren - z.B. die offizielle Farbpalette des Corporate Designs der Goethe Universität, die Sie auf den Folien von PsyBSc 1 und 2 im letzten Semester kennen (und lieben!) gelernt haben. 
+Das bei den [Themes](#Themes) erwähnte Paket `ggthemes` enthält auch weitere Farbpaletten, die Sie nutzen können, um Ihren Plot nach Ihren Vorlieben zu gestalten. Wichtig ist beispielsweise, dass es eine Palette namens `colorblind` hat, die Farben so auswählt, dass sie auch von Personen mit Farbblindheit differenziert werden können. In Fällen mit 6 oder weniger Gruppen bietet sich darüber hinaus in solchen Fällen an mit der Ästhetik `pch` (für **p**lot**ch**aracter). Darüber hinaus gibt es für Fans der Filme von Wes Anderson z.B. das Paket `wesanderson`, welches für jeden seiner Filme die Farbpalette parat hat. Darüber hinaus können wir aber natürlich auch unsere ganz eigene Farbpalette definieren - z.B. die offizielle Farbpalette des Corporate Designs der Goethe Universität, die Sie auf den Folien von PsyBSc 1 und 2 im letzten Semester kennen (und lieben!) gelernt haben.
 
 Für diese Palette können wir zunächst in einem Objekt die Farben festhalten, die wir benötigen. In `ggplot2` ist es dabei am gängigsten, Farben entweder [über Worte auszuwählen](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf) oder via [hexadezimaler Farbdefinition](https://www.color-hex.com/) zu bestimmen. Für die fünf Farben, die von der Corporate Design Abteilung der Goethe Uni definiert werden ergibt sich folgendes Objekt:
 
@@ -386,7 +386,7 @@ gu_colors <- c('#00618f', '#e3ba0f', '#ad3b76', '#737c45', '#c96215')
 Dieses Objekt können wir dann nutzen um mit `scale_color_manual` selbstständig Farben zuzuweisen:
 
 ```{r}
-ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
   geom_line() + geom_point() +
   theme_light() +
   scale_color_manual(values = gu_colors)
@@ -411,7 +411,7 @@ covid_today
 Um diese Daten abzubilden könnten wir jetzt theoretisch wie bisher vorgehen, lediglich die Variable auf x-Achse und die genutzte Geometrie ändern sich:
 
 ```{r, error = TRUE}
-ggplot(covid_today, aes(x = Country.Region, y = Confirmed)) + 
+ggplot(covid_today, aes(x = Country.Region, y = Confirmed)) +
   geom_bar()
 ```
 
@@ -420,14 +420,14 @@ Der Fehler verrät uns, dass `ggplot2` davon ausgeht, dass wir die Häufigkeit e
 In unserem Fall haben wir allerdings eine Variable, die die Häufigkeiten enthält, sodass wir dieses Verhalten unterdrücken müssen. Das erreichen wir dadurch, dass wir als "zu berechnende Statistik" statt dem Auszählen (`stat = 'count'`) die schon vorliegende Statistik (`stat = 'identity'`) benutzen.
 
 ```{r}
-ggplot(covid_today, aes(x = Country.Region, y = Confirmed)) + 
+ggplot(covid_today, aes(x = Country.Region, y = Confirmed)) +
   geom_bar(stat = 'identity')
 ```
 
 Diese Art der Abbildung kann natürlich auch wieder den Möglichkeiten verbunden werden, die wir im Abschnitt [Abbildungen Anpassen](#Anpassen) besprochen hatten. Probieren Sie es doch direkt aus! Sie können z.B. ein Theme mit einem weißen Hintergrund wählen und die Balken nach Land farbig füllen lassen.
 
 ```{r barplot, exercise = TRUE, exercise.eval = FALSE}
-ggplot(covid_today, aes(x = Country.Region, y = Confirmed)) + 
+ggplot(covid_today, aes(x = Country.Region, y = Confirmed)) +
   geom_bar(stat = 'identity')
 ```
 
@@ -442,7 +442,7 @@ covid_global <- covid[covid$Day == max(covid$Day), ]
 Dann können wir die Daten mit `geom_histogram` ganz einfach darstellen. Der einzige Unterschied ist, dass jetzt die uns interessierende Variable auf der x- und nicht mehr auf der y-Achse abgebildet wird.
 
 ```{r}
-ggplot(covid_global, aes(x = Confirmed)) + 
+ggplot(covid_global, aes(x = Confirmed)) +
   geom_histogram()
 ```
 
@@ -453,7 +453,7 @@ ggplot(covid_global, aes(x = Confirmed)) +
 Um die Verteilung von Variablen zu untersuchen, werden in den Sozialwissenschaften häufig Boxplots genutzt. In `ggplot2` werden diese entsprechend über `geom_boxplot` erstellt. Wir können also die gleichen Informationen wie im letzten Abschnitt auch in Form eines Boxplots darstellen:
 
 ```{r}
-ggplot(covid_global, aes(y = Confirmed)) + 
+ggplot(covid_global, aes(y = Confirmed)) +
   geom_boxplot()
 ```
 
@@ -462,7 +462,7 @@ ggplot(covid_global, aes(y = Confirmed)) +
 In den Abschnitten [`ggplot2` Grundprinzipien](#Grundprinzipien) und [Abbildungen anpassen](#Anpassen) haben wir uns mit dem sehr verbreiteten Scatterplot befasst. In diesen Plots werden zwei Variablen zueinander ins Verhältnis gestellt - bei uns war das die Zeit auf der x-Achse und die Anzahl bestätigter Fälle auf der y-Achse. Typischerweise wollen wir aus solchen Plots auch einen Trend erkennen können. Im Fall von COVID-19 ist dieser Trend auch in den Rohdaten sehr leicht erkennbar, aber das ist nicht immer der Fall. Mit `geom_smooth` können wir uns eine "Glättung" der Datenlagen anschauen, die den generellen Trend verdeutlicht. Per Voreinstellung wird hierzu die sogenannte LOESS-Glättung genutzt.
 
 ```{r}
-ggplot(covid_sel, aes(x = Day, y = Confirmed)) + 
+ggplot(covid_sel, aes(x = Day, y = Confirmed)) +
   geom_point() +
   geom_smooth()
 ```
@@ -470,7 +470,7 @@ ggplot(covid_sel, aes(x = Day, y = Confirmed)) +
 Was eingezeichnet wird ist die *globale* Trendlinie. Die schattierte Region um diese Linie herum stellt den Standardschätzfehler dieser Kurve dar. Um die Trends länderspezifisch einzuzeichnen, können wir erneut mit der Ästhetik `color` arbeiten, um die Länder in allen Geometrien farblich voneinander abzugrenzen:
 
 ```{r}
-ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
   geom_point() +
   geom_smooth()
 ```
@@ -501,7 +501,7 @@ In der Berichterstattung zur aktuellen COVID-19 Ausbreitung stehen vor allem eur
   3. Stellen Sie die Bestätigten Fälle pro 100 000 Einwohner in Abhängigkeit von der Zeit in einer Abbildung dar. Nutzen Sie Farben um zwischen den Ländern zu unterscheiden.
   4. Stellen Sie für jedes Land in einer Teilabbildung die bestätigten Fälle (`Confirmed`), und die Todesfälle (`Deaths`) dar. Nutzen sie für die beiden Linien unterschiedliche Farben (aber über alle Länder hinweg die gleichen). Weil sich die Bevölkerungszahlen so drastisch unterscheiden, lassen sie die y-Achse über die Länder hinweg frei variieren.
   5. Nutzen Sie ein Balkendiagramm, um die relative Häufigkeit verstorbener Personen (`Deaths`) and der Gesamtzahl besätigter Fälle (`Confirmed`) pro Land bis zum heutigen Tag darzustellen. Denken Sie daran, dass Sie dafür Daten aggregieren müssen. Füllen Sie die Balken dabei mit länderspezifischen Farben.
-  
+
 
 ## Bonusplots
 
@@ -518,7 +518,7 @@ library(gganimate)
 Nehmen wir wieder den Plot der Verläufe der bestätigten Fälle. Dieser stellt jetzt den "statischen" Anteil unserer Abbildung dar, daher können wir ihn einfach `static` nennen:
 
 ```{r static}
-static <- ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) + 
+static <- ggplot(covid_sel, aes(x = Day, y = Confirmed, color = Country.Region)) +
   geom_line() + geom_point() +
   theme_light() + scale_color_discrete('Country')
 ```
@@ -550,7 +550,7 @@ Somit wird in der Animation im Untertitel immer "Day X" stehen, wobei X sich im 
   - `nframes`: Wieviele Frames sollen insgesamt animiert werden?
   - `fps`: Wieviele Frames per Second soll die finale Animation haben?
   - `duration`: Wie lang soll die Animation (in Sekunden) sein?
-  
+
 Von den letzten drei sind immer nur zwei nötig, weil die dritte sich dann aus den beiden Angaben ergibt. In unserem Fall mach es Sinn jedem Tag einen eigenen Frame zuzuweisen und 10 Frames pro Sekunde zu benutzen:
 
 ```{r, eval = FALSE}
@@ -577,14 +577,14 @@ head(welt)
 Was Sie in den Daten sehen sind Länge- und Breitengrade von Landesgrenzen. Außerdem bestimmt die Variable `group` das Land (anhand dessen die Landesgrenzen gruppiert werden sollten). Damit Linie der Grenzen nicht hin und her springt gibt es außerdem die Variable `order` die angibt, welcher Punkt in der Grenze als nächstes kommt. Anhand dieser Punkte werden in `ggplot2` mit der allgemeinen `geom_polygon` Funktion Karten gezeichnet. Um eine leere Weltkarte zu erzeugen reicht Folgendes aus:
 
 ```{r}
-ggplot(welt, aes(x = long, y = lat, group = group)) + 
+ggplot(welt, aes(x = long, y = lat, group = group)) +
   geom_polygon()
 ```
 
 Wie Sie sehen, hat dieser Plot die gleichen Eigenschaften wie normale `ggplot`s - weil es ein ganz normaler Plot ist. Um einzelne Länder erkennen zu können, sollten wir z.B. die Länder weiß und nicht schwarz füllen. Außerdem brauchen wir nicht unbedingt x- und y-Achse, sodass wir das komplett leere Theme `theme_void` nutzen können:
 
 ```{r}
-ggplot(welt, aes(x = long, y = lat, group = group)) + 
+ggplot(welt, aes(x = long, y = lat, group = group)) +
   geom_polygon(fill = 'white', color = 'black', lwd = .25) +
   theme_void()
 ```
@@ -600,8 +600,8 @@ Im Folgenden werden die Namen der Länder mit dem `recode` Befehl des `car`-Pake
 
 ```{r}
 # Recodes
-covid$Country.Region <- car::recode(covid$Country.Region, 
-  "'Burma' = 'Myanmar'; 
+covid$Country.Region <- car::recode(covid$Country.Region,
+  "'Burma' = 'Myanmar';
   'Cabo Verde' = 'Cape Verde';
   'Congo (Brazzaville)' = 'Republic of Congo';
   'Congo (Kinshasa)' = 'Democratic Republic of the Congo';
@@ -659,19 +659,19 @@ covid_map <- covid_map[order(covid_map$group, covid_map$order), ]
 Mit den neuen Daten können wir unsere vorherige Karte jetzt so ergänzen, dass wir die Länder nach der Anzahl der Fälle einfärben:
 
 ```{r}
-ggplot(covid_map, aes(x = long, y = lat, group = group)) + 
-  geom_polygon(color = 'black', lwd = .25, aes(fill = Confirmed)) + 
+ggplot(covid_map, aes(x = long, y = lat, group = group)) +
+  geom_polygon(color = 'black', lwd = .25, aes(fill = Confirmed)) +
   theme_void()
 ```
 
 Wegen der exponentiellen Art und Weise mit der die Anzahl der Fälle in betroffenen Ländern zunimmt, sind mit dieser Skalierung nur wenige Länder überhaupt unterscheidbar. Das liegt besonders an der exorbitanten Anzahl bestätigter Fälle in den USA. Um solche Situationen zu umgehen wird in der Datenvisualisierung häufig mit logarithmischen Skalen gearbeitet. Das Gleiche können wir hier auch mit dem Argument `trans` für Funktionen tun, die mit `scale_` beginnen. Darüber hinaus gefällt mir die Farbgebung nicht, sodass ich mit `scale_fill_gradient2` drei Farben aussuchen werden, die Untergrenze, Mittelpunkt und Obergrenze der bestätigten Fälle kodieren:
 
 ```{r}
-ggplot(covid_map, aes(x = long, y = lat, group = group)) + 
-  geom_polygon(color = 'black', lwd = .25, aes(fill = Confirmed)) + 
+ggplot(covid_map, aes(x = long, y = lat, group = group)) +
+  geom_polygon(color = 'black', lwd = .25, aes(fill = Confirmed)) +
   theme_void() +
   scale_fill_gradient2(low = '#737c45', mid = '#e3ba0f', high = '#ad3b76',
-    trans = 'log2', 
+    trans = 'log2',
     midpoint = log(median(covid_map$Confirmed, na.rm = TRUE), 2))
 ```
 
@@ -681,11 +681,11 @@ Im letzten Schritt werden die Farbe, die bei fehlenden Werten vergeben wird, etw
 
 ```{r}
 options(scipen = 3)
-ggplot(covid_map, aes(x = long, y = lat, group = group)) + 
-  geom_polygon(color = 'black', lwd = .25, aes(fill = Confirmed)) + 
-  theme_void() + 
+ggplot(covid_map, aes(x = long, y = lat, group = group)) +
+  geom_polygon(color = 'black', lwd = .25, aes(fill = Confirmed)) +
+  theme_void() +
   scale_fill_gradient2(trans = 'log2', low = '#737c45', mid = '#e3ba0f', high = '#ad3b76', na.value = 'grey95', midpoint = log(median(covid_map$Confirmed, na.rm = TRUE), 2),
-    breaks = c(10, 1000, 100000), name = 'Confirmed\n(Log-Scale)') + 
+    breaks = c(10, 1000, 100000), name = 'Confirmed\n(Log-Scale)') +
   theme(legend.position = 'bottom')
 options(scipen = 1)
 ```
