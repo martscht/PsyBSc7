@@ -446,29 +446,18 @@ WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus 
 
 Wir wollen anschließend ein einfaches Regressionsmodell schätzen, in welchem die logarithmierte Bevölkerungszahl die abhängige Variable darstellt. Speichern Sie das `lm` Objekt unter dem Namen `m_log` ab. Geben Sie von `m_log` die `summary` aus.
 
-```{r test_log_Pop_reg,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup3"}
+```{r exercise_log_Pop_reg,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup3"}
 
 ```
 
+```{r exercise_log_Pop_reg-hint-1}
+m_log <- lm(... ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
 
-```{r test_log_Pop_reg-check}
-# Intro into excercise
-WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
+```
 
-
-# Begin grading:
+```{r exercise_log_Pop_reg-solution}
 m_log <- lm(log_Population ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
-m_log <- lm(I(log(Population)) ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
-
-res <- summary(m_log)
-
-grade_result(
-  fail_if(~ (!identical(.result, res)), 'Sie müssen die Variable log_Population vorhersagen durch das Jahr. Geben Sie davon die summary aus.'),
-  pass_if(~ identical(.result, res)),
-  correct = 'Sehr gut! Sie haben die logarithmierte Weltbevölkerung durch den  Trend der Zeit vorhergesagt und die summary davon ausgegeben.',
-  incorrect = 'Leider falsch.',
-  glue_correct = '{.correct}',
-  glue_incorrect = '{.incorrect} {.message}')
+summary(m_log)
 ```
 
 ```{r, include = F}
@@ -573,27 +562,14 @@ Vielleicht wächst die Bevölkerung sogar schneller als exponentiell? Die gelbe 
 ### Quadratisch-exponentielles Modell für das Bevölkerungswachstum
 Dies wollen wir in einem Regressionsmodell der logarithmierten Populationsgröße mit quadratischen Trend (`poly(...,2)`) der Zeit schätzen. Geben Sie hierzu die `summary` aus.
 
-```{r test_log_Pop_reg_quad,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup5"}
+```{r exercise_log_Pop_reg_quad,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup5"}
 m_log_quad <- 
+summary(...)
 ```
 
-
-```{r test_log_Pop_reg_quad-check}
-# Intro into excercise
-WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
-
-
-# Begin grading:
+```{r exercise_log_Pop_reg_quad-solution,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup5"}
 m_log_quad <- lm(log_Population ~ poly(Year, 2), data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
-res <- summary(m_log_quad)
-
-grade_result(
-  fail_if(~ (!identical(.result, res)), 'Sie müssen die Variable log_Population vorhersagen durch den quadratischen Verlauf des Jahres. Geben Sie davon die summary aus.'),
-  pass_if(~ identical(.result, res)),
-  correct = 'Sehr gut! Sie haben die logarithmierte Weltbevölkerung durch einen quadratischen Trend der Zeit vorhergesagt und die summary davon ausgegeben',
-  incorrect = 'Leider falsch.',
-  glue_correct = '{.correct}',
-  glue_incorrect = '{.incorrect} {.message}')
+summary(m_log_quad)
 ```
 
 ```{r, include = F}
