@@ -687,6 +687,11 @@ ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_line(aes(x = Year, y = pred_Pop_exp), col = "red", lwd = 1.5)+
      geom_line(aes(x = Year, y = pred_Pop_exp_quad), col = "gold3", lwd = 2)
 
+# nur quadratisch-exponentiell
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
+     geom_point()+
+     geom_line(aes(x = Year, y = pred_Pop_exp_quad), col = "gold3", lwd = 2)
+
 res <- studres(m_log_quad) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 # Grafisch: Histogramm mit Normalverteilungskurve
