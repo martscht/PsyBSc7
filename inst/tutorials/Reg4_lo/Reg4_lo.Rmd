@@ -48,11 +48,13 @@ long <- merge(confirmed_long, deaths_long,
 ### Full data ----
 covid <- aggregate(cbind(Confirmed, Deaths) ~ Country.Region + Day, data = long, FUN = 'sum')
 
+### Only data until April 14th ----
+covid_full <- covid
+covid <- covid[covid$Day < 80, ]
+
 ### Subsets ----
 covid_de <- covid[covid$Country.Region == 'Germany', ]
 covid_sel <- covid[covid$Country.Region %in% c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom'), ]
-covid_today <- covid_sel[covid_sel$Day == max(covid_sel$Day), ]
-covid_global <- covid[covid$Day == max(covid$Day), ]
 ```
 
 
@@ -247,6 +249,30 @@ var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp)      # Varianz der ret
 var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp_quad) # Varianz der retransformierten Residuen im quad.-log. Modell
 var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp) < var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp_quad) # Variation im quad.-log. Modell retransformiert größer?
 ```
+
+Sie haben sich sicher gefragt, wieso nicht der gesamte Verlauf bis zum heutigen Tage abgebildet wurde in den Modellen. Dies liegt daran, dass ein exponentielles Wachstum ab dem Zeitpunkt, wo die Maßnahmen merklich geholfen haben, nicht mehr sinnvoll war zur Modellierung des Wachstums der Coronafälle.
+
+```{r}
+covid_sel <- covid_full[covid_full$Country.Region %in% c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom'), ]
+ggplot(covid_sel, aes(x = Day, y = Confirmed, col = Country.Region))+geom_line(lwd = 2)
+```
+
+Den Grafiken ist deutlich zu entnehmen, dass kein exponentielles Wachstum mehr vorliegt und das Wachstum sich verlangsamt hat. Wenn hier nun ein exponentielles Wachstum gefittet wird, so sind die resultierenden Ergebnisse nicht sinnvoll. Wir schauen uns dies für Deutschland an:
+
+```{r}
+covid_de <- covid_full[covid_full$Country.Region == 'Germany', ]
+covid_de$log_Confirmed <- log(covid_de$Confirmed)               # Logarithmieren der "confirmed cases"
+covid_de$log_Confirmed[covid_de$log_Confirmed == -Inf] <- NA    # Ersetzen von -unendlich durch missing (NA) 
+covid_de <- covid_de[!is.na(covid_de$log_Confirmed),] # Löschen aller Fälle, in welchen Confrimed = 0 war
+m_log <- lm(log_Confirmed ~ Day, data = covid_de) # lineares Modell mit log(y) als AV (logarithmische Skala)
+
+covid_de$pred_Confirmed_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
+
+ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
+        geom_point()+geom_line(aes(x = Day, y = pred_Confirmed_exp), col = "red", lwd = 1.5)
+```
+
+Hier wird eine erhebliche Diskrepanz zwischen Vorhersage und Daten ersichtlich. Die Maßnahmen scheinen etwas zu nutzen!
 
 
 ## Appendix zu den Analysen in Deutschland
