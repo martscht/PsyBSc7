@@ -408,7 +408,7 @@ Durch den quadratischen Verlauf lassen sich `r round(summary(m_q)$r.squared*100,
 
 ### Exponentielles Modell für das Bevölkerungswachstum
 
-Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besser beschreibt. Dazu müssen wir zunächst die Weltpopulation logarithmieren und können anschließend ein lineares Modell verwenden. Transformieren Sie hierzu die Variablen und speichern diese als weitere Spalte in unserem Datensatz ab.
+Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besser beschreibt. Dazu müssen wir zunächst die Weltpopulation logarithmieren und können anschließend ein lineares Modell verwenden. Transformieren Sie hierzu die Variablen und speichern diese als weitere Spalte in unserem Datensatz ab. Ordnen Sie diese folgendem Namen zu: `WorldPopulation$log_Population <- ...` und geben Sie anschließend `WorldPopulation$log_Population` aus. Der Name ist entscheidend, da wir diesen später weiter verwenden wollen. 
 
 
 
