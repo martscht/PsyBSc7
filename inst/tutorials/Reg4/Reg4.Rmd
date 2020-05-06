@@ -779,7 +779,7 @@ Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich v
 
 Zur Vorbereitung laden Sie die Daten ein. Entweder via folgendem Code
 
-```{r}
+```{r, eval = F}
 library(ggplot2)
 library(car)
 library(MASS)
@@ -810,15 +810,16 @@ long <- merge(confirmed_long, deaths_long,
 ### Full data ----
 covid <- aggregate(cbind(Confirmed, Deaths) ~ Country.Region + Day, data = long, FUN = 'sum')
 
+### Only data until April 11th ----
+covid_full <- covid
+covid <- covid[covid$Day < 80, ]
+
 ### Subsets ----
 covid_de <- covid[covid$Country.Region == 'Germany', ]
 covid_sel <- covid[covid$Country.Region %in% c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom'), ]
-covid_today <- covid_sel[covid_sel$Day == max(covid_sel$Day), ]
-covid_global <- covid[covid$Day == max(covid$Day), ]
 ```
 
-oder via `PsyBSc7::Aufgabe_2()`.
-
+oder via `PsyBSc7::Aufgaben_7()`.
 
 #### **Aufgabe 1.**  Verschaffen Sie sich einen Überblick über die Daten durch
 
