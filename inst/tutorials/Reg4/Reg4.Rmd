@@ -444,7 +444,7 @@ m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Ver
 WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
 ```
 
-Wir wollen anschließend ein einfaches Regressionsmodell schätzen, in welchem die logarithmierte Bevölkerungszahl die abhängige Variable darstellt. Geben Sie die `summary` aus.
+Wir wollen anschließend ein einfaches Regressionsmodell schätzen, in welchem die logarithmierte Bevölkerungszahl die abhängige Variable darstellt. Speichern Sie das `lm` Objekt unter dem Namen `m_log` ab. Geben Sie von `m_log` die `summary` aus.
 
 ```{r test_log_Pop_reg,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup3"}
 
