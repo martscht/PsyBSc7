@@ -689,7 +689,7 @@ residualPlot(m_log_quad)
 Es ist deutlich zu sehen, dass der Knick um 1950 durch das quadratisch-exponentielle Wachstum am besten darzustellen/ zu modellieren ist.
 Das Histogramm der Residuen des logarithmierten quadratischen Modells (welches das quadratisch-exponentielle Wachstum der Bevölkerung darstellt) ist etwas rechts-schief/links-steil. Die Residuenplots zeigen außerdem, dass auch hier die Residuen nicht vollständig unsystematisch sind. Dennoch ist die Resiudalvarianz sehr klein.
 
-Da die Modelle des quadratischen und des quadratisch-exponentiellen Verlaufs nicht geschachtelt sind (*sie gehen nicht auseinander hervor und sind nicht durch Restringieren, bzw. Nullsetzen, von Regressionsparametern aus einander überführbar*) und können daher nicht inferenzstatistisch miteinander verglichen werden. Da das quadratisch-exponentielle Modell mehr Variation als das rein quadratische Modell aufklärt und auch grafisch besser zum Verlauf der Daten passt (*besonders von 1800 bis ca. 1850 sagt das quadratische Modell ein Verkleinern der Bevölkerung vorher*), entscheiden wir uns final für dieses. 
+Da die Modelle des quadratischen und des quadratisch-exponentiellen Verlaufs nicht geschachtelt sind (*sie gehen nicht auseinander hervor und sind nicht durch Restringieren, bzw. Nullsetzen, von Regressionsparametern aus einander überführbar*), können sie daher nicht inferenzstatistisch miteinander verglichen werden. Da das quadratisch-exponentielle Modell mehr Variation als das rein quadratische Modell aufklärt und auch grafisch besser zum Verlauf der Daten passt (*besonders von 1800 bis ca. 1850 sagt das quadratische Modell ein Verkleinern der Bevölkerung vorher*), entscheiden wir uns final für dieses. 
 
 
 ### Parameterinterpretation des quadratisch-exponentielles Modell für das Bevölkerungswachstum
@@ -698,7 +698,7 @@ Was bedeuten nun die Parameter in unserem quadratisch-exponentiellen Modell? Der
 
 Wären beide Koeffizienten negativ, so würde dies für *beschleunigtes exponentiellen Zerfall/Abnahme* sprechen. Ist der Koeffizient des quadratische Trends negativ, wird von *exponentiellen Wachstum mit Dämpfung* gesprochen. 
 
-Final ist zu sagen, dass die Menschheit am wahrscheinlichsten  exponentiell wächst. Ein quadratisches Modell ist im Allgemeinen nicht sinnvoll. Da wir uns in dieser Übung nur einen kleine Zeitausschnitt angesehen haben, kam es zu diesen Abweichungen. Allerdings würde das geschätzte quadratische Modell für das Jahr `0` eine Bevölkerungszahl von `r predict(object = m_q, newdata = data.frame(Year=c(0)))`, was absolut nicht sinnvoll ist. 
+Final ist zu sagen, dass die Menschheit am wahrscheinlichsten  exponentiell wächst. Ein quadratisches Modell ist im Allgemeinen nicht sinnvoll. Da wir uns in dieser Übung nur einen kleine Zeitausschnitt angesehen haben, kam es zu diesen Abweichungen. Allerdings würde das geschätzte quadratische Modell für das Jahr `0` eine Bevölkerungszahl von `r round(predict(object = m_q, newdata = data.frame(Year=c(0)))/10^11, 2)`$*10^{11}$ vorhersagen, was absolut nicht sinnvoll ist. 
 
 
 #### Aufgaben
