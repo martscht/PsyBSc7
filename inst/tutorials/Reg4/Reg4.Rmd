@@ -819,7 +819,7 @@ covid_de <- covid[covid$Country.Region == 'Germany', ]
 covid_sel <- covid[covid$Country.Region %in% c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom'), ]
 ```
 
-oder via `PsyBSc7::Aufgaben_7()`.
+oder via `PsyBSc7::Aufgaben_7()`. Die tagesaktuellen Daten finden Sie unter `covid_full`. Wir wollen uns zeitlich einschränken bis zum 11. April. Betrachten Sie in den folgenden Aufgaben bitte immer nur die Daten bis zum 11. April in `covid_sel` und `covid_de`.
 
 #### **Aufgabe 1.**  Verschaffen Sie sich einen Überblick über die Daten durch
 
@@ -844,11 +844,14 @@ b) lineare Regression der logarithmierten "Confirmed" Cases
 c) Passt das Modell zu den Daten? Analysieren Sie die Voraussetzungen 
 
 d) Stellen den logarithmierten sowie den retransformierten Verlauf dar
+*(Subdatensatz `covid_de`)*
 
 #### **Aufgabe 3.** Prüfen Sie nun, ob sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können indem Sie einen quadratischen Trend der Zeit aufnehmen und die Modelle vergleichen
+*(Subdatensatz `covid_de`)*
 
 
 #### **Bonusaufgabe.**: Vergleichen Sie die Koeffizienten des exponentiellen Wachstums zwischen den Ländern 
+*(Subdatensatz `covid_sel`)*
 
 (*Die Bonusaufgabe ist komplett freiwillig und muss nicht gelöst werden, um die Studienleistung zu erbringen.*)
 
