@@ -325,12 +325,12 @@ Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich v
 
 * **Lineares Modell**: $Y_i = \beta_0 + \beta_1t_i + \varepsilon_i$
 
-* **Quadratisches Modell**: $Y_i = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$
+* **Quadratisches Modell**: $Y_i = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$. Hier wurde mit `poly(...,2)` eine Transformation der Variable Zeit vorgenommen, was hier durch "$^*$" dargestellt werden soll.
 
 
 * **Logarithmisches Modell**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i + \varepsilon_i} = e^{\beta_0 + \beta_1t_i} \ e^{\varepsilon_i}$ 
 
-* **Logarithmisches Modell mit quadratischem Term**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i}$.
+* **Logarithmisches Modell mit quadratischem Term**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i}$. Hier wurde mit `poly(...,2)` eine Transformation der Variable Zeit vorgenommen, was hier durch "$^*$" dargestellt werden soll.
 
 
 

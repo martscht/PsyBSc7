@@ -558,7 +558,7 @@ residualPlot(m_log) # Residualplot
 Dem Residualplot ist zu entnehmen, dass ein nicht-linearer Verlauf angemessen wäre. Wir gehen dieser Vermutung nach, indem wir dem Log-Plot  einen quadratischen Verlauf hinzufügen.
 
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 ggplot(data = WorldPopulation, aes(x = Year, y = log_Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")+
   geom_smooth(method="lm", formula = "y~poly(x,2)", col = "gold3")+
@@ -781,12 +781,12 @@ Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich v
 
 * **Lineares Modell**: $Y_i = \beta_0 + \beta_1t_i + \varepsilon_i$
 
-* **Quadratisches Modell**: $Y_i = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$
+* **Quadratisches Modell**: $Y_i = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$. Hier wurde mit `poly(...,2)` eine Transformation der Variable Zeit vorgenommen, was hier durch "$^*$" dargestellt werden soll.
 
 
 * **Logarithmisches Modell**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i + \varepsilon_i} = e^{\beta_0 + \beta_1t_i} \ e^{\varepsilon_i}$. Diesem Modell ist zu entnehmen, dass der Fehler in Abhängigkeit von der Ausprägung der unabhängigen Variablen (hier: $t_i$) sich unterschiedlich stark auf das Kriterium (die abhängige Variable, hier die Bevölkerungszahl) auswirkt - er hängt also mit der Ausprägung der unabhängigen Variable zusammen. Dies ist im logarithmierten Modell nicht mehr der Fall; es handelt sich hier bis auf die Transformation der abhängigen Variable um ein "normales" Regressionsmodell: Hier verliert sich diese Beziehung zwischen unabhängiger Variable und Fehler!
 
-* **Logarithmisches Modell mit quadratischem Term**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i}$.
+* **Logarithmisches Modell mit quadratischem Term**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i}$. Hier wurde mit `poly(...,2)` eine Transformation der Variable Zeit vorgenommen, was hier durch "$^*$" dargestellt werden soll.
 
 
 ## Appendix D {#AppendixD}
