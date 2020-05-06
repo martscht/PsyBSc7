@@ -485,7 +485,7 @@ Das lineare Modell für die logarithmierte Bevölkerunsdichte scheint gut zu den
 ```{r, fig.height=6, fig.align="center"}
 ggplot(data = WorldPopulation, aes(x = Year, y = log_Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")+
-  labs(titel = "Logarithmierte Weltbevölkerung vs. Jahr")
+  labs(title = "Logarithmierte Weltbevölkerung vs. Jahr")
 ```
 
 Wieso erklärt nun das quadratische Modell mehr Variation? Wir wollen die Vorhersage auch retransformiert plotten, um sie mit dem quadratischen Verlauf grafisch vergleichen zu können. Dazu müssen wir die vorhergesagten Werte unseres logarithmischen Modells verwenden und mit mit der Umkehrfunktion des Logarithmus retransformieren. Diese können wir einem `lm`-Objekt mit `predict` entlocken.
@@ -562,7 +562,7 @@ Dem Residualplot ist zu entnehmen, dass ein nicht-linearer Verlauf angemessen w�
 ggplot(data = WorldPopulation, aes(x = Year, y = log_Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")+
   geom_smooth(method="lm", formula = "y~poly(x,2)", col = "gold3")+
-  labs(titel = "Logarithmierte Weltbevölkerung vs. Jahr")
+  labs(title = "Logarithmierte Weltbevölkerung vs. Jahr")
 ```
 
 

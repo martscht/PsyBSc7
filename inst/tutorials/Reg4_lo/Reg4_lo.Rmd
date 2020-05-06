@@ -48,7 +48,7 @@ long <- merge(confirmed_long, deaths_long,
 ### Full data ----
 covid <- aggregate(cbind(Confirmed, Deaths) ~ Country.Region + Day, data = long, FUN = 'sum')
 
-### Only data until April 14th ----
+### Only data until April 11th ----
 covid_full <- covid
 covid <- covid[covid$Day < 80, ]
 
@@ -185,7 +185,7 @@ ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
 ### Ergebnisinterpretation **Aufgabe 2.**
 **a)** Obwohl ein linearer Verlauf sehr unwahrscheinlich wirkt, können so bereits `r round(summary(m_l)$r.squared*100, 2)`% der Variation der bestätigten Corona-Fälle in Deutschland durch die Zeit eklärt werden. Wie der Grafik deutlich zu entnehmen ist, sind die Residuen in dieser Regressionanalyse stark abhängig von der Zeit (negatives Residuum von von ca. Tag 22 bis Tag 62 und positive Residuen sonst; Wiederholung: $\varepsilon_i=Y_i-\hat{Y}_i$, wobei $\hat{Y}_i$ der vorhergesagte Wert ist). Auch wenn wir uns das zugehörige Histogramm der Residuen ansehen, widerspricht dieses der Annahme auf Normalverteilung. Ist hier ein quadratischer Effekt versteckt? Wir möchten dem auf den Grund gehen und nutzen wieder die Funktion `poly`, um sein Polynom 2. Grades (eine quadratische Funktion) der Jahreszahl in unsere Analysen mit aufzunehmen.
 
-Durch den quadratischen Verlauf lassen sich `r round(summary(m_q)$r.squared*100, 2)`% der Variation der bestätigten Corona-Fälle in Deutschland durch die Zeit erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_q)$r.squared*100 - summary(m_l)$r.squared*100, 2)`% entspricht (*mit einer Irrtumswahrscheinlichkeit von 5% ist das Inkrement in der Population nicht null.* Dies ist äquivialent zu folgdender Aussage: *mit einer Irrtumswahrscheinlichkeit von 5% ist der Effektsparameter (der Regressionkoeffizient) des quadratischen Verlaufs in der Population nicht null*; dies spricht folglich für einen quadratischen im Gegensatz zu einem linearen Verlauf). Das Histogramm spricht nicht für Normalverteilung der Residuen. Allerdings ist der Grafik deutlich zu entnehmen, dass der quadratische Verlauf nicht weit vom empirischen entfernt liegt.
+Durch den quadratischen Verlauf lassen sich `r round(summary(m_q)$r.squared*100, 2)`% der Variation der bestätigten Corona-Fälle in Deutschland durch die Zeit erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_q)$r.squared*100 - summary(m_l)$r.squared*100, 2)`% entspricht (*mit einer Irrtumswahrscheinlichkeit von 5% ist das Inkrement in der Population nicht null.* Dies ist äquivialent zu folgdender Aussage: *mit einer Irrtumswahrscheinlichkeit von 5% ist der Effektsparameter (der Regressionkoeffizient) des quadratischen Verlaufs in der Population nicht null*; dies spricht folglich für einen quadratischen im Gegensatz zu einem linearen Verlauf). Das Histogramm spricht nicht für Normalverteilung der Residuen. Allerdings ist der Grafik deutlich zu entnehmen, dass der quadratische Verlauf nicht weit vom empirischen entfernt liegt, auch wenn einige unlogische Werte vorhergesagt werden: negative Corona-Fälle zwischen dem ca. 15. und dem 45. Tag.
 
 Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besser beschreibt. 
 
@@ -203,7 +203,7 @@ Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besse
 
 
 ```{r}
-m_log_quad <- lm(log_Confirmed ~ poly(Day, 3), data = covid_de)
+m_log_quad <- lm(log_Confirmed ~ poly(Day, 2), data = covid_de)
 summary(m_log_quad)
 anova(m_log, m_log_quad)
 covid_de$pred_Confirmed_exp_quad <- exp(predict(m_log_quad))
@@ -250,7 +250,7 @@ var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp_quad) # Varianz der ret
 var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp) < var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp_quad) # Variation im quad.-log. Modell retransformiert größer?
 ```
 
-Sie haben sich sicher gefragt, wieso nicht der gesamte Verlauf bis zum heutigen Tage abgebildet wurde in den Modellen. Dies liegt daran, dass ein exponentielles Wachstum ab dem Zeitpunkt, wo die Maßnahmen merklich geholfen haben, nicht mehr sinnvoll war zur Modellierung des Wachstums der Coronafälle.
+Sie haben sich sicher gefragt, wieso nicht der gesamte Verlauf bis zum heutigen Tage abgebildet wurde in den Modellen. Dies liegt daran, dass ein exponentielles Wachstum ab dem Zeitpunkt, ab welchem die Maßnahmen merklich geholfen haben, nicht mehr sinnvoll war zur Modellierung des Wachstums der Coronafälle.
 
 ```{r}
 covid_sel <- covid_full[covid_full$Country.Region %in% c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom'), ]
@@ -272,8 +272,36 @@ ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
         geom_point()+geom_line(aes(x = Day, y = pred_Confirmed_exp), col = "red", lwd = 1.5)
 ```
 
-Hier wird eine erhebliche Diskrepanz zwischen Vorhersage und Daten ersichtlich. Die Maßnahmen scheinen etwas zu nutzen!
+Hier wird eine erhebliche Diskrepanz zwischen Vorhersage und Daten ersichtlich. Die Maßnahmen scheinen etwas zu nutzen! Wenn wir erneut den qudaratisch-exponentiellen Verlauf modellieren wollen, sieht dies so aus:
 
+```{r}
+m_log_quad <- lm(log_Confirmed ~ poly(Day, 2), data = covid_de)
+summary(m_log_quad)
+anova(m_log, m_log_quad)
+covid_de$pred_Confirmed_exp_quad <- exp(predict(m_log_quad))
+ggplot(data = covid_de, aes(x = Day, y = Confirmed))+geom_point()+
+     geom_line(aes(x = Day, y = pred_Confirmed_exp), col = "red", lwd = 1.5)+
+     geom_line(aes(x = Day, y = pred_Confirmed_exp_quad), col = "gold3", lwd = 2)
+
+ggplot(data = covid_de, aes(x = Day, y = Confirmed))+geom_point()+
+     geom_line(aes(x = Day, y = pred_Confirmed_exp_quad), col = "gold3", lwd = 2)
+
+```
+Die Kurve liegt zwar näher dran, spiegelt aber nicht dem tatsächlichen Verlauf wider. 
+
+```{r}
+m_log_cub <- lm(log_Confirmed ~ poly(Day, 3), data = covid_de)
+covid_de$pred_Confirmed_exp_cub <- exp(predict(m_log_cub))
+ggplot(data = covid_de, aes(x = Day, y = Confirmed))+geom_point()+
+     geom_line(aes(x = Day, y = pred_Confirmed_exp_quad), col = "gold3", lwd = 2)+
+     geom_line(aes(x = Day, y = pred_Confirmed_exp_cub), col = "purple", lwd = 1.5)
+
+
+ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
+     geom_point()+
+     geom_line(aes(x = Day, y = pred_Confirmed_exp_cub), col = "purple", lwd = 1.5)
+
+```
 
 ## Appendix zu den Analysen in Deutschland
 ### __Appendix A:__ Übersicht über erklärte Varianzanteile
