@@ -567,7 +567,7 @@ m_log_quad <-
 summary(...)
 ```
 
-```{r exercise_log_Pop_reg_quad-solution,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup5"}
+```{r exercise_log_Pop_reg_quad-solution}
 m_log_quad <- lm(log_Population ~ poly(Year, 2), data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
 summary(m_log_quad)
 ```
@@ -588,7 +588,7 @@ m_log_quad <- lm(log_Population ~ poly(Year, 2), data = WorldPopulation) # linea
 
 Testen Sie dieses auf Signifikanz mit `anova` im Vergleich zu `m_log`.
 
-```{r test_anova_pop_log,  exercise = TRUE, exercise.eval = FALSE, exercise.setup="exercise_setup2"}
+```{r test_anova_pop_log,  exercise = TRUE, exercise.eval = FALSE, exercise.setup="exercise_setup6"}
 
 ```
 
