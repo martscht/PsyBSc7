@@ -844,6 +844,7 @@ b) lineare Regression der logarithmierten "Confirmed" Cases
 c) Passt das Modell zu den Daten? Analysieren Sie die Voraussetzungen 
 
 d) Stellen den logarithmierten sowie den retransformierten Verlauf dar
+
 *(Subdatensatz `covid_de`)*
 
 #### **Aufgabe 3.** Prüfen Sie nun, ob sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können indem Sie einen quadratischen Trend der Zeit aufnehmen und die Modelle vergleichen
