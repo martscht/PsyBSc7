@@ -102,7 +102,7 @@ mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 stdsum <- summary(lm.beta(mod)) 
 ```
 
-Interessant an der standardisierten Lösung ist, dass das Interzept $0$ ist. Dies macht völlig Sinn, da beim Standardisieren die Mittelwerte aller Variablen auf $0$ gesetzt werden und die Standardabweichungen auf $1$. So auch beim Kriterium - der Leseleistung. Der Mittelwert des Kriterium liegt genau an der Stelle, wo alle Prädiktoren ihren Mittelwert haben. Im standardisierten Modell ist der Mittelwert jedes Prädiktors gerade $0$. Somit liegt der Mittelwert des Kriteriums genau beim Interzept, welches also $0$ sein muss, wenn es sich um das voll standardisierte Modell handeln soll! Den Koeffizienten entnehmen wir, dass die Prädiktoren `female` und `IQ` signifikante Anteile am Kriterium erklären (*Mit einer Irrtumswahrscheinlichkeit von 5% ist der Regressionkoeffizent und damit die lineare Beziehung zwischen dem jeweiligen Prädiktor (z.B. IQ) und der Leseleistung in der Population nicht 0*). Der standardisierte Koeffizient des `IQ` ist  hierbei deutlich größer ($\hat{\beta}_2=$ `r round(stdsum$coefficients[3,2], 2)`) als vom Geschlecht ($\hat{\beta}_1=$ `r round(stdsum$coefficients[2,2], 2)`). Damit ist ersichtlich, dass der `IQ` mehr Variation am Kriterium Leseleisstug erklärt. Dies war den unstandardisier ten Koeffizienten nicht zu entnehmen. Hier lag der unstandardisierte Effekt des Geschlechts auf die Leseleistung bei $\hat{b}_1=$ `r round(stdsum$coefficients[2,1], 2)` und des des `IQ` lediglich bei $\hat{b}_2=$ `r round(stdsum$coefficients[3,1], 2)`. Dies liegt natürlich daran, dass der `IQ` eine wesentlich größere Streuung ($\sigma_{IQ}^2$=`r var(Schulleistungen$IQ)`) aufweißt als die dummykodierte Variable `female` ($\sigma_{female}^2$=`r var(Schulleistungen$female)`). Insgesamt werden `r round(stdsum$r.squared*100, 2)`% der Variation der Leseleistung durch die beiden Prädiktoren erklärt.
+Interessant an der standardisierten Lösung ist, dass das Interzept $0$ ist. Dies macht völlig Sinn, da beim Standardisieren die Mittelwerte aller Variablen auf $0$ gesetzt werden und die Standardabweichungen auf $1$. So auch beim Kriterium - der Leseleistung. Der Mittelwert des Kriterium liegt genau an der Stelle, wo alle Prädiktoren ihren Mittelwert haben. Im standardisierten Modell ist der Mittelwert jedes Prädiktors gerade $0$. Somit liegt der Mittelwert des Kriteriums genau beim Interzept, welches also $0$ sein muss, wenn es sich um das voll standardisierte Modell handeln soll! Den Koeffizienten entnehmen wir, dass die Prädiktoren `female` und `IQ` signifikante Anteile am Kriterium erklären (*Mit einer Irrtumswahrscheinlichkeit von 5% ist der Regressionkoeffizent und damit die lineare Beziehung zwischen dem jeweiligen Prädiktor (z.B. IQ) und der Leseleistung in der Population nicht 0*). Der standardisierte Koeffizient des `IQ` ist  hierbei deutlich größer ($\hat{\beta}_2=$ `r round(stdsum$coefficients[3,2], 2)`) als vom Geschlecht ($\hat{\beta}_1=$ `r round(stdsum$coefficients[2,2], 2)`). Damit ist ersichtlich, dass der `IQ` mehr Variation am Kriterium Leseleisstug erklärt. Dies war den unstandardisier ten Koeffizienten nicht zu entnehmen. Hier lag der unstandardisierte Effekt des Geschlechts auf die Leseleistung bei $\hat{b}_1=$ `r round(stdsum$coefficients[2,1], 2)` und des des `IQ` lediglich bei $\hat{b}_2=$ `r round(stdsum$coefficients[3,1], 2)`. Dies liegt natürlich daran, dass der `IQ` eine wesentlich größere Streuung ($\sigma_{IQ}^2$=`r round(var(Schulleistungen$IQ), 2)`) aufweißt als die dummykodierte Variable `female` ($\sigma_{female}^2$=`r round(var(Schulleistungen$female), 2)`). Insgesamt werden `r round(stdsum$r.squared*100, 2)`% der Variation der Leseleistung durch die beiden Prädiktoren erklärt.
 
 
 Gegenstand der folgenden Sitzung ist Die Prüfung von Voraussetzungen der Regressionsanalyse:
@@ -174,7 +174,7 @@ ncvTest(mod)
 
 Voraussetzung für die Signifikanztests im Kontext der linearen Regression ist die Normalverteilung der Residuen. Auch diese Annahme wird i.d.R. grafisch geprüft. Hierfür bietet sich zum einen ein Histogramm der Residuen an, zum anderen ein *Q-Q-Diagramm* (oder "Quantile-Quantile-Plot"). Zusätzlich zur grafischen Darstellung erlaubt z.B. der Shapiro-Wilk-Test auf Normalität (`shapiro.test`) einen Signifkanztest der Nullhypothese, dass die Residuen normalverteilt sind. Auch der Kolmogorov-Smirnov (`ks.test`) Test, welcher eine deskriptive mit einer theoretischen Verteilung vergleicht, wäre denkbar. 
 
-Fangen wir mit der Vorbereitung der Daten an. Wir wollen die studentisierten Residuen grafisch mit dem `R`-Paket `ggplot2`darzustellen. Der Befehl `studres` aus dem `MASS` Paket greift die Residuen aus einem `lm` Objekt ab; also aus `mod`; und studentisiert diese. Studentisieren der Residuen führt eine Art Standardisierung durch, sodass anschließend der Mittelwert *0* und die Varianz *1* ist (somit lassen sich solche Plots immer gleich interpretieren). Speichern Sie diese Residuen als `res` ab und erzeugen Sie dann daraus einen `data.frame`, welchen wir später in den Grafiken mit `ggplot2` verwenden wollen. 
+Fangen wir mit der Vorbereitung der Daten an. Wir wollen die studentisierten Residuen grafisch mit dem `R`-Paket `ggplot2`darstellen. Der Befehl `studres` aus dem `MASS` Paket greift die Residuen aus einem `lm` Objekt ab; also aus `mod`; und studentisiert diese. Studentisieren der Residuen führt eine Art Standardisierung durch, sodass anschließend der Mittelwert *0* und die Varianz *1* ist (somit lassen sich solche Plots immer gleich interpretieren). Speichern Sie diese Residuen als `res` ab und erzeugen Sie dann daraus einen `data.frame` und speichern sie diesen ab unter dem Namen `df_res`. Diesen wollen wir später in den Grafiken mit `ggplot2` verwenden. 
  
 ```{r test_dataprep, exercise = TRUE, exercise.setup = "exercise_setup1", exercise.eval = FALSE}
 
@@ -194,15 +194,16 @@ res <- studres(...)
 # Verwenden Sie die Befehle 
 res <- studres(...)
 # und
-data.frame(...)
+df_res <- data.frame(...)
 ```
 
 ```{r test_dataprep-hint-4}
 # Verwenden Sie die Befehle 
 res <- studres(...)
 # und
-data.frame(...)
+df_res <- data.frame(...)
 # geben Sie das Objekt des Data.frames zurück (sehen Sie sich dieses an)
+df_res
 ```
  
 ```{r test_dataprep-check}
@@ -237,7 +238,7 @@ res <- studres(mod) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 ```
 
-In dem folgenden Block sehen wir den Code für ein Histogramm in `ggplot2`-Notation. Hier sind einge Zusatzeinstellungen gewählt, die das Histogramm schöner machen sollen. Vervollständigen Sie mit Hilfe der Tipps den Code.
+In dem folgenden Block sehen wir den Code für ein Histogramm in `ggplot2`-Notation. Hier sind einge Zusatzeinstellungen gewählt, die das Histogramm schöner machen sollen. Vervollständigen Sie den Code mit Hilfe der Tipps.
 
 
 ```{r exercise_hist1, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2", fig.height=6, fig.align="center"}
