@@ -255,6 +255,50 @@ var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp) < var(covid_de$log_Con
 
 Die retransformierte Resiudalvarianz, also die Varianz zwischen den exponentiellen Daten und der retransformierten Vorhersage (quasi die Diskrepanz, die wir in den retransformierten Grafiken sehen) ist im quadratisch-exponentiellen Modell größer, als im rein exponentiellen Modell.
 
+
+
+## Bonusaufgaben: Vergleichen Sie die Koeffizienten des exponentiellen Wachstums zwischen den Ländern
+
+```{r, fig.height=6, fig.align="center"}
+
+Intercept <- c()
+Slope <- c()
+Countries <- c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom')
+for(Country in Countries)
+{
+        covid <- NULL
+        covid <- covid_sel[covid_sel$Country.Region == Country,]
+        
+        covid$log_Confirmed <- log(covid$Confirmed)
+        covid$log_Confirmed[covid$log_Confirmed == -Inf] <- NA
+        covid <- covid[!is.na(covid$log_Confirmed),]
+        
+        
+        ggplot(covid, aes(x = Day, y = log_Confirmed))+geom_point()+geom_smooth(method = "lm", formula = "y~x")
+        
+        
+        m_log <- lm(log_Confirmed ~ Day, data = covid) # lineares Modell mit log(y) als AV (logarithmische Skala)
+        summary(m_log)
+        
+        covid$pred_Confirmed_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
+        
+        gplot <- ggplot(data = covid, aes(x = Day, y = Confirmed))+
+                geom_point()+geom_line(aes(x = Day, y = pred_Confirmed_exp), col = "red", lwd = 1.5)+
+                labs(title = paste0("Verlauf der bestätigten Corona-Fälle in ", Country), x = "Zeit") # Füge eigenen Titel und Achsenbeschriftung hinzu
+        print(gplot)
+        Intercept <- rbind(Intercept, coef(summary(m_log))[1,])
+        Slope <- rbind(Slope, coef(summary(m_log))[2,])
+}
+Slope <- data.frame(Slope)
+Slope <- cbind(Slope, Countries)
+ggplot(data = Slope, aes(x = Countries, y = Estimate, col = Countries))+geom_point()+
+        geom_errorbar(data = Slope,
+                      aes(ymin= Estimate-2*Std..Error, ymax=Estimate+2*Std..Error), width=.2)+
+        labs(title = "Steigungsrate pro Land +/- Konfidenzintervall")
+```
+
+## Appendix: Gesamter Zeitverlauf
+
 Sie haben sich sicher gefragt, wieso nicht der gesamte Verlauf bis zum heutigen Tage abgebildet wurde in den Modellen. Dies liegt daran, dass ein exponentielles Wachstum ab dem Zeitpunkt, ab welchem die Maßnahmen merklich geholfen haben, nicht mehr sinnvoll war zur Modellierung des Wachstums der Coronafälle.
 
 ```{r, fig.height=6, fig.align="center"}
@@ -292,7 +336,7 @@ ggplot(data = covid_de, aes(x = Day, y = Confirmed))+geom_point()+
      geom_line(aes(x = Day, y = pred_Confirmed_exp_quad), col = "gold3", lwd = 2)
 
 ```
-Die Kurve liegt zwar näher dran, spiegelt aber nicht dem tatsächlichen Verlauf wider. 
+Die Kurve liegt zwar näher dran, spiegelt aber nicht den tatsächlichen Verlauf wider. Was bedeuten nun die Parameter in diesem quadratisch-exponentiellen Modell? Der Regressionskoeffizient des linearen Trends von `poly` liegt bei `r round(coef(m_log_quad)[2], 2)` und der Koeffizient des quadratischen Trends bei `r round(coef(m_log_quad)[3], 2)`. Dies spricht für ein **gedämpftes exponentielles Wachstum**. 
 
 ```{r, fig.height=6, fig.align="center"}
 m_log_cub <- lm(log_Confirmed ~ poly(Day, 3), data = covid_de)
@@ -340,44 +384,3 @@ Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich v
 
 
 
-
-
-## Bonusaufgaben: Vergleichen Sie die Koeffizienten des exponentiellen Wachstums zwischen den Ländern
-
-```{r, fig.height=6, fig.align="center"}
-
-Intercept <- c()
-Slope <- c()
-Countries <- c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom')
-for(Country in Countries)
-{
-        covid <- NULL
-        covid <- covid_sel[covid_sel$Country.Region == Country,]
-        
-        covid$log_Confirmed <- log(covid$Confirmed)
-        covid$log_Confirmed[covid$log_Confirmed == -Inf] <- NA
-        covid <- covid[!is.na(covid$log_Confirmed),]
-        
-        
-        ggplot(covid, aes(x = Day, y = log_Confirmed))+geom_point()+geom_smooth(method = "lm", formula = "y~x")
-        
-        
-        m_log <- lm(log_Confirmed ~ Day, data = covid) # lineares Modell mit log(y) als AV (logarithmische Skala)
-        summary(m_log)
-        
-        covid$pred_Confirmed_exp <- exp(predict(m_log)) # Abspeichern der retransformierten vorhergesagten Werten (wieder auf der Skala der Weltbevölkerung)
-        
-        gplot <- ggplot(data = covid, aes(x = Day, y = Confirmed))+
-                geom_point()+geom_line(aes(x = Day, y = pred_Confirmed_exp), col = "red", lwd = 1.5)+
-                labs(title = paste0("Verlauf der bestätigten Corona-Fälle in ", Country), x = "Zeit") # Füge eigenen Titel und Achsenbeschriftung hinzu
-        print(gplot)
-        Intercept <- rbind(Intercept, coef(summary(m_log))[1,])
-        Slope <- rbind(Slope, coef(summary(m_log))[2,])
-}
-Slope <- data.frame(Slope)
-Slope <- cbind(Slope, Countries)
-ggplot(data = Slope, aes(x = Countries, y = Estimate, col = Countries))+geom_point()+
-        geom_errorbar(data = Slope,
-                      aes(ymin= Estimate-2*Std..Error, ymax=Estimate+2*Std..Error), width=.2)+
-        labs(title = "Steigungsrate pro Land +/- Konfidenzintervall")
-```
