@@ -239,6 +239,8 @@ Was bedeuten nun die Parameter in unserem Modell? Der Regressionscoeffizient des
 
 Wären beide Koeffizienten negativ, so würde dies für *beschleunigtes exponentiellen Zerfall/Abnahme* sprechen. Ist der Koeffizient des quadratische Trends negativ, wird von *exponentiellen Wachstum mit Dämpfung* gesprochen. 
 
+Interessieren Sie sich für eine Datenanalyse des kompletten Zeitverlauf, dann schauen Sie doch einmal im dazugehörigen [Appendix](#AppendixGesamtVerlauf) nach.
+
 Dass das retransformierte Diagramm nicht so gut zu den Daten passt, liegt daran, dass wir die Parameter so geschätzt haben, dass die Vorhersage die logarithmierten Daten gut beschreibt; was der Fall ist, da die erklärte Varianz annähernd bei 100% liegt. Sind die Residuen für die logarithmierten Modell im Mittel Null, so gilt dies nicht mehr für die retransformierten Residuen. Einen Einblick dazu sehen Sie im Folgenden.
 
 ### Bonus
@@ -300,7 +302,39 @@ ggplot(data = Slope, aes(x = Countries, y = Estimate, col = Countries))+geom_poi
 Es scheint unterschiede (nicht überlappende Konfidenzintervalle) zu geben zwischen den Ländern. Hier scheinen Frankreick, Deutschland und Groß Britannien deutlichen niedrigere Wachstumsraten aufzuweisen im Vergleich zu Italien und Spanien. Beachten Sie, dass dies nur die Ergebnisse bis zum 11. April sind. Dies bedeutet, dass bis zum 11. April, sich die Wachstumsraten unterscheiden.
 
 
-## Appendix: Gesamter Zeitverlauf
+## Appendix zu den Analysen in Deutschland
+### __Appendix A:__ Übersicht über erklärte Varianzanteile
+
+Hier sind nochmals die Anteile erklärter Varianz der Bevölkerungsdichte über die Zeit in den vier betrachteten Modellen dargestellt:
+
+```{r}
+R2 <- rbind(summary(m_l)$r.squared,
+            summary(m_q)$r.squared,
+            summary(m_log)$r.squared,
+            summary(m_log_quad)$r.squared)
+rownames(R2) <- c("linear", "quadratisch", "exponentiell (log. Modell)", "quadratisch-exponentiell (quadratisches log. Modell)")
+colnames(R2) <- "R^2"
+round(R2, 4)
+```
+
+
+### __Appendix B:__ Übersicht über die Modelle
+
+Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich verschieden. Insbesondere der Regressionfehler ist an einer anderen Stelle:
+
+* **Lineares Modell**: $Y_i = \beta_0 + \beta_1t_i + \varepsilon_i$
+
+* **Quadratisches Modell**: $Y_i = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$. Hier wurde mit `poly(...,2)` eine Transformation der Variable Zeit vorgenommen, was hier durch "$^*$" dargestellt werden soll.
+
+
+* **Logarithmisches Modell**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i + \varepsilon_i} = e^{\beta_0 + \beta_1t_i} \ e^{\varepsilon_i}$ 
+
+* **Logarithmisches Modell mit quadratischem Term**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i}$. Hier wurde mit `poly(...,2)` eine Transformation der Variable Zeit vorgenommen, was hier durch "$^*$" dargestellt werden soll.
+
+
+
+
+## Appendix: Gesamter Zeitverlauf {#AppendixGesamtVerlauf}
 
 Sie haben sich sicher gefragt, wieso nicht der gesamte Verlauf bis zum heutigen Tage abgebildet wurde in den Modellen. Dies liegt daran, dass ein exponentielles Wachstum ab dem Zeitpunkt, ab welchem die Maßnahmen merklich geholfen haben, nicht mehr sinnvoll war zur Modellierung des Wachstums der Coronafälle.
 
@@ -366,36 +400,6 @@ ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")+labs(title = "Corona-Fälle nach dem 11. April in Deutschland")
 ```
 
-
-
-## Appendix zu den Analysen in Deutschland
-### __Appendix A:__ Übersicht über erklärte Varianzanteile
-
-Hier sind nochmals die Anteile erklärter Varianz der Bevölkerungsdichte über die Zeit in den vier betrachteten Modellen dargestellt:
-
-```{r}
-R2 <- rbind(summary(m_l)$r.squared,
-            summary(m_q)$r.squared,
-            summary(m_log)$r.squared,
-            summary(m_log_quad)$r.squared)
-rownames(R2) <- c("linear", "quadratisch", "exponentiell (log. Modell)", "quadratisch-exponentiell (quadratisches log. Modell)")
-colnames(R2) <- "R^2"
-round(R2, 4)
-```
-
-
-### __Appendix B:__ Übersicht über die Modelle
-
-Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich verschieden. Insbesondere der Regressionfehler ist an einer anderen Stelle:
-
-* **Lineares Modell**: $Y_i = \beta_0 + \beta_1t_i + \varepsilon_i$
-
-* **Quadratisches Modell**: $Y_i = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$. Hier wurde mit `poly(...,2)` eine Transformation der Variable Zeit vorgenommen, was hier durch "$^*$" dargestellt werden soll.
-
-
-* **Logarithmisches Modell**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i + \varepsilon_i} = e^{\beta_0 + \beta_1t_i} \ e^{\varepsilon_i}$ 
-
-* **Logarithmisches Modell mit quadratischem Term**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i}$. Hier wurde mit `poly(...,2)` eine Transformation der Variable Zeit vorgenommen, was hier durch "$^*$" dargestellt werden soll.
 
 
 
