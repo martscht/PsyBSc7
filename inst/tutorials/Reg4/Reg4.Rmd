@@ -828,24 +828,27 @@ a)  Stellen Sie die Verläufe der bestätigten Fälle in den Ländern Frankreich
 b) Stellen Sie nur den Verlauf der bestätigten Fälle von Deutschland grafisch dar  *(Subdatensatz `covid_de`)* 
 
 c) Stellen Sie den logarithmierten Verlauf der bestätigten Fälle von Deutschland grafisch dar 
-Tipp: der Logarithmus von 0 ist nicht definiert (`log(0) = -Inf`); diese Werte machen in einer Regressionsanalyse keinen sind, weswegen Sie diese durch fehlende Werte (`NA`) ersetzten müssen *(Subdatensatz `covid_de`)* 
+Tipp: der Logarithmus von 0 ist nicht definiert (`log(0) = -Inf`); diese Werte machen in einer Regressionsanalyse keinen Sinn, weswegen Sie diese durch fehlende Werte (`NA`) ersetzten müssen *(Subdatensatz `covid_de`)* 
 
 d) Löschen Sie die Tage aus dem Datensatz heraus, an welchen noch keine bestätigten Fälle in Deutschland aufgetreten sind
 Tipp:  `is.na(...)` fragt ab, ob Einträge in einem Element fehlen. Entsprechend können mit `!is.na(...)` jene Fälle angesprochen werden, die vorhanden sind. *(Subdatensatz `covid_de`)* 
 
 
 
-#### **Aufgabe 2.** Schauen Sie sich den Verlauf der bestätigten Infektion in Deutschland genauer an durch
+#### **Aufgabe 2.** Schauen Sie sich den Verlauf der bestätigten Infektion in Deutschland genauer an 
 
-a) durch lineare und quadratische Regression
+a) durch lineare und quadratische Regression und vergleichen Sie die beiden Modelle *(Subdatensatz `covid_de`)*
 
-b) lineare Regression der logarithmierten "Confirmed" Cases
 
-c) Passt das Modell zu den Daten? Analysieren Sie die Voraussetzungen 
+b) lineare Regression der logarithmierten "Confirmed" Cases *(Subdatensatz `covid_de`)*
 
-d) Stellen den logarithmierten sowie den retransformierten Verlauf dar
 
-*(Subdatensatz `covid_de`)*
+c) Passt das lineare logarithmierte Modell (bzw. das exponentielle Modell) zu den Daten? Analysieren Sie die Voraussetzungen *(Subdatensatz `covid_de`)*
+
+
+d) Stellen Sie den logarithmierten sowie den retransformierten Verlauf dar *(Subdatensatz `covid_de`)*
+
+
 
 #### **Aufgabe 3.** Prüfen Sie nun, ob sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können indem Sie einen quadratischen Trend der Zeit aufnehmen und die Modelle vergleichen
 *(Subdatensatz `covid_de`)*

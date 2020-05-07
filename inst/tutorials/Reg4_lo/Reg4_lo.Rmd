@@ -78,7 +78,7 @@ ggplot(covid_de, aes(x = Day, y = Confirmed))+geom_point()
 
 
 ### c) Stellen Sie den logarithmierten Verlauf der bestätigten Fälle von Deutschland grafisch dar 
-#### Tipp: der Logarithmus von 0 ist nicht definiert (`log(0) = -Inf`); diese Werte machen in einer Regressionsanalyse keinen sind, weswegen Sie diese durch fehlende Werte (`NA`) ersetzten müssen 
+#### Tipp: der Logarithmus von 0 ist nicht definiert (`log(0) = -Inf`); diese Werte machen in einer Regressionsanalyse keinen Sinn, weswegen Sie diese durch fehlende Werte (`NA`) ersetzten müssen 
 #### *(Subdatensatz covid_de)* 
 
 ```{r}
@@ -97,13 +97,13 @@ head(covid_de) # Datensatz ohne Tage, an denen in Deutschland keine Corona-Föll
 ```
 
 ### Ergebnisinterpretation **Aufgabe 1.**
-**a)** Bei allen Verläufen lässt sich ein exponentielles-Wachstum vermuten. Vielleicht unterscheiden sich die Raten des Wachstums oder zeitliche Einstieg der Epedimien pro Land.
+**a)** Bei allen Verläufen lässt sich ein exponentielles-Wachstum bis zum 11. April 2020 vermuten. Vielleicht unterscheiden sich die Raten des Wachstums oder zeitliche Einstieg der Epedimien pro Land.
 
 **b) + c) + d)** Aus den beiden Grafiken ist ersichtlich, dass sich ein exponentielles Wachstum für die bestätigten Fälle der Corona-Infektionen in Deutschland vermuten lässt. Im Vergleich zu allen andern Ländern wurde der erste Corona-Fall in Deutschland am *6. Tag* der Datenerhebung registiert.
 
 
-## **Aufgabe 2.** Schauen Sie sich den Verlauf der bestätigten Infektion in Deutschland genauer an durch
-### a) durch lineare und quadratische Regression
+## **Aufgabe 2.** Schauen Sie sich den Verlauf der bestätigten Infektion in Deutschland genauer an 
+### a) durch lineare und quadratische Regression und vergleichen Sie die beiden Modelle
 ```{r}
 ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")         # plotte linearen Verlauf 
@@ -154,7 +154,7 @@ m_log <- lm(log_Confirmed ~ Day, data = covid_de) # lineares Modell mit log(y) a
 summary(m_log)
 ```
 
-### c) Passt das Modell zu den Daten? Analysieren Sie die Voraussetzungen 
+### c) Passt das lineare logarithmierte Modell (bzw. das exponentielle Modell) zu den Daten? Analysieren Sie die Voraussetzungen 
 ```{r}
 residualPlot(m_log)
 avPlots(m_log)
@@ -171,7 +171,7 @@ ggplot(data = df_res, aes(x = res)) +
         labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das logarithmierte Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
 ```
 
-### d) Stellen den logarithmierten sowie den retransformierten Verlauf dar
+### d) Stellen Sie den logarithmierten sowie den retransformierten Verlauf dar
 ```{r}
 ggplot(covid_de, aes(x = Day, y = log_Confirmed))+geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")
 
@@ -189,7 +189,7 @@ Durch den quadratischen Verlauf lassen sich `r round(summary(m_q)$r.squared*100,
 
 Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besser beschreibt. 
 
-**b)** Das lineare Modell für die logarithmierten bestätigten Corona-Fälle in Deutschland vorhergesagt durch die Zeit scheint gut zu den Daten zu passen. Insgesamt können `r round(summary(m_log)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden; etwas mehr als durch das quadratische Wachstum, durch welches `r round(summary(m_q)$r.squared*100, 2)`% der Variation in den Daten durch den Zeitverlauf erklärt werden konnten. 
+**b)** Das lineare Modell für die logarithmierten bestätigten Corona-Fälle in Deutschland vorhergesagt durch die Zeit scheint gut zu den Daten zu passen. Insgesamt können `r round(summary(m_log)$r.squared*100, 2)` % der Variation in den Daten durch den Zeitverlauf erklärt werden; etwas mehr als durch das quadratische Wachstum, durch welches `r round(summary(m_q)$r.squared*100, 2)`% der Variation in den Daten durch den Zeitverlauf erklärt werden konnten. Allerdings lässt sich dieses Varianzinkrement nicht auf Signifikanz prüfen.
 
 **c)** Die Voraussetzungen scheinen nicht wirklich gegeben zu sein, da es Systematiken zwischen dem Zeitverlauf/ den vorhergesagten Werten sowie den Residuen gibt. Auch das Histogramm spricht gegen die Normalverteilungsannahme. Allerdings können wir durch unsere Modelle sehr viel Variation im Datensatz erklären.
 
@@ -199,7 +199,8 @@ Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besse
 
 
 
-## **Aufgabe 3.** Prüfen Sie nun, ob sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können
+## **Aufgabe 3.** Prüfen Sie nun, ob sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können indem Sie einen quadratischen Trend der Zeit aufnehmen und die Modelle vergleichen
+*(Subdatensatz `covid_de`)*
 
 
 ```{r}
