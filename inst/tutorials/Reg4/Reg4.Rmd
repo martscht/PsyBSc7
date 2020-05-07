@@ -538,12 +538,12 @@ Das Diagramm der retransformierten vorhergesagten Werten signalisiert, dass ein 
 
 
 ```{r exercise_resid_mlog, fig.height=6, fig.align="center",  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup5"}
-residualPlot(...) # Residualplot
+residualPlot(..., col = "red") # Residualplot
 ```
 
 ```{r exercise_resid_mlog-solution}
 # Finale Lösung
-residualPlot(m_log) # Residualplot
+residualPlot(m_log, col = "red") # Residualplot
 ```
 
 Dem Residualplot ist zu entnehmen, dass ein nicht-linearer Verlauf angemessen wäre. Wir gehen dieser Vermutung nach, indem wir dem Log-Plot  einen quadratischen Verlauf hinzufügen.
