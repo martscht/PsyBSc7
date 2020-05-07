@@ -62,7 +62,7 @@ covid_sel <- covid[covid$Country.Region %in% c('France', 'Germany', 'Italy', 'Sp
 ### a)  Stellen Sie die Verläufe der bestätigten Fälle in den Ländern Frankreich, Deutschland, Italien, Spanien und Groß Britannien gegen die Zeit dar 
 #### *(Subdatensatz covid_sel)*
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 ggplot(covid_sel, aes(x = Day, y = Confirmed, col = Country.Region))+geom_line(lwd = 2)
 ```
 
@@ -72,7 +72,7 @@ ggplot(covid_sel, aes(x = Day, y = Confirmed, col = Country.Region))+geom_line(l
 #### *(Subdatensatz covid_de)* 
 
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 ggplot(covid_de, aes(x = Day, y = Confirmed))+geom_point()
 ```
 
@@ -81,7 +81,7 @@ ggplot(covid_de, aes(x = Day, y = Confirmed))+geom_point()
 #### Tipp: der Logarithmus von 0 ist nicht definiert (`log(0) = -Inf`); diese Werte machen in einer Regressionsanalyse keinen Sinn, weswegen Sie diese durch fehlende Werte (`NA`) ersetzten müssen 
 #### *(Subdatensatz covid_de)* 
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 covid_de$log_Confirmed <- log(covid_de$Confirmed)               # Logarithmieren der "confirmed cases"
 covid_de$log_Confirmed[covid_de$log_Confirmed == -Inf] <- NA    # Ersetzen von -unendlich durch missing (NA) 
 ggplot(covid_de, aes(x = Day, y = log_Confirmed))+geom_point()
@@ -104,7 +104,7 @@ head(covid_de) # Datensatz ohne Tage, an denen in Deutschland keine Corona-Föll
 
 ## **Aufgabe 2.** Schauen Sie sich den Verlauf der bestätigten Infektion in Deutschland genauer an 
 ### a) durch lineare und quadratische Regression und vergleichen Sie die beiden Modelle
-```{r}
+```{r, fig.height=6, fig.align="center"}
 ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")         # plotte linearen Verlauf 
 
@@ -155,7 +155,7 @@ summary(m_log)
 ```
 
 ### c) Passt das lineare logarithmierte Modell (bzw. das exponentielle Modell) zu den Daten? Analysieren Sie die Voraussetzungen 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 residualPlot(m_log)
 avPlots(m_log)
 res <- studres(m_log) # Studentisierte Residuen als Objekt speichern
@@ -172,7 +172,7 @@ ggplot(data = df_res, aes(x = res)) +
 ```
 
 ### d) Stellen Sie den logarithmierten sowie den retransformierten Verlauf dar
-```{r}
+```{r, fig.height=6, fig.align="center"}
 ggplot(covid_de, aes(x = Day, y = log_Confirmed))+geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")
 
 
@@ -203,7 +203,7 @@ Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besse
 *(Subdatensatz `covid_de`)*
 
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 m_log_quad <- lm(log_Confirmed ~ poly(Day, 2), data = covid_de)
 summary(m_log_quad)
 anova(m_log, m_log_quad)
@@ -239,6 +239,8 @@ Was bedeuten nun die Parameter in unserem Modell? Der Regressionscoeffizient des
 
 Wären beide Koeffizienten negativ, so würde dies für *beschleunigtes exponentiellen Zerfall/Abnahme* sprechen. Ist der Koeffizient des quadratische Trends negativ, wird von *exponentiellen Wachstum mit Dämpfung* gesprochen. 
 
+Dass das retransformierte Diagramm nicht so gut zu den Daten passt, liegt daran, dass wir die Parameter so geschätzt haben, dass die Vorhersage die logarithmierten Daten gut beschreibt; was der Fall ist, da die erklärte Varianz annähernd bei 100% liegt. Sind die Residuen für die logarithmierten Modell im Mittel Null, so gilt dies nicht mehr für die retransformierten Residuen. Einen Einblick dazu sehen Sie im Folgenden.
+
 ### Bonus
 Allerdings suggeriert das retransformierte Modell des quadratisch-exponentiellen Verlaufs eine deutliche Überschätzung der Corona-Fälle in Deutschland ab ca. dem 68. Tag. Dies spricht wiederum für ein rein exponentielles Wachstum. Schauen wir uns beispielsweise die Varianz der Residuen durch Retransformation an, so zeigt sich, dass die Variation im quadratisch-exponentiellen Modell deutlich größer Ausfällt.
 
@@ -251,16 +253,18 @@ var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp_quad) # Varianz der ret
 var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp) < var(covid_de$log_Confirmed - covid_de$pred_Confirmed_exp_quad) # Variation im quad.-log. Modell retransformiert größer?
 ```
 
+Die retransformierte Resiudalvarianz, also die Varianz zwischen den exponentiellen Daten und der retransformierten Vorhersage (quasi die Diskrepanz, die wir in den retransformierten Grafiken sehen) ist im quadratisch-exponentiellen Modell größer, als im rein exponentiellen Modell.
+
 Sie haben sich sicher gefragt, wieso nicht der gesamte Verlauf bis zum heutigen Tage abgebildet wurde in den Modellen. Dies liegt daran, dass ein exponentielles Wachstum ab dem Zeitpunkt, ab welchem die Maßnahmen merklich geholfen haben, nicht mehr sinnvoll war zur Modellierung des Wachstums der Coronafälle.
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 covid_sel <- covid_full[covid_full$Country.Region %in% c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom'), ]
 ggplot(covid_sel, aes(x = Day, y = Confirmed, col = Country.Region))+geom_line(lwd = 2)
 ```
 
 Den Grafiken ist deutlich zu entnehmen, dass kein exponentielles Wachstum mehr vorliegt und das Wachstum sich verlangsamt hat. Wenn hier nun ein exponentielles Wachstum gefittet wird, so sind die resultierenden Ergebnisse nicht sinnvoll. Wir schauen uns dies für Deutschland an:
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 covid_de <- covid_full[covid_full$Country.Region == 'Germany', ]
 covid_de$log_Confirmed <- log(covid_de$Confirmed)               # Logarithmieren der "confirmed cases"
 covid_de$log_Confirmed[covid_de$log_Confirmed == -Inf] <- NA    # Ersetzen von -unendlich durch missing (NA) 
@@ -275,7 +279,7 @@ ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
 
 Hier wird eine erhebliche Diskrepanz zwischen Vorhersage und Daten ersichtlich. Die Maßnahmen scheinen etwas zu nutzen! Wenn wir erneut den qudaratisch-exponentiellen Verlauf modellieren wollen, sieht dies so aus:
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 m_log_quad <- lm(log_Confirmed ~ poly(Day, 2), data = covid_de)
 summary(m_log_quad)
 anova(m_log, m_log_quad)
@@ -290,7 +294,7 @@ ggplot(data = covid_de, aes(x = Day, y = Confirmed))+geom_point()+
 ```
 Die Kurve liegt zwar näher dran, spiegelt aber nicht dem tatsächlichen Verlauf wider. 
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 m_log_cub <- lm(log_Confirmed ~ poly(Day, 3), data = covid_de)
 covid_de$pred_Confirmed_exp_cub <- exp(predict(m_log_cub))
 ggplot(data = covid_de, aes(x = Day, y = Confirmed))+geom_point()+
@@ -340,7 +344,7 @@ Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich v
 
 ## Bonusaufgaben: Vergleichen Sie die Koeffizienten des exponentiellen Wachstums zwischen den Ländern
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 
 Intercept <- c()
 Slope <- c()
