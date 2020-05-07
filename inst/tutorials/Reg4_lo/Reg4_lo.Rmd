@@ -59,7 +59,7 @@ covid_sel <- covid[covid$Country.Region %in% c('France', 'Germany', 'Italy', 'Sp
 
 
 ## **Aufgabe 1.** Verschaffen Sie sich einen Überblick über die Daten durch
-### a)  Stellen Sie die Verläufe der bestätigten Fälle in den Ländern Frankreich, Deutschland, Italien, Spanien und Groß Britannien gegen die Zeit dar 
+### a)  Stellen Sie die Verläufe der bestätigten Fälle in den Ländern Frankreich, Deutschland, Italien, Spanien und Großbritannien gegen die Zeit dar 
 #### *(Subdatensatz covid_sel)*
 
 ```{r, fig.height=6, fig.align="center"}
@@ -235,7 +235,7 @@ residualPlot(m_log_quad)
 Durch den quadratisch-exponentiellen Verlauf lassen sich `r round(summary(m_log_quad)$r.squared*100, 2)`% der Variation der  bestätigten Corona-Fälle in Deutschland erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_log_quad)$r.squared*100 - summary(m_log)$r.squared*100, 2)`% im Vergleich zum reinen exponentiellen Verlaufsmodell entspricht. Interessant zu sehen ist, dass fast 100% der Variation im Datensatz erklärbar ist. 
 Das Histogramm der Residuen des logarithmierten quadratischen Modells (welches das quadratisch-exponentielle Wachstum der  bestätigten Corona-Fälle in Deutschland darstellt) ist etwas rechts-schief/links-steil. Die Residuenplots zeigen außerdem, dass auch hier die Residuen nicht vollständig unsystematisch sind. Dennoch ist die Resiudalvarianz sehr klein.
 
-Was bedeuten nun die Parameter in unserem Modell? Der Regressionscoeffizient des linearen Trends von `poly` liegt bei `r round(coef(m_log_quad)[2], 2)` und der Koeffizient des quadratischen Trends bei `r round(coef(m_log_quad)[3], 2)`. Dies spricht für ein **beschläunigtes exponentielles Wachstum**. 
+Was bedeuten nun die Parameter in unserem Modell? Der Regressionscoeffizient des linearen Trends von `poly` liegt bei `r round(coef(m_log_quad)[2], 2)` und der Koeffizient des quadratischen Trends bei `r round(coef(m_log_quad)[3], 2)`. Dies spricht für ein **beschläunigtes exponentielles Wachstum** der Corona-Fälle in Deutschland bis zum 11. April. 
 
 Wären beide Koeffizienten negativ, so würde dies für *beschleunigtes exponentiellen Zerfall/Abnahme* sprechen. Ist der Koeffizient des quadratische Trends negativ, wird von *exponentiellen Wachstum mit Dämpfung* gesprochen. 
 
@@ -299,7 +299,7 @@ ggplot(data = Slope, aes(x = Countries, y = Estimate, col = Countries))+geom_poi
         labs(title = "Steigungsrate pro Land +/- Konfidenzintervall")
 ```
 
-Es scheint unterschiede (nicht überlappende Konfidenzintervalle) zu geben zwischen den Ländern. Hier scheinen Frankreick, Deutschland und Groß Britannien deutlichen niedrigere Wachstumsraten aufzuweisen im Vergleich zu Italien und Spanien. Beachten Sie, dass dies nur die Ergebnisse bis zum 11. April sind. Dies bedeutet, dass bis zum 11. April, sich die Wachstumsraten unterscheiden.
+Es scheint unterschiede (nicht überlappende Konfidenzintervalle) zu geben zwischen den Ländern. Hier scheinen Frankreick, Deutschland und Großbritannien deutlichen niedrigere Wachstumsraten aufzuweisen im Vergleich zu Italien und Spanien. Beachten Sie, dass dies nur die Ergebnisse bis zum 11. April sind. Dies bedeutet, dass bis zum 11. April, sich die Wachstumsraten unterscheiden.
 
 
 ## Appendix zu den Analysen in Deutschland

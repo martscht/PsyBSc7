@@ -823,7 +823,7 @@ oder via `PsyBSc7::Aufgaben_7()`. Die tagesaktuellen Daten finden Sie unter `cov
 
 #### **Aufgabe 1.**  Verschaffen Sie sich einen Überblick über die Daten durch
 
-a)  Stellen Sie die Verläufe der bestätigten Fälle in den Ländern Frankreich, Deutschland, Italien, Spanien und Groß Britannien gegen die Zeit dar  *(Subdatensatz `covid_sel`)*
+a)  Stellen Sie die Verläufe der bestätigten Fälle in den Ländern Frankreich, Deutschland, Italien, Spanien und Großbritannien gegen die Zeit dar  *(Subdatensatz `covid_sel`)*
 
 b) Stellen Sie nur den Verlauf der bestätigten Fälle von Deutschland grafisch dar  *(Subdatensatz `covid_de`)* 
 
