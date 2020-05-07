@@ -360,7 +360,7 @@ ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
 Auch diese Modellierung passt nicht gut zu den retransformierten Daten. Ab Tag 80 (also dem 11. April) passt wohl ein lineares Wachstum. Dies spricht deutlich für das Wirken der Einschränkungsmaßnahmen der Bevölkerung. 
 
 ```{r, fig.height=6, fig.align="center"}
-covid_de <- covid_de[covid_de$Tag > 80,]
+covid_de <- covid_de[covid_de$Day > 80,]
 
 ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")+labs(title = "Corona-Fälle nach dem 11. April in Deutschland")
