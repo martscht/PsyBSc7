@@ -336,14 +336,14 @@ Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich v
 
 ## Appendix: Gesamter Zeitverlauf {#AppendixGesamtVerlauf}
 
-Sie haben sich sicher gefragt, wieso nicht der gesamte Verlauf bis zum heutigen Tage abgebildet wurde in den Modellen. Dies liegt daran, dass ein exponentielles Wachstum ab dem Zeitpunkt, ab welchem die Maßnahmen merklich geholfen haben, nicht mehr sinnvoll war zur Modellierung des Wachstums der Coronafälle.
+Sie haben sich sicher gefragt, wieso nicht der gesamte Verlauf bis zum heutigen Tage abgebildet wurde in den Modellen. Dies liegt daran, dass ein exponentielles Wachstum ab dem Zeitpunkt, ab welchem die Maßnahmen merklich geholfen haben, nicht mehr sinnvoll war zur Modellierung des Wachstums der Corona-Fälle.
 
 ```{r, fig.height=6, fig.align="center"}
 covid_sel <- covid_full[covid_full$Country.Region %in% c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom'), ]
 ggplot(covid_sel, aes(x = Day, y = Confirmed, col = Country.Region))+geom_line(lwd = 2)
 ```
 
-Den Grafiken ist deutlich zu entnehmen, dass kein exponentielles Wachstum mehr vorliegt und das Wachstum sich verlangsamt hat. Wenn hier nun ein exponentielles Wachstum gefittet wird, so sind die resultierenden Ergebnisse nicht sinnvoll. Wir schauen uns dies für Deutschland an:
+Den Grafiken ist deutlich zu entnehmen, dass kein exponentielles Wachstum mehr vorliegt und das Wachstum sich verlangsamt hat. Wenn hier nun ein exponentielles Wachstum gefittet wird, so sind die resultierenden Ergebnisse nicht sinnvoll. Wir schauen uns dies für Deutschland an. Dazu bearbeiten wir den tagesaktuellen Datensatz `covid_full`:
 
 ```{r, fig.height=6, fig.align="center"}
 covid_de <- covid_full[covid_full$Country.Region == 'Germany', ]
