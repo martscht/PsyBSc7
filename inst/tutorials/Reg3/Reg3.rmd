@@ -552,6 +552,8 @@ Insgesamt bedeutet dies, dass die Standardfehler von der Inversen der Kovarianzm
 *Fall 3*: $X'X=\begin{pmatrix}100&0&0\\0&100&100\\0&100&100\end{pmatrix}$.
 
 Hierbei ist zu beachten, dass $X$ die Systemmatrix ist, welche auch die $1$ des Interzepts enthält. Natürlich ist eine Variable von einer Konstanten unabhängig, weswegen die erste Zeile und Spalte von $X'X$ jeweils der Vektor $(100, 0, 0)$ ist. Die zugehörigen Korrelationsmatrizen können durch teilen durch 100 berechnet werden (*da wir zentrierte Variablen haben, die Stichprobengröße gleich 100 ist und die Varianzen der Variablen gerade 100 sind!*).
+
+
 *Fall 1*: $\Sigma_1=\begin{pmatrix}1&0&0\\0&1&0\\0&0&1\end{pmatrix}.\qquad$
 *Fall 2*: $\Sigma_2=\begin{pmatrix}1&0&0\\0&1&.97\\0&.97&1\end{pmatrix} \qquad$  und 
 *Fall 3*: $\Sigma_3=\begin{pmatrix}1&0&0\\0&1&1\\0&1&1\end{pmatrix}$. 
