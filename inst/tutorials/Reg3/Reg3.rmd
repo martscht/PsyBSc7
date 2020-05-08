@@ -541,23 +541,28 @@ Im Folgenden stehen $\beta$s für _**unstandardisierte**_ Regressionskoeffizient
 Für eine einfache Regressionsgleichung mit $$Y_i=\beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \varepsilon_i$$
 kann die selbe Gleichung auch in Matrixnotation formuliert werden $$Y = X\beta + \varepsilon.$$ Hier ist $X$ die Systemmatrix, welche die Zeilenvektoren $X_i=(1, x_{i1}, x_{i2})$ enthält. Die Standardfehler, welche die Streuung der Parameter $\beta:=(\beta_0,\beta_1,\beta_2)$ beschreiben, lassen sich wie folgt bestimmen: Wir bestimmen die Matrix $I$ wie folgt
 $$I:=(X'X)^{-1}\hat{\sigma}^2_e,$$
-wobei $\hat{\sigma}^2_e$ die Resiudalvarianz unserer Regressionanalyse ist (also der nicht-erklärte Anteil an der Varianz von $Y$). Aus der Matrix $I$ erhalten wir die Standardfehler sehr einfach: Sie stehen im Quadrat auf der Diagonale. Das heißt, die Standardfehler sind $SE(\beta)=\sqrt{\text{diag}(I)}$ (Wir nehmen mit $\text{diag}$ die Diagonalelemente aus $I$ und ziehen aus diesen jeweils die Wurzel: der erste Eintrag ist der $SE$ von $\beta_0$; also $SE(\beta_0)=\sqrt{I_{11}}$; der zweite von $\beta_1$;$SE(\beta_1)=\sqrt{I_{22}}$; usw.). Was hat das nun mit der Kolinearität zu tun? Wir wissen, dass in $X'X$ die Information über die Kovariation im Datensatz steckt (*es muss nur noch durch die Stichprobengröße geteilt werden und das Vektorprodukt der Mittelwerte abgezogen werden; eine Zentrierung um die Mittelwert wird damit vorgenommen*). Beispielsweise lässt sich die empirische Kovarianzmatrix $S$ zwischen zwei Variablen $z_1$ und $z_2$ sehr einfach bestimmen mit $Z:=(z_1, z_2)$:
+wobei $\hat{\sigma}^2_e$ die Resiudalvarianz unserer Regressionanalyse ist (also der nicht-erklärte Anteil an der Varianz von $Y$). Aus der Matrix $I$ erhalten wir die Standardfehler sehr einfach: Sie stehen im Quadrat auf der Diagonale. Das heißt, die Standardfehler sind $SE(\beta)=\sqrt{\text{diag}(I)}$ (Wir nehmen mit $\text{diag}$ die Diagonalelemente aus $I$ und ziehen aus diesen jeweils die Wurzel: der erste Eintrag ist der $SE$ von $\beta_0$; also $SE(\beta_0)=\sqrt{I_{11}}$; der zweite von $\beta_1$;$SE(\beta_1)=\sqrt{I_{22}}$; usw.). Was hat das nun mit der Kolinearität zu tun? Wir wissen, dass in $X'X$ die Information über die Kovariation im Datensatz steckt (*es muss nur noch durch die Stichprobengröße geteilt werden und das Vektorprodukt der Mittelwerte abgezogen werden; eine Zentrierung um die Mittelwert wird damit vorgenommen sowie eine Normierung an der Stichprobengröße*). Beispielsweise lässt sich die empirische Kovarianzmatrix $S$ zwischen zwei Variablen $z_1$ und $z_2$ sehr einfach bestimmen mit $Z:=(z_1, z_2)$:
 $$ S=\frac{1}{n}Z'Z - \begin{pmatrix}\overline{z}_1\\\overline{z}_2 \end{pmatrix}\begin{pmatrix}\overline{z}_1&\overline{z}_2 \end{pmatrix}.$$
 Weitere Informationen hierzu (Kovarianzmatrix und Standardfehler) sind im Appendix B (sowie auch in einigen Kapiteln) von [Eid et al. (2017)](https://hds.hebis.de/ubffm/Record/HEB366849158) Unterpunkt 5.2-5.4 bzw. ab Seite 1058 nachzulesen. 
 
-Insgesamt bedeutet dies, dass die Standardfehler von der Inversen der Kovarianzmatrix unserer Daten sowie von der Residualvarianz abhängen. Sie sind also groß, wenn die Resiudalvarianz groß ist (damit ist die Vorhersage von $Y$ schlecht) oder wenn die Inverse der Kovarianzmatrix groß ist (also wenn die Variablen stark redundant sind). Nehmen wir dazu an, dass $\hat{\sigma}_e^2=1$. Wir gucken uns jetzt drei Fälle an mit 
+Insgesamt bedeutet dies, dass die Standardfehler von der Inversen der Kovarianzmatrix unserer Daten sowie von der Residualvarianz abhängen. Sie sind also groß, wenn die Resiudalvarianz groß ist (damit ist die Vorhersage von $Y$ schlecht) oder wenn die Inverse der Kovarianzmatrix groß ist (also wenn die Variablen stark redundant sind und somit hoch mit einander korrelieren). Nehmen wir dazu der Einfachheit halber an, dass $\hat{\sigma}_e^2=1$ (es geht hier nur um eine numerische Präsentation der Effekte, nicht um ein sinnvolles Modell) sowie, dass $n = 100$ (Stichprobengröße). Zusätzlich gehen wir von zentrierten Variablen (Mittelwert von 0) aus. Dann lässt sich aus $X'X$ durch teilen durch $100$ die Kovarianzmatrix der Variablen bestimmen. Wir gucken uns jetzt drei Fälle an mit 
 
-*Fall 1*: $X'X=\begin{pmatrix}1&0&0\\0&4&0\\0&0&4\end{pmatrix}$.
-*Fall 2*: $X'X=\begin{pmatrix}1&1.8&1.9\\1.8&4&3.9\\1.9&3.9&4\end{pmatrix}$  und 
-*Fall 3*: $X'X=\begin{pmatrix}1&2&2\\2&4&4\\2&4&4\end{pmatrix}$.
+*Fall 1*: $X'X=\begin{pmatrix}100&0&0\\0&100&0\\0&0&100\end{pmatrix}.\qquad$
+*Fall 2*: $X'X=\begin{pmatrix}100&0&0\\0&100&97\\0&97&100\end{pmatrix} \qquad$  und 
+*Fall 3*: $X'X=\begin{pmatrix}100&0&0\\0&100&100\\0&100&100\end{pmatrix}$.
 
-Wir könnten hier z.B. von zentrierten Variablen (Mittelwert von 0) ausgehen, sowie von einer Stichprobengröße von 10. Dann lässt sich aus $X'X$ durch teilen durch 10 die Kovarianzmatrix der Variablen bestimmen.
+Hierbei ist zu beachten, dass $X$ die Systemmatrix ist, welche auch die $1$ des Interzepts enthält. Natürlich ist eine Variable von einer Konstanten unabhängig, weswegen die erste Zeile und Spalte von $X'X$ jeweils der Vektor $(100, 0, 0)$ ist. Die zugehörigen Korrelationsmatrizen können durch teilen durch 100 berechnet werden (*da wir zentrierte Variablen haben, die Stichprobengröße gleich 100 ist und die Varianzen der Variablen gerade 100 sind!*).
+*Fall 1*: $\Sigma_1=\begin{pmatrix}1&0&0\\0&1&0\\0&0&1\end{pmatrix}.\qquad$
+*Fall 2*: $\Sigma_2=\begin{pmatrix}1&0&0\\0&1&.97\\0&.97&1\end{pmatrix} \qquad$  und 
+*Fall 3*: $\Sigma_3=\begin{pmatrix}1&0&0\\0&1&1\\0&1&1\end{pmatrix}$. 
+
+Hierbei ist die erste Zeile und Spalte jeweils die Korrelation der Variablen mit dem Interzept (=0).
 
 Im *Fall 1* sind alle unkorreliert. Die Inverse ist leicht zu bilden.
 ```{r}
-XX_1 <- matrix(c(1,0,0,
-               0,4,0,
-               0,0,4),3,3)
+XX_1 <- matrix(c(100,0,0,
+               0,100,0,
+               0,0,100),3,3)
 XX_1 # Die Matrix X'X im Fall 1
 I_1 <- solve(XX_1)*1 # I (*1 wegen Residualvarianz = 1)
 I_1
@@ -567,16 +572,16 @@ Die Standardfehler sind nicht sehr groß.
 
 Im *Fall 2* sind alle fast perfekt korreliert - es liegt hohe Multikolinearität vor. Die Inverse ist noch zu bilden. Die Standardfehler sind deutlich erhöht im Vergleich zu *Fall 1*
 ```{r}
-XX_2 <- matrix(c(1,1.8,1.9,
-               1.8,4,3.9,
-               1.9,3.9,4),3,3)
+XX_2 <- matrix(c(100,0,0,
+               0,100,97,
+               0,97,100),3,3)
 XX_2 # Die Matrix X'X im Fall 2
 I_2 <- solve(XX_2)*1 # I (*1 wegen Residualvarianz = 1)
 I_2
 sqrt(diag(I_2)) # SEs im Fall 2
 sqrt(diag(I_1)) # SEs im Fall 1
 ```
-Die Standardfehler des *Fall 2* sind sehr groß im Vergleich zu *Fall 1*. Die Determinante von $X'X$ in *Fall 2* liegt nahe $0$; im *Fall 1* bei $16$.
+Die Standardfehler des *Fall 2* sind sehr groß im Vergleich zu *Fall 1*. Die Determinante von $X'X$ in *Fall 2* liegt nahe $0$; im *Fall 1* bei $1000000$.
 ```{r}
 det(XX_2) # Determinante Fall 2
 det(XX_1) # Determinante Fall 1
@@ -585,9 +590,9 @@ det(XX_1) # Determinante Fall 1
 
 Im *Fall 3* sind alle perfekt korreliert - es liegt perfekte Multikolinearität vor. Die Inverse ist  **nicht** zu bilden (da $\text{det}(X'X) = 0$). Die Standardfehler sind nicht zu berechnen. Eine Fehlermeldung wird ausgegeben.
 ```{r}
-XX_3 <- matrix(c(1,2,2,
-               2,4,4,
-               2,4,4),3,3)
+XX_3 <- matrix(c(100,0,0,
+               0,100,100,
+               0,100,100),3,3)
 XX_3 # Die Matrix X'X im Fall 3
 det(XX_3) # Determinante on X'X im Fall 3
 ```
