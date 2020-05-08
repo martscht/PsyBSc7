@@ -583,14 +583,14 @@ I_2
 sqrt(diag(I_2)) # SEs im Fall 2
 sqrt(diag(I_1)) # SEs im Fall 1
 ```
-Die Standardfehler des *Fall 2* sind sehr groß im Vergleich zu *Fall 1*. Die Determinante von $X'X$ in *Fall 2* liegt nahe $0$; im *Fall 1* bei $10^6$.
+Die Standardfehler des *Fall 2* sind sehr groß im Vergleich zu *Fall 1* (mehr als sieben Mal so groß); nur der Standardfehler des Interzept bleibt gleich. Die Determinante von $X'X$ in *Fall 2* liegt deutlich näher an $0$ im Vergleich zu *Fall 1*; hier: $10^6$.
 ```{r}
 det(XX_2) # Determinante Fall 2
 det(XX_1) # Determinante Fall 1
 ```
 
 
-Im *Fall 3* sind alle perfekt korreliert - es liegt perfekte Multikolinearität vor. Die Inverse ist  **nicht** zu bilden (da $\text{det}(X'X) = 0$). Die Standardfehler sind nicht zu berechnen. Eine Fehlermeldung wird ausgegeben.
+Im *Fall 3* sind die zwei Variablen perfekt korreliert - es liegt perfekte Multikolinearität vor. Die Inverse ist  **nicht** zu bilden (da $\text{det}(X'X) = 0$). Die Standardfehler sind nicht zu berechnen. Eine Fehlermeldung wird ausgegeben.
 ```{r}
 XX_3 <- matrix(c(100,0,0,
                0,100,100,
@@ -609,6 +609,8 @@ sqrt(diag(I_3)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_
 #    Error in solve.default(XX_3) : 
 #    Lapack routine dgesv: system is exactly singular: U[2,2] = 0
 ```
+
+Der VIF und Die Toleranz quantifizieren die Korrelation zwischen den beiden Variablen. Der VIF wäre in diesen Analysen jeweils 1 und 1 im *1. Fall*, 50.25 und 50.25 im *2. Fall* und nicht berechenbar (bzw. $\infty$) im *3. Fall*, Entsprechend wäre die Toleranz 1 und 1 im *1. Fall*, 0.02 und 0.02 im *2. Fall* und 0 und 0 im *3. Fall*.
 
 Dieser Exkurs zeigt, wie sich die Multikolinearität auf die Standardfehler und damit auf die Präzision der Parameterschätzung auswirkt. Inhaltlich bedeutet dies, dass die Prädiktoren redundant sind und nicht klar ist, welchem Prädiktor die Effekte zugeschrieben werden können.
 
