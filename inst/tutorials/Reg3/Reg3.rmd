@@ -548,14 +548,14 @@ Weitere Informationen hierzu (Kovarianzmatrix und Standardfehler) sind im Append
 Insgesamt bedeutet dies, dass die Standardfehler von der Inversen der Kovarianzmatrix unserer Daten sowie von der Residualvarianz abhängen. Sie sind also groß, wenn die Resiudalvarianz groß ist (damit ist die Vorhersage von $Y$ schlecht) oder wenn die Inverse der Kovarianzmatrix groß ist (also wenn die Variablen stark redundant sind und somit hoch mit einander korrelieren). Nehmen wir dazu der Einfachheit halber an, dass $\hat{\sigma}_e^2=1$ (es geht hier nur um eine numerische Präsentation der Effekte, nicht um ein sinnvolles Modell) sowie, dass $n = 100$ (Stichprobengröße). Zusätzlich gehen wir von zentrierten Variablen (Mittelwert von 0) aus. Dann lässt sich aus $X'X$ durch teilen durch $100$ die Kovarianzmatrix der Variablen bestimmen. Wir gucken uns jetzt drei Fälle an mit 
 
 *Fall 1*: $X'X=\begin{pmatrix}100&0&0\\0&100&0\\0&0&100\end{pmatrix}.\qquad$
-*Fall 2*: $X'X=\begin{pmatrix}100&0&0\\0&100&97\\0&97&100\end{pmatrix} \qquad$  und 
+*Fall 2*: $X'X=\begin{pmatrix}100&0&0\\0&100&99\\0&99&100\end{pmatrix} \qquad$  und 
 *Fall 3*: $X'X=\begin{pmatrix}100&0&0\\0&100&100\\0&100&100\end{pmatrix}$.
 
 Hierbei ist zu beachten, dass $X$ die Systemmatrix ist, welche auch die $1$ des Interzepts enthält. Natürlich ist eine Variable von einer Konstanten unabhängig, weswegen die erste Zeile und Spalte von $X'X$ jeweils der Vektor $(100, 0, 0)$ ist. Die zugehörigen Korrelationsmatrizen können durch teilen durch 100 berechnet werden (*da wir zentrierte Variablen haben, die Stichprobengröße gleich 100 ist und die Varianzen der Variablen gerade 100 sind!*).
 
 
 *Fall 1*: $\Sigma_1=\begin{pmatrix}1&0&0\\0&1&0\\0&0&1\end{pmatrix}.\qquad$
-*Fall 2*: $\Sigma_2=\begin{pmatrix}1&0&0\\0&1&.97\\0&.97&1\end{pmatrix} \qquad$  und 
+*Fall 2*: $\Sigma_2=\begin{pmatrix}1&0&0\\0&1&.99\\0&.99&1\end{pmatrix} \qquad$  und 
 *Fall 3*: $\Sigma_3=\begin{pmatrix}1&0&0\\0&1&1\\0&1&1\end{pmatrix}$. 
 
 Hierbei ist die erste Zeile und Spalte jeweils die Korrelation der Variablen mit dem Interzept (=0).
@@ -572,18 +572,18 @@ sqrt(diag(I_1)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_
 ```
 Die Standardfehler sind nicht sehr groß.
 
-Im *Fall 2* sind alle fast perfekt korreliert - es liegt hohe Multikolinearität vor. Die Inverse ist noch zu bilden. Die Standardfehler sind deutlich erhöht im Vergleich zu *Fall 1*
+Im *Fall 2* sind die zwei Variablen fast perfekt zu $.99$ korreliert - es liegt hohe Multikolinearität vor. Die Inverse ist noch zu bilden. Die Standardfehler sind deutlich erhöht im Vergleich zu *Fall 1*
 ```{r}
 XX_2 <- matrix(c(100,0,0,
-               0,100,97,
-               0,97,100),3,3)
+               0,100,99,
+               0,99,100),3,3)
 XX_2 # Die Matrix X'X im Fall 2
 I_2 <- solve(XX_2)*1 # I (*1 wegen Residualvarianz = 1)
 I_2
 sqrt(diag(I_2)) # SEs im Fall 2
 sqrt(diag(I_1)) # SEs im Fall 1
 ```
-Die Standardfehler des *Fall 2* sind sehr groß im Vergleich zu *Fall 1*. Die Determinante von $X'X$ in *Fall 2* liegt nahe $0$; im *Fall 1* bei $1000000$.
+Die Standardfehler des *Fall 2* sind sehr groß im Vergleich zu *Fall 1*. Die Determinante von $X'X$ in *Fall 2* liegt nahe $0$; im *Fall 1* bei $10^6$.
 ```{r}
 det(XX_2) # Determinante Fall 2
 det(XX_1) # Determinante Fall 1
