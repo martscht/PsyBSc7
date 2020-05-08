@@ -572,7 +572,7 @@ sqrt(diag(I_1)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_
 ```
 Die Standardfehler sind nicht sehr groß.
 
-Im *Fall 2* sind die zwei Variablen fast perfekt zu $.99$ korreliert - es liegt hohe Multikolinearität vor. Die Inverse ist noch zu bilden. Die Standardfehler sind deutlich erhöht im Vergleich zu *Fall 1*
+Im *Fall 2* sind die zwei Variablen fast perfekt (zu $.99$) korreliert - es liegt hohe Multikolinearität vor. Die Inverse ist noch zu bilden. Die Standardfehler sind deutlich erhöht im Vergleich zu *Fall 1*
 ```{r}
 XX_2 <- matrix(c(100,0,0,
                0,100,99,
