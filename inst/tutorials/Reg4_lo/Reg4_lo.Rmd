@@ -400,7 +400,7 @@ ggplot(data = covid_de, aes(x = Day, y = Confirmed))+
      geom_point()+geom_smooth(method="lm", formula = "y~x")+labs(title = "Corona-Fälle nach dem 11. April in Deutschland")
 ```
 
-
+Auch weitere komplexere aus der Biostatistik stammende Analyse verfahren wie etwa das [SIR  (Susceptible-Infected-Removed) Modell](https://de.wikipedia.org/wiki/SIR-Modell), das [SEIR  (Susceptible-Exposed-Infected-Removed) Modell](https://de.wikipedia.org/wiki/SEIR-Modell)  oder noch komplexere Modelle wären denkbar. Dies überschreitet allerdings deutlich, was wir hier zeigen wollten!
 
 
 
