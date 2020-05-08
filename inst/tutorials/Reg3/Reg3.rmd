@@ -551,16 +551,14 @@ Insgesamt bedeutet dies, dass die Standardfehler von der Inversen der Kovarianzm
 *Fall 2*: $X'X=\begin{pmatrix}100&0&0\\0&100&99\\0&99&100\end{pmatrix} \qquad$  und 
 *Fall 3*: $X'X=\begin{pmatrix}100&0&0\\0&100&100\\0&100&100\end{pmatrix}$.
 
-Hierbei ist zu beachten, dass $X$ die Systemmatrix ist, welche auch die $1$ des Interzepts enthält. Natürlich ist eine Variable von einer Konstanten unabhängig, weswegen die erste Zeile und Spalte von $X'X$ jeweils der Vektor $(100, 0, 0)$ ist. Die zugehörigen Korrelationsmatrizen können durch teilen durch 100 berechnet werden (*da wir zentrierte Variablen haben, die Stichprobengröße gleich 100 ist und die Varianzen der Variablen gerade 100 sind!*).
+Hierbei ist zu beachten, dass $X$ die Systemmatrix ist, welche auch die $1$ des Interzepts enthält. Natürlich ist eine Variable von einer Konstanten unabhängig, weswegen die erste Zeile und Spalte von $X'X$ jeweils der Vektor $(100, 0, 0)$ ist. Die zugehörigen Korrelationsmatrizen können durch teilen durch 100 berechnet werden (*da wir zentrierte Variablen haben, die Stichprobengröße gleich 100 ist und die Varianzen der Variablen gerade 100 sind!*). Wir betrachten nur die Minormatrizen, aus welchen die 1. Zeile und die 1. Spalte gestrichen wurden. Diese teilen wir durch 100 und erhalten die Korrelationsmatrix der Variablen:
 
 
-*Fall 1*: $\Sigma_1=\begin{pmatrix}1&0&0\\0&1&0\\0&0&1\end{pmatrix}.\qquad$
-*Fall 2*: $\Sigma_2=\begin{pmatrix}1&0&0\\0&1&.99\\0&.99&1\end{pmatrix} \qquad$  und 
-*Fall 3*: $\Sigma_3=\begin{pmatrix}1&0&0\\0&1&1\\0&1&1\end{pmatrix}$. 
+*Fall 1*: $\Sigma_1=\begin{pmatrix}1&0\\0&1\end{pmatrix}.\qquad$
+*Fall 2*: $\Sigma_2=\begin{pmatrix}1&.99\\.99&1\end{pmatrix} \qquad$  und 
+*Fall 3*: $\Sigma_3=\begin{pmatrix}1&1\\1&1\end{pmatrix}$. 
 
-Hierbei ist die erste Zeile und Spalte jeweils die Korrelation der Variablen mit dem Interzept (=0).
-
-Im *Fall 1* sind alle unkorreliert. Die Inverse ist leicht zu bilden.
+Im *Fall 1* sind die zwei Variablen unkorreliert. Die Inverse ist leicht zu bilden.
 ```{r}
 XX_1 <- matrix(c(100,0,0,
                0,100,0,
@@ -570,7 +568,7 @@ I_1 <- solve(XX_1)*1 # I (*1 wegen Residualvarianz = 1)
 I_1
 sqrt(diag(I_1)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_e^2=1
 ```
-Die Standardfehler sind nicht sehr groß.
+Die Standardfehler sind nicht sehr groß: alle liegen bei $0.1$.
 
 Im *Fall 2* sind die zwei Variablen fast perfekt (zu $.99$) korreliert - es liegt hohe Multikolinearität vor. Die Inverse ist noch zu bilden. Die Standardfehler sind deutlich erhöht im Vergleich zu *Fall 1*
 ```{r}
@@ -610,7 +608,7 @@ sqrt(diag(I_3)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_
 #    Lapack routine dgesv: system is exactly singular: U[2,2] = 0
 ```
 
-Der VIF und Die Toleranz quantifizieren die Korrelation zwischen den beiden Variablen. Der VIF wäre in diesen Analysen jeweils 1 und 1 im *1. Fall*, 50.25 und 50.25 im *2. Fall* und nicht berechenbar (bzw. $\infty$) im *3. Fall*, Entsprechend wäre die Toleranz 1 und 1 im *1. Fall*, 0.02 und 0.02 im *2. Fall* und 0 und 0 im *3. Fall*.
+Der VIF bzw. die Toleranz quantifizieren die Korrelation zwischen den beiden Variablen. Der VIF wäre in diesen Analysen jeweils 1 und 1 im *1. Fall*, 50.25 und 50.25 im *2. Fall* und nicht berechenbar (bzw. $\infty$) im *3. Fall*. Entsprechend wäre die Toleranz 1 und 1 im *1. Fall*, 0.02 und 0.02 im *2. Fall* und 0 und 0 im *3. Fall*.
 
 Dieser Exkurs zeigt, wie sich die Multikolinearität auf die Standardfehler und damit auf die Präzision der Parameterschätzung auswirkt. Inhaltlich bedeutet dies, dass die Prädiktoren redundant sind und nicht klar ist, welchem Prädiktor die Effekte zugeschrieben werden können.
 
