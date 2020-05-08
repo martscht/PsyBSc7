@@ -335,7 +335,7 @@ qqplot() # brauch als Argument das Regressionmodell "mod".
 qqPlot(mod, pch = 16, distribution = "norm")
 ```
 
-Nun wollen wir noch statistische Tests verwenden. Diese testen im Grunde genommen die Null-Hypothese: $H_0:$ *"Normalverteilung liegt vor"*. (Wir wissen allerdings, dass wir Hypothesen nur verwerfen können und nicht wirklich annehmen, weshalb diese Tests immer nur unter Vorbehalt interpretiert werden sollten - Aussagen wie etwa: *"$H_0$ nicht verworfen; daraus folgt, dass, dass in der Population Normalverteilung herrscht"*, sind nicht zulässig).
+Nun wollen wir noch statistische Tests verwenden. Diese testen im Grunde genommen die Null-Hypothese: $H_0:$ *"Normalverteilung liegt vor"*. (Wir wissen allerdings, dass wir Hypothesen nur verwerfen können und nicht wirklich annehmen, weshalb diese Tests immer nur unter Vorbehalt interpretiert werden sollten - Aussagen wie etwa: *"$H_0$ nicht verworfen; daraus folgt, dass, dass in der Population Normalverteilung herrscht"*, sind nicht zulässig; wird die $H_0$ nicht verworfen, nehmen wir nur weiterhin an, dass Normalverteilung vorliegt, ein Beweis dafür ist dies nicht).
 
 Der `shapiro.test` und der `ks.test` brauchen die Variablen selbst, welche auf Normalverteilung geprüft werden sollen; also `res`.
 
@@ -375,7 +375,7 @@ ks.test # sind wie folgt angeordnet:
 ks.test(res, "pnorm", mean(res), sd(res))
 ```
 
-Für unser Modell zeigen alle Ergebnisse übereinstimmend, dass die Residuen normalverteilt sind (bzw. lehnen diese Hypothese nicht ab: *Shapiro-Wilk Test* ubd *Kolmogorov-Smirnov Tests gegen die Normalverteilung*).  `distribution = "norm` im `qqPlot` des `car` Pakets erzeugt den Vergleich zur Normalverteilung (auch der Vergleich zu anderen Verteilungen wäre möglich). Dem *Kolmogorov-Smirnov Tests gegen die Normalverteilung* `ks.test` muss zusnächst als erstes Argument `res`, die Variable, deren Verteilung untersucht werden soll, übergeben werden. `"pnorm"` zeigt an, dass die empirische Verteilung unserer Daten `res` mit der Normalverteilung verglichen werden soll (wird hier eine andere Verteilung gewählt, so kann gegen diese geprüft werden; auch können zwei empirisiche Verteilungen auf Gleichheit untersucht werden). Anschließend übergeben wir die verteilungsspezifischen Parameter; hier `mean(res)` (der Mittelwert) sowie `sd(res)` (die Standardabweichung), da die Normalverteilung genau durch diese beiden Parameter bestimmt ist (hier könnten auch theoretisch angenommene Parameter gewählt werden, z.B. `0` und `1` für eine Mittelwert von 0 und einer Varianz von 1). 
+Für unser Modell zeigen alle Ergebnisse übereinstimmend, dass die Residuen normalverteilt sind (bzw. lehnen diese Hypothese nicht ab: *Shapiro-Wilk Test* ubd *Kolmogorov-Smirnov Tests gegen die Normalverteilung*).  `distribution = "norm` im `qqPlot` des `car` Pakets erzeugt den Vergleich zur Normalverteilung (auch der Vergleich zu anderen Verteilungen wäre möglich). Dem *Kolmogorov-Smirnov Tests gegen die Normalverteilung* `ks.test` muss zusnächst als erstes Argument `res`, die Variable, deren Verteilung untersucht werden soll, übergeben werden. `"pnorm"` zeigt an, dass die empirische Verteilung unserer Daten `res` mit der Normalverteilung verglichen werden soll (wird hier eine andere Verteilung gewählt, so kann gegen diese geprüft werden; auch können zwei empirisiche Verteilungen auf Gleichheit untersucht werden). Anschließend übergeben wir die verteilungsspezifischen Parameter; hier `mean(res)` (der Mittelwert) sowie `sd(res)` (die Standardabweichung), da die Normalverteilung genau durch diese beiden Parameter bestimmt ist (hier könnten auch theoretisch angenommene Parameter gewählt werden, z.B. `0` und `1` für eine Mittelwert von 0 und einer Varianz von 1 und geprüft werden, ob die beobachteten Daten dieser Verteilung widersprechen). 
 
 Wäre der *Shapiro-Wilk-Normality Tests* oder der *Kolmogorov-Smirnov Tests gegen die Normalverteilung* signifikant auf dem 5%-Niveau, würde dies dafür sprechen, dass "mit einer Irrtumswahrscheinlichkeit von 5% die Null-Hypothese auf Gleichheit der Normalverteilung mit unserer empirischen Verteilung verworfen werden muss, da in der Population die Abweichung der empirischen zur theoretischen Normalverteilung mit der Irrtumswahrscheinlichkeit von 5% ungleich 0 ist". 
 
@@ -551,6 +551,8 @@ Insgesamt bedeutet dies, dass die Standardfehler von der Inversen der Kovarianzm
 *Fall 2*: $X'X=\begin{pmatrix}1&1.8&1.9\\1.8&4&3.9\\1.9&3.9&4\end{pmatrix}$  und 
 *Fall 3*: $X'X=\begin{pmatrix}1&2&2\\2&4&4\\2&4&4\end{pmatrix}$.
 
+Wir könnten hier z.B. von zentrierten Variablen (Mittelwert von 0) ausgehen, sowie von einer Stichprobengröße von 10. Dann lässt sich aus $X'X$ durch teilen durch 10 die Kovarianzmatrix der Variablen bestimmen.
+
 Im *Fall 1* sind alle unkorreliert. Die Inverse ist leicht zu bilden.
 ```{r}
 XX_1 <- matrix(c(1,0,0,
@@ -603,7 +605,7 @@ sqrt(diag(I_3)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_
 
 Dieser Exkurs zeigt, wie sich die Multikolinearität auf die Standardfehler und damit auf die Präzision der Parameterschätzung auswirkt. Inhaltlich bedeutet dies, dass die Prädiktoren redundant sind und nicht klar ist, welchem Prädiktor die Effekte zugeschrieben werden können.
 
-*Die Matrix $I$ wird im Zusammenhang mit der Maximum-Likelihood-Schätzung auch die Inverse der Fischer-Information genannt und enthält die Informationen der Kovariationen der Parameterschätzer (diese Informationen enthält sie hier im Übrigen auch!).*
+*Die Matrix $I$ ist im Zusammenhang mit der Maximum-Likelihood-Schätzung die Inverse der Fischer-Information und enthält die Informationen der Kovariationen der Parameterschätzer (diese Informationen enthält sie hier im Übrigen auch!).*
 
 ## Appendix B {#AppendixB}
 ### Aufgaben
