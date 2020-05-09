@@ -91,7 +91,6 @@ Die Frage ist nun, woher die Verstöße gegen die Normalverteilungsannahme komme
 
 
 
-
 ## Aufnahme eines quadratischen Effekts 
 <small> $***$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_ </small>
 
