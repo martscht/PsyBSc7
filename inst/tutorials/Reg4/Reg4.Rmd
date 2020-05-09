@@ -272,15 +272,15 @@ f <- a*b^(c*x) # f(x), eine exponentiell-wachsende Funktion in x
 ##################
 #### Plot von f(x) vs. x
 #### 
-plot(x = x, y = f, type = "l", col = "blue", main = "Plot von f(x) vs. x") # plotte f(x) gegen x
-abline(v = 0, lty = 3) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
+plot(x = x, y = f, type = "l", col = "blue", lwd = 2, main = "Plot von f(x) vs. x") # plotte f(x) gegen x
+abline(v = 0, lwd = 0.7) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
 abline(h = a, lty = 3) # im Punkt a schneidet f (das exponentielle Wachstum) die y-Achse (x=0), h = a zeichnet zu y = a eine horizontale Linie
 
 ##################
 #### Plot von ln(f(x)) vs. x
 #### 
-plot(x = x, y = log(f), type = "l", col = "blue", main = "Plot von ln(f(x)) vs. x") # plotte ln(f(x)) gegen x
-abline(v = 0, lty = 3) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
+plot(x = x, y = log(f), type = "l", col = "blue", lwd = 2, main = "Plot von ln(f(x)) vs. x") # plotte ln(f(x)) gegen x
+abline(v = 0, lwd = 0.7) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
 abline(h = log(a), lty = 3)  # im Punkt log(a) schneidet log(f) (das linearisierte exponentielle Wachstum) die y-Achse (x=0), h =llog(a) zeichnet zu y = log(a) eine horizontale Linie
 ```
 
