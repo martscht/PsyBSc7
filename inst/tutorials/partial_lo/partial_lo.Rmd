@@ -1,0 +1,155 @@
+---
+title: "Partial- und Semipartialkorrelationen"
+# author: "Luisa Grützmacher"
+# date: "4/27/2020"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+  includes:
+    after_body: footer.html
+    in_header: header.html
+  runtime: shiny_prerendered
+---
+
+*Statistik für Psychologen: PraktikumPsyBSc 7,Sommersemester 2020*
+
+# Beispiel Geschlechtsunterschiede in der Lesekompetenz
+
+```{r data}
+# Datensatz laden
+data(PISA_2009, package = 'PsyBSc7')
+library(ppcor)
+```
+
+Es ist ein regelmäßig replizierter Befund, dass Mädchen in Lesetests besser abschneiden als Jungen. Der Beispieldatensatz entzhält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009.
+Enthalten sind die Variablen:
+
+* Jahrgangsstufe (`grade`),
+* Alter (`Age`)
+* Geschlecht (`female`, 0=m / 1=w),
+* Lesekompetenz (`Reading`),
+* Fragebogen-Score für die Freude am Lesen (`JoyRead`) und
+* Lernzeit in Minuten pro Woche für das Fach Deutsch (`LearnMins`)
+
+## Einfacher Geschlechtseffekt
+
+1.) Bestimmen Sie den "Effekt" des weiblichen Geschlechts
+    (`female`) auf die Lesekompetenz (`Reading`) und
+    interpretieren Sie das Ergebnis.
+
+```{r}
+# Das ist auf mehrere Weisen möglich: t-Test, einfache Regression oder die bivariate Korrelation
+
+# t-Test
+t.test(PISA_2009$Reading ~ PISA_2009$Female)
+
+# Regression
+reg <- lm(Reading ~ Female, data = PISA_2009)
+summary(reg)
+
+# Korrelation
+cor.test(PISA_2009$Female, PISA_2009$Reading)
+
+```
+
+### Interpretation der Ergebnisse
+* Es gibt einen signifikanten Geschlechtsunterschied zugunsten von Mädchen, der ca. 40 Punkte auf der PISA-Skala beträgt.
+
+## Korrelationen Lesekompetenz und Kontrollvariablen
+
+2.) Es ist unwahrscheinlich, dass sich der Besitz eines
+    Y-Chromosoms direkt negativ auf die Lesekompetenz
+    auswirkt. Untersucht werden soll, ob der
+    Geschlechtsunterschied dadurch erklärt werden kann,
+    dass Mädchen mehr für Deutsch lernen oder dass ihnen
+    Lesen mehr Freude macht als Jungen.
+    Untersuchen Sie zunächst die bivariaten Korrelationen
+    von Lesekompetenz (`Reading`) und Geschlecht (`Female`)
+    einerseits und den möglichen Einflussvariablen Lernzeit
+    (`LearnMins`) und Freude am Lesen (`JoyRead`)
+    andererseits.
+
+a) Korrelation Lesekompetenz - Lernzeit
+b) Korrelation Lesekompetenz - Freude am Lesen
+c) Korrelation Geschlecht - Lernzeit
+d) Korrelation Geschlecht - Freude am Lesen
+
+Können Sie auf Basis dieser Zusammenhänge vermuten, ob eine der beiden Drittvariablen für den Geschlechtsunterschied relevant ist?
+
+```{r Aufgabe 2}
+#2a Korrelation Lesekompetenz - Lernzeit
+cor.test(PISA_2009$Reading, PISA_2009$LearnMins)
+
+#2b Korrelation Lesekompetenz - Freude am Lesen
+cor.test(PISA_2009$Reading, PISA_2009$JoyRead)
+
+#2c Korrelation Geschlecht - Lernzeit
+cor.test(PISA_2009$Female, PISA_2009$LearnMins)
+
+#2d Korrelation Geschlecht - Freude am Lesen
+cor.test(PISA_2009$Female, PISA_2009$JoyRead)
+```
+
+### Interpretation der Zusammenhänge
+
+* *Lernzeit* hängt negativ mit Lesekompetenz zusammen, d.h. schwache Schüler/innen lernen mehr. Zudem hängt Geschlecht nicht mit Lernzeit zusammen. Es erscheint daher unwahrscheinlich, dass sich der Geschlechtsunterschied in der Lesekompetenz durch Lernzeit erklären lässt.
+
+* *Lesefreude* korreliert stark positiv mit Lesekompetenz, außerdem hängt sie positiv mit (weiblichem) Geschlecht zusammen. Lesefreude erscheint daher als ein guter Kandidat für eine Drittvariable, die den Geschlechtsunterschied in der Lesekompetenz erklären könnte.
+
+## Partialkorrelationen
+3.) Berechnen Sie die Partialkorrelationen zwischen
+    Geschlecht und Lesekompetenz unter Kontrolle von
+
+a) Lernzeit für Deutsch (`LearnMins`) und
+b) Freude am Lesen (`JoyRead`)
+
+```{r Aufgabe 3 Partialkorrelationen}
+# 3a Partialkorrelationen zwischen Geschlecht und Lesekompetenz unter Kontrolle der Lernzeit
+pcor.test(x=PISA_2009$Reading, y=PISA_2009$Female, z=PISA_2009$LearnMins)
+# 3b Partialkorrelationen zwischen Geschlecht und Lesekompetenz unter Kontrolle der Lesefreude
+pcor.test(x=PISA_2009$Reading, y=PISA_2009$Female, z=PISA_2009$JoyRead)
+
+```
+
+### Interpretation der Ergebnisse
+
+* Bei Kontrolle der Lernzeit ändert sich der Zusammenhang zwischen Geschlecht und Lesekompetenz praktisch nicht (*r~xy~*`=0.23, *r~xy.z~*=0.23).
+
+* Bei Kontrolle der Lesefreude verschwindet der Zusammenhang zwischen Geschlecht und Lesekompetenz nahezu vollständig (*r~xy~*=0.23, *r~xy.z~*=0.06) und ist nicht mehr signifikant. Der Geschlechtsunterschied in der Lesekompetenz kann darauf zurückgeführt werden, dass Mädchen eine größere Freude am Lesen haben als Jungen.
+
+## Semipartialkorrelationen
+
+4.) Gerichtete (kausale) Effekte der Lernzeit oder Lesefreude auf das Geschlecht werden nach derzeitigem Stand der Forschung für unwahrscheinlich gehalten. Es ist daher zwar sinnvoll, den Zusammenhang von Lernzeit und Lesefreude mit Lesekompetenz zu kontrollieren, nicht jedoch den Zusammenhang von Lernzeit und Lesefreude mit Geschlecht. Berechnen und interpretieren Sie daher den Zusammenhang zwischen Geschlecht und Lesekompetenz,
+
+a) als Semipartialkorrelation, wobei Sie den Effekt von Lernzeit auf Lesekompetenz kontrollieren
+b) als Semipartialkorrelation, wobei Sie den Effekt von Freude am Lesen auf Lesekompetenz kontrollieren
+
+```{r Aufgabe 3 Semipartialkorrelationen}
+# 4a Partialkorrelationen zwischen Geschlecht und Lesekompetenz unter
+# Kontrolle des Effekts der Lernzeit auf die Lesekompetenz
+spcor.test(x=PISA_2009$Female, y=PISA_2009$Reading, z=PISA_2009$LearnMins)
+# 4b Partialkorrelationen zwischen Geschlecht und Lesekompetenz unter
+# Kontrolle des Effekts der Lesefreude auf die Lesekompetenz
+spcor.test(x=PISA_2009$Female, y=PISA_2009$Reading, z=PISA_2009$JoyRead)
+
+```
+
+### Interpretation der Ergebnisse
+
+* Die inhaltlich sinnvolleren Semipartialkorrelationen, bei denen der "Einfluss" der Drittvariablen auf das Geschlecht nicht kontrolliert wird, sind praktisch identisch mit den Partialkorrelationen.
+
+5.) Berechnen Sie die Partialkorrelationen zwischen
+    Geschlecht und Lesekompetenz unter Kontrolle von zwei
+    Drittvariablen der Lernzeit für Deutsch (`LearnMins`)
+    und der Freude am Lesen (`JoyRead`).
+
+``````{r Zusatzaufgabe Partialkorrelation mit zwei Drittvariablen}
+
+pcor.test(PISA_2009$Reading, PISA_2009$Female, PISA_2009[,c ("LearnMins", "JoyRead")])
+
+```
+
+### Interpretation der Ergebnisse
+
+* Bei Kontrolle der beiden Variablen Lesefreude und Lernzeit für Deutsch verschwindet der Zusammenhang zwischen dem Geschlecht und der Lesekompetenz nahezu vollständig (*r~xy~*=0.23, *r~xy.z~*=0.07) und ist nicht mehr signifikant.
