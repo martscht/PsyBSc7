@@ -1,7 +1,7 @@
 #### Setup for Partial- und Semipartialkorrelation in learnr ####
 
 ### Data
-Schulleistungen <- data(Schulleistungen, package = 'PsyBSc7')
+data(Schulleistungen, package = 'PsyBSc7')
 
 
 ### Regressionsresiduen 
