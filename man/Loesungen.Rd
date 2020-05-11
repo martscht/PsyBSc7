@@ -21,23 +21,21 @@ Loesungen_1(password)
 
 Loesungen_2(password)
 
-Loesungen_3()
+Loesungen_3(password)
 
-Loesungen_4()
+Loesungen_4(password)
 
-Loesungen_5()
+Loesungen_5(password)
 
-Loesungen_6()
+Loesungen_6(password)
 
-Loesungen_7()
+Loesungen_7(password)
 
-Loesungen_8()
+Loesungen_8(password)
 
-Loesungen_9()
+Loesungen_9(password)
 
-Loesungen_10()
-
-Loesungen_11()
+Loesungen_10(password)
 }
 \description{
 R-Skripte zur Lösung der Aufgaben im Praktikum zu PsyBSc 7, Sommersemester 2020

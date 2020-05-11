@@ -110,7 +110,7 @@ Sitzung_7 <- function() {
   learnr::run_tutorial('Reg4', package = 'PsyBSc7')
 }
 
-
+  
 
 #' @rdname Sitzungen
 #' @export
@@ -167,4 +167,3 @@ Sitzung_11 <- function() {
   library(gradethis)
   message('Leider ist die Sitzung noch nicht fertig :(.')
 }
-
