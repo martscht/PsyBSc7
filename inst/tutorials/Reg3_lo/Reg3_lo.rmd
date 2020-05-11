@@ -1,0 +1,223 @@
+---
+title: "Sitzung 6: Regressionanalyse III --- Aufgaben mit Lösungen"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
+---
+
+```{r setup, include = FALSE}
+source('setup.R')
+
+library(learnr)       # package to generate interactive HTML
+library(gradethis)    # grade Code from input in HTML
+library(shiny)        # nice appearance in R
+library(fontawesome)  # nice fonts
+library(car)
+library(MASS)
+library(ggplot2)
+
+data("PISA2009", package = "PsyBSc7")
+knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
+```
+
+
+## Datensatz (wie beim letzten Termin)
+
+Der Beispieldatensatz enthält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009. Gegenüber dem letzten Termin sind in dieser Version noch mehr Variablen enthalten, insbesondere über die Eltern und Besitztümer im Elternhaus. 
+
+```{r data}
+library(car)
+library(MASS)
+library(lm.beta) # erforderlich für standardiserte Gewichte
+# Datensatz laden 
+
+data("PISA2009", package = "PsyBSc7")
+```
+
+Im Einzelnen enthält der Datensatz die folgenden Variablen:
+
+* Klassenstufe (`Grade`)
+* Alter in Jahren (`Age`)
+* Geschlecht (`Female`, 0=m / 1=w)
+* Lesekompetenz (`Reading`)
+* Lesefreude (`JoyRead`)
+* Lernzeit in Minuten für Deutsch (`LearnMins`)
+* Sozialstatus (`HISEI`, "highest international socio-economic index of occupational status")
+* Fragebogen-Score für kulturelle Besitztümer zu Hause (`CultPoss`, z. B. klassische Literatur, Kunstwerke)
+* Anzahl Bücher zu Hause (`Books`, eigentlich eine ordinale Ratingskala)
+* Anzahl Fernseher zu Hause (`TVs`)
+* Anzahl Computer zu Hause (`Computers`)
+* Anzahl Autos zu Hause (`Cars`)
+* Migrationshintergrund (`MigHintergrund`, 0=beide Eltern in D geboren, 1=min. 1 Elternteil im Ausland geboren)
+* Bildungsabschluss des Vaters (`FatherEdu`, International Standard Classification of Education)
+* Bildungsabschluss der Mutter (`MotherEdu`, International Standard Classification of Education)
+
+## Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen
+
+In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`), der Bildungsabschluss der Mutter (`MotherEdu`) und die Zahl der Bücher zu Hause (`Books`) bedeutsame Prädiktoren für die Lesekompetenz der Schüler/innen sind. Berechnen Sie diese Modell erneut.
+
+
+```{r}
+# Berechnung des Modells und Ausgabe der Ergebnisse
+m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009)
+summary(lm.beta(m1))
+```
+
+## **Aufgabe 1.** Prüfen Sie die Annahme der Homoskedastizität 
+### a) durch Inspektion der Residuenplots und 
+
+```{r}
+# Residuenplots
+residualPlots(m1, pch = 16)
+```
+
+### b) den Breusch–Pagan Test auf nicht-konstante Varianz
+```{r}
+ncvTest(m1)
+```
+
+### Ergebnisinterpretation **Aufgabe 1.**
+
+Weder die Grafiken noch der Breusch-Pagan-Test lassen deutliche Verletzungen der Homoskedaszidität erkennen.
+
+
+## **Aufgabe 2.** Prüfen Sie die Annahme der Linearität 
+### a) durch Inspektion der partiellen Regressionsplots und 
+### b) des Tests für quadratische Trends, der mit der Funktion `residualPlots` erzeugt wurde.
+
+```{r}
+
+# Partielle Regressionsplots
+avPlots(m1, pch = 16)
+
+```
+
+### Ergebnisinterpretation **Aufgabe 2.**
+
+Die Effekte von Sozialstatus und Büchern werden durch das lineare Modell gut wiedergegeben. Für den Bildungsabschluss der Mutter ist ein leicht nicht-linearer Zusammenhang zu erkennen, der quadratische Trend für die Residuen ist signifikant (entnommen aus den Analysen zu 1.; *Die Null-Hypothese, dass kein quadratischer Trend besteht wird mit einer Irrtumswahrscheinlichkeit von 5% verworfen; der quadratische Effekt ist somit mit dieser Irrtumswahrscheinlichkeit in der Population verschieden von 0*). Der Effekt ist dadurch charakterisiert, dass der Zuwachs der Lesekompetenz im unteren Bereich des mütterlichen Bildungsabschlusses stärker ist und im oberen Bereich abflacht. Dies wird in der nächsten Sitzung näher behandelt.
+
+## **Aufgabe 3.** Püfen Sie die Normalverteilung der Residuen 
+### a) grafisch (Histogramm, Q-Q-Plot) und 
+```{r}
+res <- studres(m1) # Studentisierte Residuen als Objekt speichern
+df_res <- data.frame(res) # als Data.Frame für ggplot
+# Grafisch: Histogramm mit Normalverteilungskurve
+library(ggplot2)
+ggplot(data = df_res, aes(x = res)) + 
+     geom_histogram(aes(y =..density..),
+                    bins = 15,                    # Wie viele Balken sollen gezeichnet werden?
+                    colour = "blue",              # Welche Farbe sollen die Linien der Balken haben?
+                    fill = "skyblue") +           # Wie sollen die Balken gefüllt sein?
+     stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)), col = "darkblue") + # Füge die Normalverteilungsdiche "dnorm" hinzu und nutze den empirischen Mittelwert und die empirische Standardabweichung "args = list(mean = mean(res), sd = sd(res))", wähle dunkelblau als Linienfarbe
+     labs(title = "Histogramm der Residuen mit Normalverteilungsdichte", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
+
+# Grafisch: Q-Q-Diagramm mit der car Funktion qqPlot
+qqPlot(m1, pch = 16, distribution = "norm") 
+
+```
+### b) über den Shapiro-Wilks-Test sowie den Kolmogorov-Smirnov-Test.
+```{r}
+# Test auf Abweichung von der Normalverteilung mit dem Shpiro Test
+shapiro.test(res)
+
+# Test auf Abwweichung von der Normalverteilung mit dem Kolmogorov-Smirnov Test
+ks.test(res, "pnorm", mean(res), sd(res))
+```
+
+
+### Ergebnisinterpretation **Aufgabe 3.**
+
+Im Histogramm ist zu erkennen, dass die Residuen etwas linksschief / rechtssteil verteilt sind ("zu viele" Werte im unteren negativen, "zu wenige" im oberen positiven Bereich). Dies zeigt sich auch im Q-Q-Diagramm, und auch der Shapiro-Wilks-Test ist signifikant. Nur der Kolmogorov-Smirnov-Test ist nicht signifikant. Zusammenfassend verwerfen wir die Annahme normalverteilter Residuen. 
+
+## **Aufgabe 4.** Prüfen Sie die Multikollinearität der Prädiktoren im Modell
+### a) durch Inspektion der bivariaten Korrelationen und
+
+```{r}
+cor(PISA2009[,c("HISEI", "MotherEdu", "Books")])
+
+```
+### b) Berechnung von VIF und Toleranz.
+```{r}
+
+vif(m1)   # VIF
+1/vif(m1) # Toleranz
+```
+
+### Ergebnisinterpretation **Aufgabe 4.**
+
+Die drei Prädiktoren sind alle substanziell positiv korreliert ($r>.40$). VIF / Toleranzwerte geben aber keine Hinweise auf problematische Multikollinearität.
+
+
+## **Aufgabe 5.** Ausreißer und einflussreiche Datenpunkte
+### a) Inspizieren Sie die Verteilung der Hebelwerten $h_i$
+
+
+```{r}
+
+# Hebelwerte
+# Hebelwerte
+n <- length(residuals(m1))
+h <- hatvalues(m1) # Hebelwerte
+df_h <- data.frame(h) # als Data.Frame für ggplot
+ggplot(data = df_h, aes(x = h)) + 
+     geom_histogram(aes(y =..density..),  bins = 15)+
+  geom_vline(xintercept = 4/n, col = "red")+ # Cut-off bei 4/n
+ geom_vline(xintercept = 9/n, col = "orange")
+```
+
+### b) Inspizieren Sie die Verteilung von Cooks Distanz $CD_i$
+```{r}
+# Cooks Distanz
+CD <- cooks.distance(m1) # Cooks Distanz
+df_CD <- data.frame(CD) # als Data.Frame für ggplot
+ggplot(data = df_CD, aes(x = CD)) + 
+     geom_histogram(aes(y =..density..),  bins = 15)+
+  geom_vline(xintercept = 1, col = "red") # Cut-Off bei 1
+
+```
+
+### c) Sichten Sie die Rohdaten und standardisierten Werte auffälliger Fälle (verwenden Sie die Funktion `influencePlot`).
+```{r}
+# Blasendiagramm mit Hebelwerten, studentisierten Residuen und Cooks Distanz
+# In "IDs" werden die Zeilennummern der auffälligen Fälle gespeichert
+InfPlot <- influencePlot(m1)
+IDs <- as.numeric(row.names(InfPlot))
+# Werte der identifizierten Fälle
+InfPlot
+# Rohdaten der auffälligen Fälle (gerundet für bessere Übersichtlichkeit)
+round(PISA2009[IDs,c("Reading", "HISEI", "MotherEdu", "Books")],2)
+# z-Standardisierte Werte der auffälligen Fälle
+round(scale(PISA2009)[IDs,c("Reading", "HISEI", "MotherEdu", "Books")],2)
+
+```
+
+### Ergebnisinterpretation **Aufgabe 5.**
+
+* Nach dem pauschalen Kriterium $4/n$ ist die Hälfte der Hebelwerte auffällig ($h_j>0.027$). * Nach dem großzügigsten Kriterium $3\cdot k / n$ liegen drei Fälle über der Grenze ($h_j>0.06$)
+* Cooks Distanz überschreitet für keinen der Fälle die Grenze von $CD_j>1.0$
+* `influencePlot` kennzeichnet vier Fälle als auffällig. Diese können wie folgt charakterisiert werden:
+    * Fall 43: Ausreißer nach unten beim Abschluss der Mutter (kein Abschluss), sonst unauffällig
+    * Fall 124: Ausreißer nach oben beim Sozialstatus bei gleichzeitig eher niedrigem Abschluss der Mutter und eher niedriger Lesekompetenz
+    * Fall 129: Sehr niedrige Lesekompetenz, niedriger Sozialstatus & Bildungsabschluss
+    * Fall 141: Niedrige Lesekompetenz "trotz" höchstem Abschluss der Mutter und maxiamal hoher Bücherzahl
+* Alle Werte sind hier prinzipiell möglich, weswegen keiner der möglichen Ausreißer zwangsläufig aus den Analysen ausgeschlossen werden muss.
+
+## Bonus-Analyse
+
+Demonstration des Effekts des Ausschlusses eines auffälligen Wertes: Der Ausschluss des einzelnen Falls 141 mit der höchsten $CD_j$ erhöht das Regressionsgewicht der Bücherzahl um 2 Punkte und die erklärte Varianz um 3%!
+```{r}
+m1.c <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009[-141,])
+summary(m1)
+summary(m1.c)
+summary(m1.c)$r.squared - summary(m1)$r.squared  # erklärte Varianz durch Entfernen des Datenpunktes
+```
+
+
+#
+$*$ *Diese Sitzung basiert zum Teil auf Unterlagen von Prof. Johannes Hartig aus dem SoSe 2019.*
+

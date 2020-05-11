@@ -129,16 +129,12 @@ Loesungen_7 <- function() {
   library(gradethis)
   
   if (digest::digest(password) != "6a1832c69beaea1033bd63fb0387a58a") {
-    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
-  }  else {
-    message('Leider ist die Lösung noch nicht fertig :(.')
-  }
 }
 
 
 #' @rdname Loesungen
 #' @export
-Loesungen_8 <- function() {
+Loesungen_8 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -158,7 +154,7 @@ Loesungen_8 <- function() {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_9 <- function() {
+Loesungen_9 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -178,7 +174,7 @@ Loesungen_9 <- function() {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_10 <- function() {
+Loesungen_10 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -201,7 +197,5 @@ Loesungen_10 <- function() {
 
 
 
-#### Kompilieren ####
-compile <- function(x) {
-  learnr::run_tutorial(x, package = 'PsyBSc7')
-}
+
+
