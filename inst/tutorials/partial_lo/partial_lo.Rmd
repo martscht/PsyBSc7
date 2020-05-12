@@ -1,18 +1,14 @@
 ---
-title: "Partial- und Semipartialkorrelationen"
-# author: "Luisa Grützmacher"
-# date: "4/27/2020"
+title: "Sitzung 4: R-Skript zu den Aufgaben"
 output:
-  html_document: default
-  pdf_document: default
-  word_document: default
-  includes:
-    after_body: footer.html
-    in_header: header.html
-  runtime: shiny_prerendered
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
 ---
-
-*Statistik für Psychologen: PraktikumPsyBSc 7,Sommersemester 2020*
 
 # Beispiel Geschlechtsunterschiede in der Lesekompetenz
 
