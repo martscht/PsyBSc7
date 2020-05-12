@@ -89,10 +89,10 @@ Loesungen_5 <- function(password) {
   }
   library(gradethis)
   
-  if (digest::digest(password) != '???') {
+  if (digest::digest(password) != '9ebc716ceac724a23f12c0bbf9b2eb25') {
     message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
-    message('Leider ist die Lösung noch nicht fertig :(.')
+    compile('reg1_lo')
   }
 }
 
