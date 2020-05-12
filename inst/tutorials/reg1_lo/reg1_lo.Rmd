@@ -1,0 +1,87 @@
+---
+title: "Sitzung 5: R-Skripte zu den Aufgaben"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
+---
+
+### Datensatz
+
+Der Beispieldatensatz entzhält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009.
+Enthalten sind die Variablen:
+
+* Jahrgangsstufe (`grade`),
+* Alter (`Age`)
+* Geschlecht (`female`, 0=m / 1=w),
+* Lesekompetenz (`Reading`),
+* Fragebogen-Score für die Freude am Lesen (`JoyRead`) und
+* Lernzeit in Minuten pro Woche für das Fach Deutsch (`LearnMins`)
+
+```{r data}
+# Datensatz laden
+data(PISA2009, package = 'PsyBSc7')
+library(lm.beta)
+```
+
+### 1. Geschlechtseffekt
+Berechnen Sie mit einer Einfachregression den Einfluss des Geschlechts auf die Lesekompetenz und interpretieren Sie die Regressionskoeffizienten und die standardisierten Regressionsgewichte.
+
+```{r}
+reg <- lm(Reading ~ Female, data=PISA2009)
+summary(lm.beta(reg))
+```
+
+#### Interpretation
+* Die Regressionskonstante ist der Erwartungswert für $y$, wenn die Prädiktoren null sind. Da Geschlecht 0=m / 1=w kodiert ist, ist das hier die durchschnittliche Lesekompetenz von Jungen. Sie beträgt `r round(coef(reg)[1],1)` Punkte.
+* Das Regressionsgewicht für Geschlecht ist die erwartete Veränderung in der Lesekompetenz, wenn sich das Geschlecht um eine Einheit ändert. Hier entspricht das aufgrund der Kodierung dem Unterschied zwischen Jungen und Mädchen. Er beträgt `r round(coef(reg)[2],1)` Punkte.
+* Dieser Effekt ist signifikant von null verschieden ($p=`r round(summary(reg)$coefficients[,4][2], 3)`$).
+* Das standardisierte Regressionsgewicht ist in diesem Fall nicht so gut zu interpretieren wie das unstandardisierte, da "eine Standardabweichung im Geschlecht" nicht so anschaulich ist wie die ursprüngliche Skala.
+
+### 2. Einfluss von Lernzeit und Lesefreude
+
+Untersuchen Sie mit einer multiplen Regression den gemeinsamen Einfluss von Lesefreude (`JoyRead`) und Lernzeit (`LearnMins`) auf die Lesekompetenz und interpretieren Sie die Ergebnisse einschließlich der standardisierten Regressionsgewichte.
+
+```{r}
+reg <- lm(Reading ~ JoyRead + LearnMins, data=PISA2009)
+summary(lm.beta(reg))
+```
+
+#### Interpretation
+
+* Beide Variablen gemeinsam erklären `r round(summary(reg)$r.squared*100,0)`% Varianz in der Lesekompetenz.
+* Dieser Varianzanteil ist signifikant von null verschieden.
+* Die Erwartete Lesekompetenz bei einem Wert von null in Lesefreude und null Minuten Lernzeit beträgt `r round(coef(reg)[1],1)` Punkte.
+* Die Veränderung in der Lesekompetenz bei einem Punkt mehr in Lesefreude beträgt `r round(coef(reg)[2],1)` Punkte.
+    * Der Effekt der Lesefreude ist signifikant von null verschieden ($p=`r round(summary(reg)$coefficients[,4][2], 3)`$)
+    * Die Veränderung in der Lesekompetenz bei einer *Standardabweichung* mehr Lesefreude beträgt `r round(lm.beta(reg)$standardized.coefficients[2], 2)` *Standardabweichungen*.
+* Die Veränderung in der Lesekompetenz bei bei einer Minute mehr Lernzeit beträgt `r round(coef(reg)[3],1)` Punkte.
+    * Der Effekt der Lernzeit ist signifikant von null verschieden ($p=`r round(summary(reg)$coefficients[,4][3], 3)`$)    
+    * Die Veränderung in der Lesekompetenz bei einer *Standardabweichung* mehr Lernzeit beträgt `r round(lm.beta(reg)$standardized.coefficients[3], 2)` *Standardabweichungen*.
+
+### 3. Einfluss von Geschlecht, Lernzeit und Lesefreude
+
+Untersuchen Sie mit einer multiplen Regression den gemeinsamen Einfluss von Geschlecht (`Female`), Lesefreude (`JoyRead`) und Lernzeit (`LearnMins`) auf die Lesekompetenz und interpretieren Sie die Ergebnisse einschließlich der standardisierten Regressionsgewichte.
+
+```{r}
+reg <- lm(Reading ~ Female + JoyRead + LearnMins, data=PISA2009)
+summary(lm.beta(reg))
+```
+
+#### Interpretation
+
+* Alle drei Variablen gemeinsam erklären `r round(summary(reg)$r.squared*100,0)`% Varianz in der Lesekompetenz.
+* Dieser Varianzanteil ist signifikant von null verschieden.
+* Die Erwartete Lesekompetenz für Jungen (`Female=0`) bei einem Wert von null in Lesefreude und null Minuten Lernzeit beträgt `r round(coef(reg)[1],1)` Punkte.
+* Der Geschlechtseffekt (Unterschied zwischen Jungen und Mädchen) beträgt `r round(coef(reg)[2],1)` Punkte.
+    * Dieser Effekt der Lesefreude ist *nicht* signifikant von null verschieden ($p=`r round(summary(reg)$coefficients[,4][2], 3)`$)
+* Die Veränderung in der Lesekompetenz bei einem Punkt mehr in Lesefreude beträgt `r round(coef(reg)[3],1)` Punkte.
+    * Der Effekt der Lesefreude ist signifikant von null verschieden ($p=`r round(summary(reg)$coefficients[,4][3], 3)`$)
+    * Die Veränderung in der Lesekompetenz bei einer *Standardabweichung* mehr Lesefreude beträgt `r round(lm.beta(reg)$standardized.coefficients[3], 2)` *Standardabweichungen*.
+* Die Veränderung in der Lesekompetenz bei bei einer Minute mehr Lernzeit beträgt `r round(coef(reg)[4],1)` Punkte.
+    * Der Effekt der Lernzeit ist signifikant von null verschieden ($p=`r round(summary(reg)$coefficients[,4][4], 3)`$)    
+    * Die Veränderung in der Lesekompetenz bei einer *Standardabweichung* mehr Lernzeit beträgt `r round(lm.beta(reg)$standardized.coefficients[4], 2)` *Standardabweichungen*.
