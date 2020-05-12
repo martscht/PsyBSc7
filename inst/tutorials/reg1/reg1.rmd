@@ -229,7 +229,7 @@ $df_1 = 2, df_1 = n-m-1 = `r n`-`r m`-1 =97$
 
 $F_{krit}(\alpha=.05, df_1=2, df_2= 97)= `r round (F.krit,2)`$
 
-$p=`r sprintf(format(p, digits = 3, trim = TRUE, scientific = FALSE))`$
+$p=`r sprintf(format(1-pf(F.omn, m, n-m-1), digits = 3, trim = TRUE, scientific = FALSE))`$
 
 
 ## Berechnung der Regression mit lm-Funktionen in R
