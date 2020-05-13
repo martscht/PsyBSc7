@@ -93,7 +93,7 @@ Sitzung_6 <- function() {
     devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
   }
   library(gradethis)
-  learnr::run_tutorial('Reg3', package = 'PsyBSc7')
+  message('Leider ist die Sitzung noch nicht fertig :(.')
 }
 
 #' @rdname Sitzungen
@@ -107,7 +107,7 @@ Sitzung_7 <- function() {
     devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
   }
   library(gradethis)
-  learnr::run_tutorial('Reg4', package = 'PsyBSc7')
+  learnr::run_tutorial('Reg3', package = 'PsyBSc7')
 }
 
   
@@ -123,7 +123,7 @@ Sitzung_8 <- function() {
     devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
   }
   library(gradethis)
-  message('Leider ist die Sitzung noch nicht fertig :(.')
+  learnr::run_tutorial('Reg4', package = 'PsyBSc7')
 }
 
 #' @rdname Sitzungen

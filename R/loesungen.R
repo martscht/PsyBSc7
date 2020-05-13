@@ -107,11 +107,10 @@ Loesungen_6 <- function(password) {
     devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
   }
   library(gradethis)
-  
-  if (digest::digest(password) != "6adb4894cab39c7d479b5284a1a907b2") {
+  if (digest::digest(password) != '???') {
     message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
-    compile("Reg3_lo")
+    message('Leider ist die Lösung noch nicht fertig :(.')
   }
 }
 
@@ -127,11 +126,11 @@ Loesungen_7 <- function(password) {
     devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
   }
   library(gradethis)
-  
-  if (digest::digest(password) != "6a1832c69beaea1033bd63fb0387a58a") {
+
+    if (digest::digest(password) != "6adb4894cab39c7d479b5284a1a907b2") {
     message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
-    message('Leider ist die Lösung noch nicht fertig :(.')
+    compile("Reg3_lo")
   }  
 }
 
@@ -147,12 +146,12 @@ Loesungen_8 <- function(password) {
     devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
   }
   library(gradethis)
-  
-  if (digest::digest(password) != '???') {
+
+  if (digest::digest(password) != "6a1832c69beaea1033bd63fb0387a58a") {
     message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     message('Leider ist die Lösung noch nicht fertig :(.')
-  }
+  }  
 }
 
 
@@ -191,10 +190,6 @@ Loesungen_10 <- function(password) {
   if (digest::digest(password) != '???') {
     message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
-    library(learnr)
-    if (!('gradethis' %in% rownames(installed.packages()))) {
-      devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
-    }
-    compile('loops_lo')
+    message('Leider ist die Lösung noch nicht fertig :(.')
   }
 }
