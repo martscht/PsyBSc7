@@ -167,10 +167,10 @@ Loesungen_9 <- function(password) {
   }
   library(gradethis)
   
-  if (digest::digest(password) != '???') {
+  if (digest::digest(password) != '74d23e6e14f37277d493c589681bbb2b') {
     message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
-    message('Leider ist die Lösung noch nicht fertig :(.')
+    compile('anova_I_lo')
   }
 }
 
