@@ -415,6 +415,8 @@ vif(...)
 vif(mod)
 ```
 
+Berechnen Sie die Toleranz.
+
 ```{r test_T, exercise = TRUE, exercise.setup = "exercise_setup1", exercise.eval = FALSE}
 
 ```
