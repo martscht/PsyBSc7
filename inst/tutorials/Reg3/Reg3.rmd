@@ -120,7 +120,7 @@ Im Folgenden werden wir mit den unstandardisierten Modell weitermachen, welches 
 
 ## Linearität
 
-Eine grafische Prüfung der partiellen Linearität der zwischen den einzelnen Prädiktorvariablen und dem Kriterium durch *partielle Regressionsplots* erfolgen. Für jeden Prädiktor werden die Residuen bei Vorhersage durch die anderen Prädiktoren gegen die Residuen des Kriteriums bei Vorhersage durch den jeweiligen Prädiktor dargestellt. Diese Grafiken können Hinweise auf systematische nicht-lineare Zusammenhänge geben, die in der Modellspezifikation nicht berücksichtigt wurden. Die zugehörige `R`-Funktion des `car` Pakets heißt `avPlots` und braucht als Argument das Modell `mod`. 
+Eine grafische Prüfung der partiellen Linearität der zwischen den einzelnen Prädiktorvariablen und dem Kriterium durch *partielle Regressionsplots* (engl. *Partialplots*) erfolgen. Für jeden Prädiktor werden die Residuen bei Vorhersage durch die anderen Prädiktoren gegen die Residuen des Kriteriums bei Vorhersage durch den jeweiligen Prädiktor dargestellt. Diese Grafiken können Hinweise auf systematische nicht-lineare Zusammenhänge geben, die in der Modellspezifikation nicht berücksichtigt wurden. Die zugehörige `R`-Funktion des `car` Pakets heißt `avPlots` und braucht als Argument das Modell `mod`. 
 
 
 ```{r exercise_avPlots, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup1", fig.height=4, fig.align="center"}
@@ -444,6 +444,9 @@ grade_result(
 Für unser Modell wird ersichtlich, dass die Prädiktoren praktisch unkorreliert sind und dementsprechend kein Multikollinearitätsproblem vorliegt. Unabhängigkeit folgt hieraus allerdings nicht, da nichtlineare Beziehungen zwischen den Variablen bestehen könnten, die durch diese Indizes nicht abgebildet werden.
 
 ## Identifikation von Ausreißern und einflussreichen Datenpunkten
+
+Die Plausibilität unserer Daten ist enorm wichtig. Aus diesem Grund sollten Aureißer oder einflussreiche Datenpunkte  analysiert werden. Diese können bspw. durch Eingabefehler entstehen (Alter von 211 Jahren anstatt 21) oder es sind seltene Fälle (hochintelligentes Kind in einer Normstichprobe), welche so in natürlicherweise (aber mit sehr geringer Häufigkeit) auftreten können. Es muss dann entschieden werden, ob Ausreißer die Repräsentativität der Stichprobe gefährden und ob diese besser ausgeschlossen werden sollten.  
+
 
 *Hebelwerte* $h_j$ erlauben die Identifikation von Ausreissern aus der gemeinsamen Verteilung der unabhängigen Variablen, d.h. einzelne Fälle, die weit entfernt vom  Mittelwert der gemeisamen Verteilung der unabhängigen Variablen liegen und somit einen starken Einfluss auf die Regressionsgewichte haben können. Diese werden mit der Funktion `hatvalues` ermittelt. Kriterien zur Beurteilung der Hebelwerte variieren, so werden von [Eid et al. (2017, S. 707 und folgend)](https://hds.hebis.de/ubffm/Record/HEB366849158) Grenzen von $2\cdot k / n$ für große und $3\cdot k / n$ für kleine Stichproben vorgeschlagen, in den Vorlesungsfolien werden Werte von $4/n$ als auffällig eingestuft (hierbei ist $k$ die Anzahl an Prädiktoren und $n$ die Anzahl der Beobachtungen). Alternativ zu einem festen Cut-Off-Kriterium kann die Verteilung der Hebelwerte inspiziert und diejenigen Werte kritisch betrachtet werden, die aus der Verteilung ausreißen. Die Funktion `hatvalues` erzeugt die Hebelwerte aus einem Regression-Objekt. Wir wollen diese als Histogramm darstellen.
 
