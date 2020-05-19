@@ -526,10 +526,10 @@ Die Funktion `scale` z-standardisiert den Datensatz, mit Hilfe von `[IDs,]`, wer
 
 Was ist an den fünf identifizierten Fällen konkret auffällig?
 
-* Fall 6: recht niedrige Lesekompetenz bei gleichzeitig überdurchschnittlichem IQ (Ausreißer aus der gemeinsamen Verteilung der Prädiktoren)
+* Fall 6: recht niedrige Lesekompetenz bei gleichzeitig durchschnittlichem bis überdurchschnittlichem IQ 
 * Fall 9: Sehr hohe Werte in IQ, Lesen & Mathe
-* Fall 33: Durchschnittliche Matheleistung "trotz" eher niedriger Intelligenz
-* Fall 80: Sehr niedriger IQ, gleichzeitig überdurchschnittliche Lesekompetenz (Ausreißer aus der gemeinsamen Verteilung der Prädiktoren)
+* Fall 33: Unterdurchschnittliche Leseleistung   "trotz" neher durchschnittlicher Intelligenz
+* Fall 80: Sehr niedriger IQ, gleichzeitig durchschnittliche bis überdurchschnittliche Lesekompetenz 
 * Fall 99: Sehr niedrige Werte in IQ, Lesekompetenz und Mathematik
 
 Die Entscheidung, ob Ausreißer oder auffällige Datenpunkte aus Analysen ausgeschlossen werden, ist schwierig und kann nicht pauschal beantwortet werden. Im vorliegenden Fall wäre z.B. zu Überlegen, ob die Intelligenztestwerte der Fälle 80 und 99, die im Bereich von Lernbehinderung oder sogar geistiger Behinderung liegen, in einer Stichprobe von Schülern/innen aus Regelschulen als glaubwürdige Messungen interpretiert werden können oder als Hinweise auf mangelndes Commitment bei der Beantwortung.
