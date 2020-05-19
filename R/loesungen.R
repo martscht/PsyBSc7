@@ -107,7 +107,7 @@ Loesungen_6 <- function(password) {
     devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
   }
   library(gradethis)
-  if (digest::digest(password) != 'Theresa') {
+  if (digest::digest(password) != 'ca0c539ff3445d34066061b829281ff3') {
     message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     compile("reg2_lo")
