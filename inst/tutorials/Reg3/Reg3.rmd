@@ -528,7 +528,7 @@ Was ist an den fünf identifizierten Fällen konkret auffällig?
 
 * Fall 6: recht niedrige Lesekompetenz bei gleichzeitig durchschnittlichem bis überdurchschnittlichem IQ 
 * Fall 9: Sehr hohe Werte in IQ, Lesen & Mathe
-* Fall 33: Unterdurchschnittliche Leseleistung   "trotz" neher durchschnittlicher Intelligenz
+* Fall 33: Unterdurchschnittliche Leseleistung "trotz" eher durchschnittlicher Intelligenz
 * Fall 80: Sehr niedriger IQ, gleichzeitig durchschnittliche bis überdurchschnittliche Lesekompetenz 
 * Fall 99: Sehr niedrige Werte in IQ, Lesekompetenz und Mathematik
 
