@@ -1,0 +1,195 @@
+---
+title: "ANOVA_I"
+output: 
+  learnr::tutorial:
+  progressive: false
+  allow_skip: true
+  includes:
+    after_body: footer.html
+    in_header: header.html
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(ez)
+data(conspiracy, package = 'PsyBSc7')
+# pre calculations for qs
+mu_k <- aggregate(conspiracy$ET, list(conspiracy$urban), mean)
+names(mu_k) <- c('urban', 'ET_mu_k')
+temp <- merge(conspiracy, mu_k, by = 'urban')
+mu <- mean(conspiracy$ET)
+n_k <- table(conspiracy$urban)
+QS_inn <- sum((temp$ET - temp$ET_mu_k)^2)
+QS_zw <- sum(n_k * (mu_k[, 2] - mu)^2)
+MQS_inn <- QS_inn / (nrow(conspiracy) - nlevels(conspiracy$urban))
+MQS_zw <- QS_zw / (nlevels(conspiracy$urban)-1)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r prep_ANOVA-setup}
+conspiracy$id <- as.factor(1:nrow(conspiracy))
+```
+
+```{r ANOVA_I-setup}
+conspiracy$id <- as.factor(1:nrow(conspiracy))
+```
+
+```{r ANOVA_III-setup}
+conspiracy$id <- as.factor(1:nrow(conspiracy))
+```
+
+## Übungs-Datensatz
+
+```{r load_data, exercise=TRUE, exercise.lines = 3}
+dim(conspiracy)
+head(conspiracy)
+```
+
+Der Datensatz enthält die Werte von 2451 Personen auf 9 Variablen und stammt aus einer Untersuchung zum Thema verschwörungstheoretische Überzegungen. Die ersten vier Variablen enthalten Informationen über den demographischen Hintergrund der Personen: höchster Bildungsabschluss, Typ des Wohnortes, Geschlecht und Alter. Die fünf restlichen Variablen sind Skalenwerte bezüglich verschiedener subdimensionen verschwörungstheoretischer Überzeugungen: GM (goverment malfeasance), MG (malevolent global conspiracies), ET (extraterrestrial cover-up), PW (personal well-being) und CI (control of information).
+
+### Aufgestellte Hypothesen
+
+Es soll untersucht werden ob sich Personen je nach Ländlichkeit ihres Wohnortes (rural, suburban, urban) in der Überzeugung unterscheiden, inwiefern die Existenz von Außerirdischen geheimgehalten wird (Beispielitem: Evidence of alien contact is being concealed from the public).
+
+In der einfaktoriellen ANOVA wird die Gleichheit aller Gruppenmittelwerte als Nullhypothese posutliert - also das sich Bewohner des ländlichen Raums (rural), des vorstädtischen Raums (suburban) und der Stadt (urban) nicht hinsichtlicher ihrer Zustimmung zur Verschwörungstheorie Extraterrestrial Cover-Up unterscheiden:
+
+$H_0: \mu_{\text{rural}} = \mu_{\text{suburban}} = \mu_{\text{urban}}$
+
+Bei der Alternativhypothese wird angenommen, dass sich mindestens zwei dieser Subgruppen im Mittel voneinander unterscheiden:
+
+$H_1: \mu_j \neq \mu_k$ für mindestens ein paar $(j, k)$ mit $j \neq k$
+
+Wir benutzen hier die Indizes $j$ und $k$ um den Vergelich der Mittelwerte von zwei unterschiedlichen Subgruppen darzustellen. Für $j = 1$ und $k = 2$ könnte dies z.B. den Vergelich der Subgruppen "rural" und "suborban" anzeigen. Die Ungleichung $j \neq k$ bedeutet in diesem Zusammenhang, das wir in der Formulierung der Alternativhypothese immer nur unterschiedliche Gruppen miteinander vergleichen, nie aber eine Subgruppe mit sich selbst.
+
+Beim paarweisen Vergleich aller Kombinationen mithilfe des $t$-Tests käme es zur sogenannten $\alpha$-Fehler Kumulierung, weswegen in diesem Fall eine einfaktorielle ANOVA genutzt werden muss.
+
+## Einfaktorielle ANOVA per Hand
+
+Die Quadratsummen der ANOVA können per Hand bestimmt werden. Hierzu nutzen wir den `aggregate()`-Befehl, der es erlaubt, eine zusammenfassende Statistik (wie Mittelwert oder Standardabweichung) für eine Variable getrennt nach verschiedenen Subgruppen zu berechnen:
+
+```{r calc_qs_I, exercise=TRUE, exercise.lines = 11}
+# Gruppenmittelwerte ermitteln
+mu_k <- aggregate(conspiracy$ET, list(conspiracy$urban), mean)
+names(mu_k) <- c('urban', 'ET_mu_k')
+temp <- merge(conspiracy, mu_k, by = 'urban')
+
+# Gesamtmittelwert ermitteln
+(mu <- mean(conspiracy$ET))
+
+# Gruppengrößen ermitteln
+(n_k <- table(conspiracy$urban))
+```
+
+Die Einfakorielle ANOVA basiert auf der Zerlegung der Gesamtquadratsumme $QS_{tot}$ in die Quadratsumme zwischen den Gruppen $QS_{zw} = \sum_{k=1}^{K} n_k (\bar{y}_k - \bar{\bar{y}})^2$ und die Quadratsumme innerhalb der Gruppen $QS_{inn} = \sum_{k=1}^{K}\sum_{i=1}^{n_k} (y_{ik} - \bar{y_k})^2$. Diese lassen sich in R einfach berechnen:
+
+```{r calc_qs_II, exercise=TRUE, exercise.lines = 3}
+(QS_inn <- sum((temp$ET - temp$ET_mu_k)^2))
+(QS_zw <- sum(n_k * (mu_k[, 2] - mu)^2))
+```
+
+Zur inferenzstatistischen Prüfung der Quadratsummen werden die mittleren Qudratsummen $MQS_{zw} = \frac{QS_{zw}}{K-1}$ und $MQS_{inn} = \frac{QS_{inn}}{N-K}$ benötigt:
+
+```{r calc_qs_III, exercise=TRUE, exercise.lines = 3}
+(MQS_inn <- QS_inn / (nrow(conspiracy) - nlevels(conspiracy$urban)))
+(MQS_zw <- QS_zw / (nlevels(conspiracy$urban)-1))
+```
+
+Das Verhältnis der Quadratsummen ist mit $df_1 = K - 1$ und $df_2 = N - K$ $F$-Verteilt:
+
+```{r calc_qs_IV, exercise=TRUE, exercise.lines = 4}
+F_wert <- MQS_zw/MQS_inn
+pf(F_wert, nlevels(conspiracy$urban)-1, nrow(conspiracy) - nlevels(conspiracy$urban), lower.tail = FALSE)
+```
+
+## Die `ezANOVA`
+
+In R (`anova`, `aov`) und diversen Paketen (z.B. `Anova` aus `car`) stehen verschiedene Funktionen zur Varianzanalyse zur Verfügung. Allerdings haben die verschiedenen Anstäze jeweils ihre Vor- und Nachteile, weshalb die `ezANOVA`-Funktion aus dem `ez`-Paket erstellt wurde, um als Meta-Funktion zu dienen, die sich situationsspezifisch bei den grundlegenden Funktionen bedient.
+
+```{r loadlib, exercise=FALSE, exercise.lines = 3}
+# Paket laden (ggf. vorher installieren)
+library(ez)
+```
+
+Weil die Funktion für verschiedene Arten von ANOVAs geeignet ist, benötigt sie einige sehr spezfisiche Argumente. Für die einfaktorielle ANOVA werden vier Argumente benötigt:
+
+- `data = `: der genutzte Datensatz
+- `wid = `: eine Personen ID-Variable
+- `dv = `: die abhängige Variable (dependent variable)
+- `between = `: eine Gruppierungsvariable (die *zwischen* Personen unterscheidet)
+
+In unserem Datensatz liegt leider noch keine ID-Variable vor, diese muss also zunächst erstellt werden. Der Einfachheit halber nummerieren wir die Personen von 1 bis `r nrow(conspiracy)` durch. Damit festgehalten wird, dass es sich bei der ID um eine nominalskalierte Variable handelt, wandeln wir diese direkt in einen `factor` um.
+
+```{r prep_ANOVA, exercise=TRUE, exercise.lines = 3}
+conspiracy$id <- as.factor(1:nrow(conspiracy))
+conspiracy$id
+```
+
+Jetzt kann die ANOVA mit dem `ezANOVA`-Befehl durchgeführt werden:
+
+```{r ANOVA_I, exercise=TRUE, exercise.lines = 2}
+ezANOVA(conspiracy, wid = id, dv = ET, between = urban)
+```
+
+Zunächst werden wir darauf hingewiesen, dass das Desgin *unbalanciert* ist: die Gruppen sind nicht alle gleich groß. Das kann Konsequenzen auf die Vertrauenswürdigkeit der Ergebnisse haben, wenn wir ANOVAs mit mehr als einem Faktor bestimmen (dazu mehr in der nächsten Sitzung).
+
+Die zweite Hälfte der Ergebnisse liefern die Überprüfung der Homoskedasitzitätsannahme mit dem Levene Test. Dieser wird von `ezANOVA` immer automatisch mitgeliefert. Alternativ kann er auch mithilfe des `car` Pakets einzeln angefordert werden:
+
+```{r ANOVA_II, exercise=TRUE, exercise.lines = 2}
+car::leveneTest(conspiracy$ET ~ conspiracy$urban)
+```
+
+In diesem Fall muss die Annahme der Varianzhomogenität über die drei Gruppen hinweg also *nicht verworfen* werden. 
+
+Der erste Abschnitt der Ausgabe der `ezANOVA`-Funktion liefert die Ergebnisse der ANOVA selbst. Dabei wird zunächst die unabhängige Variable aufgeführt (`Effect`), dann die Anzahl der Zählerfreiheitsgrad (`DFn`), dann die Anzahl der Nennerfreiheitsgrade (`DFd`). Darauf folgt der $F$-Wert (`F`) und der resultierende $p$-Wert. In diesem Fall wird die Nullhypothese, bei einem $alpha$-Fehlerniveau von .05 also verworfen: die Mittelwerte der drei Gruppen sind nicht gleich. Der `*` in der nächsten Spalte liefert uns diesbezüglich einen optischen Hinweis. Die letzte Spalte liefert das generalisierte $\eta^2$ ('ges' = Generalized Eta-Squared), ein Effektstärkemaß für ANOVAs. Dieses berechnet sich in diesem Fall einfach aus $\eta^2 = \frac{QS_{zw}}{QS_{tot}}$. Um die Quadtratsummen zu erhalten kann mithilfe des Arguments `detailed = TRUE` eine detaillierte Ausgabe angefordert werden.
+
+```{r ANOVA_III, exercise=TRUE, exercise.lines = 2}
+ezANOVA(conspiracy, wid = id, dv = ET, between = urban, detailed = TRUE)
+```
+
+Für $\eta^2$ haben sich - wie für viele Effektgrößen - Konventionen bezüglich der Interpretation etabliert. Für die Varianzanalyse wird $\eta^2 \approx .01$ als kleiner, $\eta^2 \approx .06$ als mittlerer und $\eta^2 \approx .14$ als großer Effekt interpretiert. Der Wert in unserem Beispiel liegt somit noch unter der Schwelle zu einem kleinen Effekt - die Gruppenunterschiede sind zwar statistisch signifikant von null verschieden, praktisch aber kaum bedeutsam.
+
+## Post-Hoc Analysen
+
+Die ANOVA ist ein Omnibustest - es wird lediglich die Gleichheit aller Gruppen geprüft. Wenn die Nullhypothese verworfen wird, geben die Ergebnisse zunächst keine Auskunft darüber, welche Gruppen sich unterscheiden. Die detaillierte Untersuchung der Gruppenunterschiede wird in der Post-Hoc-Analyse unternommen.
+
+Die naheliegende Untersuchung wäre hier, alle drei Gruppen mithilfe einfacher $t$-Tests zu vergleichen:
+
+```{r posthoc_I, exercise=TRUE, exercise.lines = 2}
+pairwise.t.test(conspiracy$ET, conspiracy$urban, p.adjust = 'bonferroni')
+```
+
+Aufgrund der $\alpha$-Fehler Kumulierung müssen die $p$-Werte adjustiert werden. Dabei ist die Bonferroni-Korrektur einer der einfachsten (und gleichzeitig konservatisten) Ansätze: $\alpha_{\text{kor}} = \frac{\alpha}{m}$, wobei $m$ die Anzahl der durchgeführten Tests ist. Hier zeigt sich, dass sich ausschließlich Personen aus `urban` und `suburban` Umgegbungen in ihrer Überzeugung bezüglich des *Extraterrestrial Cover-Ups* unterscheiden.
+
+Ein präziserer Ansatz als die einfachen $t$-Tests bietet Tukeys Honest Significant Difference. Dieser kann in R allerdings nur auf `aov`-Objekte angewendet werden:
+
+```{r posthoc_II, exercise=TRUE, exercise.lines = 2}
+TukeyHSD(aov(ET ~ urban, conspiracy))
+```
+
+Das Ergebnis bietet neben den einfachen $p$-Werten auch korrgierte Konfidenzintervalle für die Mittelwertsdifferenzen. Darüber hinaus können die Ergebnisse auch in einem Plot dargestellt werden:
+
+```{r posthoc_III, exercise=TRUE, exercise.lines = 3, fig.height=6}
+tuk <- TukeyHSD(aov(ET ~ urban, conspiracy))
+plot(tuk)
+```
+
+
+
+## Aufgaben
+
+Nutzen Sie für die Aufgaben die gleichen Daten, die auch in der Sitzung genutzt wurden. Zur Erinnerung: der Datensatz enthält die Werte von 2451 Personen auf 9 Variablen und stammt aus einer Untersuchung zum Thema verschwörungstheoretische Überzegungen. Die ersten vier Variablen enthalten Informationen über den demographischen Hintergrund der Personen: höchster Bildungsabschluss, Typ des Wohnortes, Geschlecht und Alter. Die fünf restlichen Variablen sind Skalenwerte bezüglich verschiedener subdimensionen verschwörungstheoretischer Überzeugungen: GM (goverment malfeasance), MG (malevolent global conspiracies), ET (extraterrestrial cover-up), PW (personal well-being) und CI (control of information).
+
+Es besteht die Annahme, dass Personen mit geringerem Bildungsniveau ein stärkeres Ausmaß an negative Vorurteilen gegenüber Wissenschaftler\*innen haben. Daraus ergibt sich die Hypothese, dass dies auch für die verschwörungstheoretischen Überzeugungen der *control of information* (CI) Subdimension der Fall sein sollte. Diese Dimension wurde durch die drei Items "Groups of scientists manipulate, fabricate, or suppress evidence in order to deceive the public", "New and advanced technology which would harm current industry is being suppressed" und "A lot of important information is deliberately concealed from the public out of self-interest" erhoben. 
+
+### 1. Prüfen Sie die Normalverteilungsannahme, die in der ANOVA gemacht wird. Nutzen Sie hier neben einem inferenzstatistischen Test auch eine grafische Prüfung der Annahme.
+
+### 2. Prüfen Sie die Homoskedasitizitätsannahme, die in der ANOVA gemacht wird.
+
+### 3. Weisen die Gruppen mit den *größeren Streuungen* die *kleineren Besetzungszahlen* $n_k$ auf, so liegt der tatsächliche $\alpha$-Fehler der Anova über dem nominellen 5%-Niveau ("Inflation des $\alpha$-Fehlers"). Liegt diese Inflation hier vor?
+
+### 4. Untersuchen Sie, ob es Gruppenunterschiede hinsichtlich des höchsten Bildungsabschlusses (`edu`) in der Dimension control of information (`CI`) gibt. Gehen Sie von der Robustheit der Ergebnisse aus.
+
+### 5. Interpretieren Sie das Ergebnis hinsichtlich der inferzstatistischen Aussage, sowie hinsichtlich der Effetkstärke.
+
+### 6. Überprüfen Sie in post-hoc Analysen, auf welche Gruppenunterschiede die globalen Effekte zurückführbar sind. Lassen Sie sich diese Vergleiche auch grafisch darstellen.

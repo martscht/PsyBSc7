@@ -1,0 +1,84 @@
+---
+title: "ANOVA_I_Loesungen"
+output: 
+  learnr::tutorial:
+  progressive: false
+  allow_skip: true
+  includes:
+    after_body: footer.html
+    in_header: header.html
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(ez)
+data(conspiracy, package = 'PsyBSc7')
+knitr::opts_chunk$set(echo = FALSE)
+learnr::tutorial_options(exercise.eval = FALSE)
+```
+
+## Lösungen zu den Aufgaben
+
+Nutzen Sie für die Aufgaben die gleichen Daten, die auch in der Sitzung genutzt wurden. Zur Erinnerung: der Datensatz enthält die Werte von 2451 Personen auf 9 Variablen und stammt aus einer Untersuchung zum Thema verschwörungstheoretische Überzegungen. Die ersten vier Variablen enthalten Informationen über den demographischen Hintergrund der Personen: höchster Bildungsabschluss, Typ des Wohnortes, Geschlecht und Alter. Die fünf restlichen Variablen sind Skalenwerte bezüglich verschiedener subdimensionen verschwörungstheoretischer Überzeugungen: GM (goverment malfeasance), MG (malevolent global conspiracies), ET (extraterrestrial cover-up), PW (personal well-being) und CI (control of information).
+
+Es besteht die Annahme, dass Personen mit geringerem Bildungsniveau ein stärkeres Ausmaß an negative Vorurteilen gegenüber Wissenschaftler\*innen haben. Daraus ergibt sich die Hypothese, dass dies auch für die verschwörungstheoretischen Überzeugungen der *control of information* (CI) Subdimension der Fall sein sollte. Diese Dimension wurde durch die drei Items "Groups of scientists manipulate, fabricate, or suppress evidence in order to deceive the public", "New and advanced technology which would harm current industry is being suppressed" und "A lot of important information is deliberately concealed from the public out of self-interest" erhoben. 
+
+### 1. Prüfen Sie die Normalverteilungsannahme, die in der ANOVA gemacht wird. Nutzen Sie hier neben einem inferenzstatistischen Test auch eine grafische Prüfung der Annahme.
+
+```{r task_I, exercise=TRUE, exercise.lines = 9}
+tapply(conspiracy$CI, conspiracy$edu, shapiro.test)
+nothigh <- conspiracy[conspiracy$edu == 'not highschool', ]
+high <- conspiracy[conspiracy$edu == 'highschool', ]
+college <- conspiracy[conspiracy$edu == 'college', ]
+
+qqnorm(nothigh$CI); qqline(nothigh$CI)
+qqnorm(high$CI); qqline(high$CI)
+qqnorm(college$CI); qqline(college$CI)
+```
+
+Sowohl der Shapiro-Wilk-Test als auch die QQ-Plots weisen auf eine - mitunter deutliche - Abweichung von der Normalverteiliungsannahme hin. Aufgrund der großen Stichprobe kann in diesem Fall allerdings von der Robustheit der ANOVA ausgegangen werden (Eid, Gollwitzer & Schmitt, 2014, S. 408).
+
+### 2. Prüfen Sie die Homoskedasitizitätsannahme, die in der ANOVA gemacht wird.
+
+Entweder via `ezANOVA`-Ergebnis (nächste Teilaufgabe) oder - wie hier - mit dem `leveneTest` aus dem `car` Paket.
+
+```{r task_II, exercise=TRUE, exercise.lines = 2}
+car::leveneTest(conspiracy$CI ~ conspiracy$edu)
+```
+
+Die Annahme der Varianzhomogenität muss verworfen werden.
+
+### 3. Auf der Vorlesungfolie 19 zur ANOVA finden Sie folgende Aussage: Weisen die Gruppen mit **den relativ zu den anderen Gruppen größeren Streuungen die relativ kleineren Besetzungszahlen** $n_k$ auf, so liegt der tatsächliche $\alpha$-Fehler der Anova über dem nominellen 5%-Niveau ("Inflation des $\alpha$-Fehlers"). Liegt diese Inflation hier vor?
+
+```{r task_III, exercise=TRUE, exercise.lines = 5}
+# Gruppengrößen
+table(conspiracy$edu)
+# Standardabweichungen
+tapply(conspiracy$CI, conspiracy$edu, sd)
+```
+
+Die Standardabweichung ist in der größten Gruppe tatsächlich am geringsten. Die mittlere Gruppe weist allerdings die größte Varianz auf, sodass die Schlussfolgerung bezüglich der Aussage uneindeutig ist. In diesem Fall könnte auf eine robuste Alternative (mit `white.adjust = TRUE`) ausgewichen werden. 
+
+### 4. Untersuchen Sie, ob es Gruppenunterschiede hinsichtlich des höchsten Bildungsabschlusses (`edu`) in der Dimension control of information (`CI`) gibt. Gehen Sie von der Robustheit der Ergebnisse aus.
+
+```{r task_IV, exercise=TRUE, exercise.lines = 4}
+library(ez)
+conspiracy$id <- as.factor(1:nrow(conspiracy))
+ezANOVA(conspiracy, wid = id, dv = CI, between = edu)
+```
+
+
+### 5. Interpretieren Sie das Ergebnis hinsichtlich der inferzstatistischen Aussage, sowie hinsichtlich der Effetkstärke.
+
+Der Effekt ist zwar statistisch bedeutsam, liegt jedoch nach klassischen Konventionen im Bereich der kleinen Effekte.
+
+### 6. Überprüfen Sie in post-hoc Analysen, auf welche Gruppenunterschiede die globalen Effekte zurückführbar sind. Lassen Sie sich diese Vergleiche auch grafisch darstellen.
+
+```{r task_VI, exercise=TRUE, exercise.lines = 4}
+tukey <- TukeyHSD(aov(CI ~ edu, conspiracy))
+tukey
+plot(tukey)
+```
+
+Zwischen Personen mit College-Abschluss und den anderen beiden Gruppen gibt es jeweils statistisch bedeutsame unterschiede. Die beiden anderen Gruppen unterscheiden sich nicht bedeutsamen voneinander.
