@@ -2,11 +2,11 @@
 title: "ANOVA_I"
 output: 
   learnr::tutorial:
-  progressive: false
-  allow_skip: true
-  includes:
-    after_body: footer.html
-    in_header: header.html
+    progressive: false
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
 runtime: shiny_prerendered
 ---
 
