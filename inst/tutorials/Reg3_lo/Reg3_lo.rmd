@@ -71,7 +71,7 @@ summary(lm.beta(m1))
 ## **Aufgabe 1.** Prüfen Sie die Annahme der Homoskedastizität 
 ### a) durch Inspektion der Residuenplots und 
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 # Residuenplots
 residualPlots(m1, pch = 16)
 ```
@@ -90,7 +90,7 @@ Weder die Grafiken noch der Breusch-Pagan-Test lassen deutliche Verletzungen der
 ### a) durch Inspektion der partiellen Regressionsplots und 
 ### b) des Tests für quadratische Trends, der mit der Funktion `residualPlots` erzeugt wurde.
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 
 # Partielle Regressionsplots
 avPlots(m1, pch = 16)
@@ -103,7 +103,7 @@ Die Effekte von Sozialstatus und Büchern werden durch das lineare Modell gut wi
 
 ## **Aufgabe 3.** Püfen Sie die Normalverteilung der Residuen 
 ### a) grafisch (Histogramm, Q-Q-Plot) und 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 res <- studres(m1) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 # Grafisch: Histogramm mit Normalverteilungskurve
@@ -157,7 +157,7 @@ Die drei Prädiktoren sind alle substanziell positiv korreliert ($r>.40$). VIF /
 ### a) Inspizieren Sie die Verteilung der Hebelwerten $h_i$
 
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 
 # Hebelwerte
 # Hebelwerte
@@ -171,7 +171,7 @@ ggplot(data = df_h, aes(x = h)) +
 ```
 
 ### b) Inspizieren Sie die Verteilung von Cooks Distanz $CD_i$
-```{r}
+```{r, fig.height=6, fig.align="center"}
 # Cooks Distanz
 CD <- cooks.distance(m1) # Cooks Distanz
 df_CD <- data.frame(CD) # als Data.Frame für ggplot
@@ -182,7 +182,7 @@ ggplot(data = df_CD, aes(x = CD)) +
 ```
 
 ### c) Sichten Sie die Rohdaten und standardisierten Werte auffälliger Fälle (verwenden Sie die Funktion `influencePlot`).
-```{r}
+```{r, fig.height=6, fig.align="center"}
 # Blasendiagramm mit Hebelwerten, studentisierten Residuen und Cooks Distanz
 # In "IDs" werden die Zeilennummern der auffälligen Fälle gespeichert
 InfPlot <- influencePlot(m1)
