@@ -1,5 +1,5 @@
 ---
-title: "ANOVA_I"
+title: "Sitzung 9: ANOVA I (einfaktoriell)"
 output: 
   learnr::tutorial:
     progressive: false

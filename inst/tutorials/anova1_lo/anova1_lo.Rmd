@@ -1,5 +1,5 @@
 ---
-title: "ANOVA_I_Loesungen"
+title: "Sitzung 9: R-Skripte zu den Aufgaben"
 output: 
   learnr::tutorial:
     progressive: false
