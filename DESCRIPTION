@@ -2,7 +2,7 @@ Package: PsyBSc7
 Type: Package
 Title: Übungen für die Praktika im Sommersemester 2020
 Description: Diese Paket bündelt die Übungsskripte für die Praktika in PsyBSc7.
-Version: 0.2.0
+Version: 0.7.0
 Date: 2020-03-25
 Authors@R: c(person("Schultze", "Martin", email = "schultze@psych.uni-frankfurt.de",
                     role = c("aut", "cre")),
