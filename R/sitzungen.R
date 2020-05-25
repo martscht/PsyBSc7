@@ -137,7 +137,7 @@ Sitzung_9 <- function() {
     devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
   }
   library(gradethis)
-  message('Leider ist die Sitzung noch nicht fertig :(.')
+  learnr::run_tutorial('anova_I', package = 'PsyBSc7')
 }
 
 #' @rdname Sitzungen
