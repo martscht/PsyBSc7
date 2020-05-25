@@ -170,7 +170,7 @@ Loesungen_9 <- function(password) {
   if (digest::digest(password) != '74d23e6e14f37277d493c589681bbb2b') {
     message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
-    compile('anova_I_lo')
+    compile('anova1_lo')
   }
 }
 
