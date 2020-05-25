@@ -1,5 +1,5 @@
 ---
-title: "Sitzung 7: Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte"
+title: "Sitzung 8: Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte"
 output: 
   learnr::tutorial:
     progressive: true
@@ -34,7 +34,7 @@ knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 ## Einleitung und Datensatz (PISA: wie in den Übungen zum letzten Termin) 
 <small> $*$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_ </small>
 
-In dieser Sitzung werden wir uns weitere nichtlineare Effekte in Regressionsmodellen ansehen. Dazu verwenden wir zunächst den Datensatz aus der Übung zur `PsyBSc7::Sitzung_6`, welcher in den Aufgaben verwendet wurde und dessen Analysen in `PsyBsc7::Loesung_6` mit dem richtigen Passwort einsehbar waren. 
+In dieser Sitzung werden wir uns weitere nichtlineare Effekte in Regressionsmodellen ansehen. Dazu verwenden wir zunächst den Datensatz aus der Übung zur `PsyBSc7::Sitzung_7`, welcher in den Aufgaben verwendet wurde und dessen Analysen in `PsyBSc7::Loesung_7` mit dem richtigen Passwort einsehbar waren. 
 Der Beispieldatensatz enthält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009. 
 
 ```{r data}
@@ -828,7 +828,7 @@ covid_de <- covid[covid$Country.Region == 'Germany', ]
 covid_sel <- covid[covid$Country.Region %in% c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom'), ]
 ```
 
-oder via `PsyBSc7::Aufgaben_7()`. Die tagesaktuellen Daten finden Sie unter `covid_full`. Wir wollen uns zeitlich einschränken bis zum 11. April. Betrachten Sie in den folgenden Aufgaben bitte immer nur die Daten bis zum 11. April in `covid_sel` und `covid_de`.
+oder via `PsyBSc7::Aufgaben_8()`. Die tagesaktuellen Daten finden Sie unter `covid_full`. Wir wollen uns zeitlich einschränken bis zum 11. April. Betrachten Sie in den folgenden Aufgaben bitte immer nur die Daten bis zum 11. April in `covid_sel` und `covid_de`.
 
 #### **Aufgabe 1.**  Verschaffen Sie sich einen Überblick über die Daten durch
 

@@ -1,5 +1,5 @@
 ---
-title: "Sitzung 6: Regressionanalyse III"
+title: "Sitzung 7: Regressionanalyse III"
 output: 
   learnr::tutorial:
     progressive: true
@@ -379,7 +379,7 @@ Für unser Modell zeigen alle Ergebnisse übereinstimmend, dass die Residuen nor
 
 Wäre der *Shapiro-Wilk-Normality Tests* oder der *Kolmogorov-Smirnov Tests gegen die Normalverteilung* signifikant auf dem 5%-Niveau, würde dies dafür sprechen, dass "mit einer Irrtumswahrscheinlichkeit von 5% die Null-Hypothese auf Gleichheit der Normalverteilung mit unserer empirischen Verteilung verworfen werden muss, da in der Population die Abweichung der empirischen zur theoretischen Normalverteilung mit der Irrtumswahrscheinlichkeit von 5% ungleich 0 ist". 
 
-Schiefe Verteilungen, welche sich im Histogramm oder im Q-Q-Plot wiederpiegeln sowie zu signifikanten *Shapiro-Wilk-Normality Tests* oder *Kolmogorov-Smirnov Tests gegen die Normalverteilung* führen können, könnten Indizien für nichtlineare (z.B. quadratische) Beziehungen im Datensatz sprechen. Weitere Analysen wären hierfür nötig (siehe hierzu `PsyBSc7::Sitzung_7()`).
+Schiefe Verteilungen, welche sich im Histogramm oder im Q-Q-Plot wiederpiegeln sowie zu signifikanten *Shapiro-Wilk-Normality Tests* oder *Kolmogorov-Smirnov Tests gegen die Normalverteilung* führen können, könnten Indizien für nichtlineare (z.B. quadratische) Beziehungen im Datensatz sprechen. Weitere Analysen wären hierfür nötig (siehe hierzu `PsyBSc7::Sitzung_8()`).
 
 ## Multikollinearität
 

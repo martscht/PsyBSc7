@@ -1,5 +1,5 @@
 ---
-title: "Sitzung 6: Regressionanalyse III --- Aufgaben mit Lösungen"
+title: "Sitzung 7: Regressionanalyse III --- Aufgaben mit Lösungen"
 output: 
   learnr::tutorial:
     progressive: true

@@ -96,9 +96,29 @@ Loesungen_5 <- function(password) {
   }
 }
 
+
 #' @rdname Loesungen
 #' @export
 Loesungen_6 <- function(password) {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  
+  if (digest::digest(password) != '???') {
+    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+  }  else {
+    message('Leider ist die Lösung noch nicht fertig :(.')
+  }
+}
+
+#' @rdname Loesungen
+#' @export
+Loesungen_7 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -118,7 +138,7 @@ Loesungen_6 <- function(password) {
 
 #' @rdname Loesungen
 #' @export
-Loesungen_7 <- function(password) {
+Loesungen_8 <- function(password) {
   library(learnr)
   if (!('fontawesome' %in% rownames(installed.packages()))) {
     devtools::install_github("rstudio/fontawesome", upgrade = 'never')
@@ -136,24 +156,6 @@ Loesungen_7 <- function(password) {
 }
 
 
-#' @rdname Loesungen
-#' @export
-Loesungen_8 <- function(password) {
-  library(learnr)
-  if (!('fontawesome' %in% rownames(installed.packages()))) {
-    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
-  }
-  if (!('gradethis' %in% rownames(installed.packages()))) {
-    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
-  }
-  library(gradethis)
-  
-  if (digest::digest(password) != '???') {
-    stop('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
-  }  else {
-    message('Leider ist die Lösung noch nicht fertig :(.')
-  }
-}
 
 
 #' @rdname Loesungen

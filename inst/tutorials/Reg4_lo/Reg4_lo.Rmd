@@ -1,5 +1,5 @@
 ---
-title: "Sitzung 7: Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte --- Aufgaben mit Lösungen"
+title: "Sitzung 8: Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte --- Aufgaben mit Lösungen"
 output: 
   learnr::tutorial:
     progressive: true
