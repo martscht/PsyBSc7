@@ -31,13 +31,13 @@ knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 ## Vorbereitung
 ### Übungs-Datensatz (wie beim letzten Termin)
 
-Eine Stichprobe von 100 Schülerinnen und Schülern hat einen Lese- und einen Mathematiktest beantwortet, zusätzlich einen allgemeinen Intelligenztest. Im Datensatz enthalten ist zudem das Geschlecht (`female`, 0=m, 1=w). Wir laden als erstes die nötigen `R`-Pakete sowie den Datensatz.
+Eine Stichprobe von 100 Schülerinnen und Schülern hat einen Lese- und einen Mathematiktest, sowie zusätzlich einen allgemeinen Intelligenztest, bearbeitet. Im Datensatz enthalten ist zudem das Geschlecht (`female`, 0=m, 1=w). Wir laden als erstes die nötigen `R`-Pakete sowie den Datensatz.
 
 ```{r}
 library(car)
 library(MASS)
 library(ggplot2)
-library(lm.beta) # erforderlich für standardiserte Gewichte
+library(lm.beta) # erforderlich für standardiserte Regressionsgewichte
 
 # Datensatz laden
 data("Schulleistungen", package = "PsyBSc7")
@@ -71,7 +71,7 @@ mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 
 Im Output sehen wir die Parameterschätzungen unseres Regressionsmodells:
 $$\text{Reading}_i=b_0+b_1\text{Female}_i+b_2\text{IQ}_i+\varepsilon_i,$$ 
-für $i=1,\dots,100=:n$. Wir wollen uns die Ergebnisse unserer Regressionsanalyse noch detaillierter anschauen. Dazu wollen wir wieder die `summary` Funktion anwenden. Um auch die standardisierten Ergebnisse ausgegeben zu bekommen, verwenden wir die Funktion `lm.beta` (*lm* steht hier für lineares Modell und *beta* für die standardisierten Koeffizienten; häufig werden allerdings $\beta$s auch für die unstandardisierten Regressionkoeffizienten verwendet, sodass darauf stehts zu achten ist - siehe bspw. [Appendix A](#AppendixA)).
+für $i=1,\dots,100=:n$. Wir wollen uns die Ergebnisse unserer Regressionsanalyse noch detaillierter anschauen. Dazu können wir wieder die `summary` Funktion anwenden. Um auch die standardisierten Ergebnisse zu erhalten, verwenden wir die Funktion `lm.beta` (*lm* steht hier für lineares Modell und *beta* für die standardisierten Koeffizienten. Achtung: Häufig werden allerdings auch unstandardisierten Regressionkoeffizienten als $\beta$s bezeichnet, sodass darauf stehts zu achten ist - siehe bspw. [Appendix A](#AppendixA)).
 
 ```{r excercise_stdreg, exercise = TRUE, exercise.setup = "exercise_setup1", exercise.eval = FALSE}
 
@@ -102,26 +102,24 @@ mod <- lm(reading ~ female + IQ, data = Schulleistungen)
 stdsum <- summary(lm.beta(mod)) 
 ```
 
-Interessant an der standardisierten Lösung ist, dass das Interzept $0$ ist. Dies macht völlig Sinn, da beim Standardisieren die Mittelwerte aller Variablen auf $0$ gesetzt werden und die Standardabweichungen auf $1$. So auch beim Kriterium - der Leseleistung. Der Mittelwert des Kriterium liegt genau an der Stelle, wo alle Prädiktoren ihren Mittelwert haben. Im standardisierten Modell ist der Mittelwert jedes Prädiktors gerade $0$. Somit liegt der Mittelwert des Kriteriums genau beim Interzept, welches also $0$ sein muss, wenn es sich um das voll standardisierte Modell handeln soll! Den Koeffizienten entnehmen wir, dass die Prädiktoren `female` und `IQ` signifikante Anteile am Kriterium erklären (*Mit einer Irrtumswahrscheinlichkeit von 5% ist der Regressionkoeffizent und damit die lineare Beziehung zwischen dem jeweiligen Prädiktor (z.B. IQ) und der Leseleistung in der Population nicht 0*). Der standardisierte Koeffizient des `IQ` ist  hierbei deutlich größer ($\hat{\beta}_2=$ `r round(stdsum$coefficients[3,2], 2)`) als vom Geschlecht ($\hat{\beta}_1=$ `r round(stdsum$coefficients[2,2], 2)`). Damit ist ersichtlich, dass der `IQ` mehr Variation am Kriterium Leseleisstug erklärt. Dies war den unstandardisier ten Koeffizienten nicht zu entnehmen. Hier lag der unstandardisierte Effekt des Geschlechts auf die Leseleistung bei $\hat{b}_1=$ `r round(stdsum$coefficients[2,1], 2)` und des des `IQ` lediglich bei $\hat{b}_2=$ `r round(stdsum$coefficients[3,1], 2)`. Dies liegt natürlich daran, dass der `IQ` eine wesentlich größere Streuung ($\sigma_{IQ}^2$=`r round(var(Schulleistungen$IQ), 2)`) aufweißt als die dummykodierte Variable `female` ($\sigma_{female}^2$=`r round(var(Schulleistungen$female), 2)`). Insgesamt werden `r round(stdsum$r.squared*100, 2)`% der Variation der Leseleistung durch die beiden Prädiktoren erklärt.
+An der standardisierten Lösung fällt auf, dass das Interzept $0$ ist. Dies macht völlig Sinn, da beim Standardisieren die Mittelwerte aller Variablen auf $0$ und die Standardabweichungen auf $1$ gesetzt werden. So auch beim Kriterium, der Leseleistung. Damit beträgt der Mittelwert des Kriteriums und der Mittelwert aller Prädiktore jeweils $0$. Das Interzept gibt an, welchen Wert das Kriterium hat, wenn alle Prädiktoren den Wert $0$ aufweisen. Somit muss das Interzept hier genau $0$ betragen. Den Koeffizienten entnehmen wir, dass die Prädiktoren `female` und `IQ` signifikante Anteile am Kriterium erklären (*Mit einer Irrtumswahrscheinlichkeit von 5% ist der Regressionkoeffizent und damit die lineare Beziehung zwischen dem jeweiligen Prädiktor (z.B. IQ) und der Leseleistung in der Population nicht 0*). Der standardisierte Koeffizient des `IQ` ist  hierbei deutlich größer ($\hat{\beta}_2=$ `r round(stdsum$coefficients[3,2], 2)`) als vom Geschlecht ($\hat{\beta}_1=$ `r round(stdsum$coefficients[2,2], 2)`). Damit ist ersichtlich, dass der `IQ` mehr Variation am Kriterium Leseleisstug erklärt. Achtung: Diese Information ist den unstandardisierten Koeffizienten nicht zu entnehmen, da ein direkter Vergleich der unstandardisierten Koeffizienten nicht möglich ist. Der unstandardisierte Effekt des Geschlechts auf die Leseleistung beträgt $\hat{b}_1=$ `r round(stdsum$coefficients[2,1], 2)` und der Effekt des `IQ` lediglich $\hat{b}_2=$ `r round(stdsum$coefficients[3,1], 2)`. Dies liegt natürlich daran, dass der `IQ` eine wesentlich größere Streuung ($\sigma_{IQ}^2$=`r round(var(Schulleistungen$IQ), 2)`) aufweist als die dummykodierte Variable `female` ($\sigma_{female}^2$=`r round(var(Schulleistungen$female), 2)`). Insgesamt werden `r round(stdsum$r.squared*100, 2)`% der Variation der Leseleistung durch die beiden Prädiktoren erklärt.
 
-
-Gegenstand der folgenden Sitzung ist Die Prüfung von Voraussetzungen der Regressionsanalyse:
+Gegenstand der folgenden Sitzung ist die Prüfung von Voraussetzungen der Regressionsanalyse:
 
 * Linearität (Wiederholung)
-* Homoskedaszidität (Wiederholung)
+* Homoskedastizität (Wiederholung)
 * Normalverteilung der Residuen (Wiederholung)
 * Multikollinearität
 * Identifikation von Ausreißern und einflussreichen Datenpunkten
 
 
 
-Im Folgenden werden wir mit den unstandardisierten Modell weitermachen, welches sich hinter dem Objekt `mod` versteckt.
+Im Folgenden werden wir mit den unstandardisierten Modell weiterarbeiten, welches wir im  Objekt `mod` gespeichert haben.
 
 
 ## Linearität
 
-Eine grafische Prüfung der partiellen Linearität der zwischen den einzelnen Prädiktorvariablen und dem Kriterium durch *partielle Regressionsplots* (engl. *Partialplots*) erfolgen. Für jeden Prädiktor werden die Residuen bei Vorhersage durch die anderen Prädiktoren gegen die Residuen des Kriteriums bei Vorhersage durch den jeweiligen Prädiktor dargestellt. Diese Grafiken können Hinweise auf systematische nicht-lineare Zusammenhänge geben, die in der Modellspezifikation nicht berücksichtigt wurden. Die zugehörige `R`-Funktion des `car` Pakets heißt `avPlots` und braucht als Argument das Modell `mod`. 
-
+Eine grafische Prüfung der partiellen Linearität zwischen den einzelnen Prädiktorvariablen und dem Kriterium kann durch *partielle Regressionsplots* (engl. *Partialplots*) erfolgen. Dafür sagen wir in einem Zwischenschritt einen einzelnen Prädiktor durch alle anderen Prädiktoren im Modell vorher und speichern die Residuen, die sich aus dieser Regression ergeben. Diese kennzeichnen den eigenständigen Anteil, den ein Prädiktor nicht mit den anderen Prädiktoren gemein hat. Dann werden die Residuen aus dieser Vorhersage gegen die Residuen des Kriteriums bei Vorhersage durch den jeweiligen Prädiktor dargestellt. Diese Grafiken können Hinweise auf systematische nicht-lineare Zusammenhänge geben, die in der Modellspezifikation nicht berücksichtigt wurden. Die zugehörige `R`-Funktion des `car` Pakets heißt `avPlots` und braucht als Argument lediglich das spezifizierte Regressionsmodell `mod`. 
 
 ```{r exercise_avPlots, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup1", fig.height=4, fig.align="center"}
 avPlots(model = ..., pch = 16, lwd = 4)
@@ -132,16 +130,13 @@ avPlots(model = ..., pch = 16, lwd = 4)
 avPlots(model = mod, pch = 16, lwd = 4)
 ```
 
-
-
-Mit Hilfe der Argumente `pch=16` und `lwd=4` werden die Darstellung der Punkte (ausgefüllt anstatt leer) sowie die Dicke der Linie (vierfache Dicke) manipuliert. Den Achsenbeschriftungen ist zu entnehmen, dass auf der Y-Achse jeweils *reading | others* dargestellt ist. Die vertikale Linie *|* steht hierbei für den mathematischen Ausdruck gegeben und *others* steht hierbei für alle weiteren (anderen) Prädiktoren im Modell. Bei den unabhängigen Variablen (UV, *female*, *IQ*) steht *UV | others* jeweils für die jeweilige UV gegeben der anderen UVs im Modell. Somit beschreiben die beiden Plots jeweils die Beziehungen, die die UVs über die anderen UVs im Modell hinaus mit dem Kriterium (AV, abhängige Variable) haben. 
-
+Mit Hilfe der Argumente `pch=16` und `lwd=4` werden die Darstellung der Punkte (ausgefüllt anstatt leer) sowie die Dicke der Linie (vierfache Dicke) manipuliert. Den Achsenbeschriftungen ist zu entnehmen, dass auf der Y-Achse jeweils *reading | others* dargestellt ist. Die vertikale Linie *|* steht hierbei für den mathematischen Ausdruck *gegeben*. *Others* steht hierbei für alle weiteren (anderen) Prädiktoren im Modell. Dies bedeutet, dass es sich hierbei um die Residuen aus der Regression von *reading* auf alle anderen Prädiktoren handelt. Bei den unabhängigen Variablen (UV, *female*, *IQ*) steht *UV | others* also jeweils für die jeweilige UV gegeben der anderen UVs im Modell. Somit beschreiben die beiden Plots jeweils die Beziehungen, die die UVs über die anderen UVs im Modell hinaus mit dem Kriterium (AV, abhängige Variable) haben. 
 
 ## Verteilung der Residuen
 
 ### Homoskedastizität
 
-Die Varianz der Residuen sollte unabhängig von den Ausprägungen der Prädiktoren sein. Dies wird i.d.R. grafisch geprüft, indem die Residuen $e_i$ gegen die Vorhergesagten Werte $\hat{y}_i$ geplottet werden; dem sogenannten *Residuenplot* (engl., *residual plot*). In diesem Streudiagramm sollten die Residuen gleichmäßig über $\hat{y}_i$ streuen und keine systematischen Trends (linear, quadratisch, auffächernd, o.ä.) erkennbar sein. Die Funktion `residualPlots` des Pakets `car` erzeugt separate Streudiagramme für die Residuen in Abhängigkeit von jedem einzelnen Prädiktor $x_j$ und von den vorhergesagten Werten $\hat{y}_i$ (*"Fittet Values"*); als Input braucht sie das Modell `mod`. Zusätzlich wird für jeden Plot ein quadratischer Trend eingezeichnet und auf Signifikanz getestet, womit eine zusätzliche Prüfung auf nicht-lineare Effekte erfolgt. Sind diese Test nicht signifikant, ist davon auszugehen, dass diese Effekte nicht vorliegen und die Voraussetzungen nicht verletzt sind.  
+Die Varianz der Residuen sollte unabhängig von den Ausprägungen der Prädiktoren sein. Dies wird i.d.R. grafisch geprüft, indem die Residuen $e_i$ gegen die vorhergesagten Werte $\hat{y}_i$ geplottet werden: der sogenannte *Residuenplot* (engl.: *residual plot*). In diesem Streudiagramm sollten die Residuen gleichmäßig über $\hat{y}_i$ streuen und keine systematischen Trends (linear, quadratisch, auffächernd, o.ä.) erkennbar sein. **Prüfung nicht-linearer Zusammenhänge:** Die Funktion `residualPlots` des Pakets `car` erzeugt separate Streudiagramme für die Residuen in Abhängigkeit von jedem einzelnen Prädiktor $x_j$ und von den vorhergesagten Werten $\hat{y}_i$ (*"Fitted Values"*); als Input braucht sie das Modell `mod`. Zusätzlich wird für jeden Plot ein quadratischer Trend eingezeichnet und auf Signifikanz getestet, wodurch eine zusätzliche Prüfung auf nicht-lineare Effekte erfolgt. Sind diese Test nicht signifikant, ist davon auszugehen, dass diese Effekte nicht vorliegen und die Voraussetzungen nicht verletzt sind.  
 
 ```{r exercise_residualPlots, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup1", fig.height=6, fig.align="center"}
 # Grafisch (+ Test auf Nicht-Linearität)
@@ -153,7 +148,7 @@ residualPlots(model = ..., pch = 16)
 residualPlots(model = mod, pch = 16)
 ```
 
-Die Funktion `ncvTest` (als Input braucht sie `mod`) prüft, ob die Varianz der Residuen bedeutsam linear (!) mit den vorhergesagten Werten zusammenhängt. Wird dieser Test signifikant, ist die Annahme der Homoskedaszidität verletzt [(Wikipedia: Breusch-Pagan)](https://en.wikipedia.org/wiki/Breusch–Pagan_test). Wird er nicht signifikant, kann dennoch eine Verletzung vorliegen, z.B. ein nicht-linearer Zusammenhang. 
+**Prüfung linearer Zusammenhänge:** Die Funktion `ncvTest` (als Input braucht sie `mod`) prüft, ob die Varianz der Residuen bedeutsam linear (!) mit den vorhergesagten Werten zusammenhängt. Wird dieser Test signifikant, ist die Annahme der Homoskedaszidität verletzt [(Wikipedia: Breusch-Pagan)](https://en.wikipedia.org/wiki/Breusch–Pagan_test). Wird er nicht signifikant, kann dennoch eine Verletzung vorliegen, z.B. ein nicht-linearer Zusammenhang. 
 
 ```{r exercise_ncvTest, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup1"}
 # Test For Non-Constant Error Variance
@@ -174,7 +169,7 @@ ncvTest(mod)
 
 Voraussetzung für die Signifikanztests im Kontext der linearen Regression ist die Normalverteilung der Residuen. Auch diese Annahme wird i.d.R. grafisch geprüft. Hierfür bietet sich zum einen ein Histogramm der Residuen an, zum anderen ein *Q-Q-Diagramm* (oder "Quantile-Quantile-Plot"). Zusätzlich zur grafischen Darstellung erlaubt z.B. der Shapiro-Wilk-Test auf Normalität (`shapiro.test`) einen Signifkanztest der Nullhypothese, dass die Residuen normalverteilt sind. Auch der Kolmogorov-Smirnov (`ks.test`) Test, welcher eine deskriptive mit einer theoretischen Verteilung vergleicht, wäre denkbar. 
 
-Fangen wir mit der Vorbereitung der Daten an. Wir wollen die studentisierten Residuen grafisch mit dem `R`-Paket `ggplot2`darstellen. Der Befehl `studres` aus dem `MASS` Paket greift die Residuen aus einem `lm` Objekt ab; also aus `mod`; und studentisiert diese. Studentisieren der Residuen führt eine Art Standardisierung durch, sodass anschließend der Mittelwert *0* und die Varianz *1* ist (somit lassen sich solche Plots immer gleich interpretieren). Speichern Sie diese Residuen als `res` ab und erzeugen Sie dann daraus einen `data.frame` und speichern sie diesen ab unter dem Namen `df_res`. Diesen wollen wir später in den Grafiken mit `ggplot2` verwenden. 
+Wir beginnen mit der Vorbereitung der Daten. Wir wollen die studentisierten Residuen grafisch mit dem `R`-Paket `ggplot2`darstellen. Der Befehl `studres` aus dem `MASS` Paket speichert die Residuen aus einem `lm` Objekt, also aus dem definierten Modell `mod`, und studentisiert diese. Das Studentisieren der Residuen bezeichnet eine Art der Standardisierung, sodass anschließend der Mittelwert *0* und die Varianz *1* ist (somit lassen sich solche Plots immer gleich interpretieren). Speichern Sie die Residuen aus `mod` als `res` ab und erzeugen Sie  daraus einen `data.frame`, den Sie unter dem Namen `df_res` speichern. Diesen wollen wir später in den Grafiken mit `ggplot2` verwenden. 
  
 ```{r test_dataprep, exercise = TRUE, exercise.setup = "exercise_setup1", exercise.eval = FALSE}
 
@@ -238,7 +233,7 @@ res <- studres(mod) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 ```
 
-In dem folgenden Block sehen wir den Code für ein Histogramm in `ggplot2`-Notation. Hier sind einge Zusatzeinstellungen gewählt, die das Histogramm schöner machen sollen. Vervollständigen Sie den Code mit Hilfe der Tipps.
+Im folgenden Block sehen wir den Code für ein Histogramm in `ggplot2`-Notation. Hier sind einige Zusatzeinstellungen gewählt, die das Histogramm optisch aufbereiten. Vervollständigen Sie den Code mit Hilfe der Tipps.
 
 
 ```{r exercise_hist1, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2", fig.height=6, fig.align="center"}
@@ -315,7 +310,7 @@ ggplot(data = df_res, aes(x = res)) +
      stat_function(fun = dnorm, args = list(mean = mean(res), sd = sd(res)))
 ```
 
-Ähnliche Informationen sind aus dem *Q-Q-Plot* zu entnehmen. Die `R`-Funktion aus dem `car` Paket ist dazu sehr nützlich, da hier die Verteilung direkt mit `distribution` festgelegt werden kann.
+Ähnliche Informationen sind aus dem *Q-Q-Plot* zu entnehmen. Dafür kann der Befehl `qqplot` aus dem `car` Paket genutzt werden. Hier kann die Verteilung, gegen die geprüft werden soll, direkt mit `distribution` festgelegt werden kann.
 
 ```{r exercise_qqplot, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2", fig.height=6, fig.align="center"}
 # Grafisch: Q-Q-Diagramm mit der car Funktion qqPlot
@@ -335,9 +330,9 @@ qqplot() # brauch als Argument das Regressionmodell "mod".
 qqPlot(mod, pch = 16, distribution = "norm")
 ```
 
-Nun wollen wir noch statistische Tests verwenden. Diese testen im Grunde genommen die Null-Hypothese: $H_0:$ *"Normalverteilung liegt vor"*. (Wir wissen allerdings, dass wir Hypothesen nur verwerfen können und nicht wirklich annehmen, weshalb diese Tests immer nur unter Vorbehalt interpretiert werden sollten - Aussagen wie etwa: *"$H_0$ nicht verworfen; daraus folgt, dass, dass in der Population Normalverteilung herrscht"*, sind nicht zulässig; wird die $H_0$ nicht verworfen, nehmen wir nur weiterhin an, dass Normalverteilung vorliegt, ein Beweis dafür ist dies nicht).
+Nun wollen wir die Voraussetzung zusätzlich mittels statistischer Tests überprüfen. Diese testen im Grunde genommen die Null-Hypothese: $H_0:$ *"Normalverteilung liegt vor"*. (Wir wissen allerdings, dass wir Hypothesen nur verwerfen können und nicht wirklich annehmen, weshalb diese Tests immer nur unter Vorbehalt interpretiert werden sollten - Aussagen wie etwa: *"$H_0$ nicht verworfen; daraus folgt, dass in der Population Normalverteilung herrscht"*, sind nicht zulässig. Wird die $H_0$ nicht verworfen, nehmen wir nur weiterhin an, dass Normalverteilung vorliegt, ein Beweis ist dies jedoch nicht).
 
-Der `shapiro.test` und der `ks.test` brauchen die Variablen selbst, welche auf Normalverteilung geprüft werden sollen; also `res`.
+Die Funktion `shapiro.test` und `ks.test` benötigen die Variable, die auf Normalverteilung geprüft werden soll, als Argument; hier also `res`.
 
 ```{r exercise_shapiro, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
 # Test auf Abwweichung von der Normalverteilung mit dem Shapiro Test
@@ -375,35 +370,34 @@ ks.test # sind wie folgt angeordnet:
 ks.test(res, "pnorm", mean(res), sd(res))
 ```
 
-Für unser Modell zeigen alle Ergebnisse übereinstimmend, dass die Residuen normalverteilt sind (bzw. lehnen diese Hypothese nicht ab: *Shapiro-Wilk Test* ubd *Kolmogorov-Smirnov Tests gegen die Normalverteilung*).  `distribution = "norm` im `qqPlot` des `car` Pakets erzeugt den Vergleich zur Normalverteilung (auch der Vergleich zu anderen Verteilungen wäre möglich). Dem *Kolmogorov-Smirnov Tests gegen die Normalverteilung* `ks.test` muss zusnächst als erstes Argument `res`, die Variable, deren Verteilung untersucht werden soll, übergeben werden. `"pnorm"` zeigt an, dass die empirische Verteilung unserer Daten `res` mit der Normalverteilung verglichen werden soll (wird hier eine andere Verteilung gewählt, so kann gegen diese geprüft werden; auch können zwei empirisiche Verteilungen auf Gleichheit untersucht werden). Anschließend übergeben wir die verteilungsspezifischen Parameter; hier `mean(res)` (der Mittelwert) sowie `sd(res)` (die Standardabweichung), da die Normalverteilung genau durch diese beiden Parameter bestimmt ist (hier könnten auch theoretisch angenommene Parameter gewählt werden, z.B. `0` und `1` für eine Mittelwert von 0 und einer Varianz von 1 und geprüft werden, ob die beobachteten Daten dieser Verteilung widersprechen). 
+Für unser Modell zeigen alle Ergebnisse übereinstimmend, dass die Residuen normalverteilt sind (bzw. lehnen diese Hypothese nicht ab: *Shapiro-Wilk Test* und *Kolmogorov-Smirnov Tests gegen die Normalverteilung*). Durch die Angabe von `distribution = "norm` als Argument für die Funktion `qqPlot` des `car`-Pakets erzeugt den Vergleich der vorliegenden Variable gegen eine Normalverteilung (auch der Vergleich zu anderen Verteilungen wäre möglich). Dem *Kolmogorov-Smirnov Test gegen die Normalverteilung* `ks.test` muss zunächst als erstes Argument `res`, die Variable, deren Verteilung untersucht werden soll, übergeben werden. `"pnorm"` gibt an, dass die empirische Verteilung unserer Daten `res` mit der Normalverteilung verglichen werden soll (wird hier eine andere Verteilung gewählt, so kann gegen diese geprüft werden; auch können zwei empirisiche Verteilungen auf Gleichheit untersucht werden). Anschließend geben wir die verteilungsspezifischen Parameter; hier `mean(res)` (der Mittelwert) sowie `sd(res)` (die Standardabweichung) an, da die Normalverteilung genau durch diese beiden Parameter bestimmt ist (hier könnten auch theoretisch angenommene Parameter gewählt werden, z.B. `0` und `1` für eine Mittelwert von 0 und einer Varianz von 1 und es kann geprüft werden, ob die beobachteten Daten dieser Verteilung widersprechen). 
 
 Wäre der *Shapiro-Wilk-Normality Tests* oder der *Kolmogorov-Smirnov Tests gegen die Normalverteilung* signifikant auf dem 5%-Niveau, würde dies dafür sprechen, dass "mit einer Irrtumswahrscheinlichkeit von 5% die Null-Hypothese auf Gleichheit der Normalverteilung mit unserer empirischen Verteilung verworfen werden muss, da in der Population die Abweichung der empirischen zur theoretischen Normalverteilung mit der Irrtumswahrscheinlichkeit von 5% ungleich 0 ist". 
 
-Schiefe Verteilungen, welche sich im Histogramm oder im Q-Q-Plot wiederpiegeln sowie zu signifikanten *Shapiro-Wilk-Normality Tests* oder *Kolmogorov-Smirnov Tests gegen die Normalverteilung* führen können, könnten Indizien für nichtlineare (z.B. quadratische) Beziehungen im Datensatz sprechen. Weitere Analysen wären hierfür nötig (siehe hierzu `PsyBSc7::Sitzung_8()`).
+Schiefe Verteilungen, welche sich im Histogramm oder im Q-Q-Plot wiederspiegeln, sowie zu signifikanten *Shapiro-Wilk-Normality Tests* oder *Kolmogorov-Smirnov Tests gegen die Normalverteilung* führen können, könnten Indizien für nichtlineare (z.B. quadratische) Beziehungen im Datensatz sein. Weitere Analysen wären hierfür nötig (siehe hierzu `PsyBSc7::Sitzung_8()`).
 
 ## Multikollinearität
 
 Multikollinearität ist ein potenzielles Problem der multiplen Regressionsanalyse und liegt vor, wenn zwei oder mehrere Prädiktoren hoch miteinander korrelieren. Hohe Multikollinearität
 
-* schränkt die mögliche multiple Korrelation ein, da die Prädiktoren redundant sind und sich überlappende Varianzanteile in $y$ erklären.
+* schränkt die mögliche multiple Korrelation ein, da die Prädiktoren redundant sind und überlappende Varianzanteile in $y$ erklären.
 * erschwert die Identifikation von bedeutsamen Prädiktoren, da deren Effekte untereinander konfundiert sind (die Effekte können schwer voneinander getrennt werden).
-* bewirkt eine Erhöung der Standardfehler der Regressionkoeffizienten *(der Standardfehler ist die Standardabweichung zu der Varianz der Regressionskoeffizienten bei wiederholter Stichprobenziehung und Schätzung)*, d.h. die Schätzungen werden instabil. 
-
+* bewirkt eine Erhöung der Standardfehler der Regressionkoeffizienten *(der Standardfehler ist die Standardabweichung zu der Varianz der Regressionskoeffizienten bei wiederholter Stichprobenziehung und Schätzung)*. Dies bedeutet, dass die Schätzungen der Regressionsparameter instabil, und damit weniger verlässlich, werden. 
 Für weiterführende Informationen zur Instabilität und Standardfehlern siehe [Appendix A](#AppendixA).
 
-Multikollinearität kann durch Inspektion der *bivariaten Zusammenhänge* (Korrelationsmatrix) der Prädiktoren $x_j$ untersucht werden, dies kann aber nicht alle Formen von Multikollinearität aufdecken. Darüber hinaus ist die Berechung der sogennanten *Toleranz* und des *Varianzinflationsfaktors* (VIF) für jeden Prädiktor möglich. Hiefür wird für jeden Prädiktor $x_j$ der Varianzanteil $R_j^2$ berechnet, der durch Vorhersage von $x_j$ durch *alle anderen Prädiktoren* in der Regression erklärt wird. Toleranz und VIF sind wie folgt definiert:
+Multikollinearität kann durch Inspektion der *bivariaten Zusammenhänge* (Korrelationsmatrix) der Prädiktoren $x_j$ untersucht werden, dies kann aber nicht alle Formen von Multikollinearität aufdecken. Darüber hinaus ist die Berechung der sogennanten *Toleranz* und des *Varianzinflationsfaktors* (VIF) für jeden Prädiktor möglich. Hierfür wird für jeden Prädiktor $x_j$ der Varianzanteil $R_j^2$ berechnet, der durch Vorhersage von $x_j$ durch *alle anderen Prädiktoren* in der Regression erklärt wird. Toleranz und VIF sind wie folgt definiert:
 
 * $T_j = 1-R^2_j = \frac{1}{VIF_j}$
 * $VIF = \frac{1}{1-R^2_j} = \frac{1}{T_j}$
 
-Offensichtlich genügt eine der beiden Statistiken, da sie vollständig redundant sind. Empfehlungen als Grenzwert für Kollinearitätsprobleme sind z. B. $VIF_j>10$ ($T_j<0.1$) (siehe [Eid, Gollwitzer, & Schmitt, 2017, S. 712 und folgend](https://hds.hebis.de/ubffm/Record/HEB366849158)). Die Varianzinflationsfaktoren der Prädiktoren im Modell können mit der Funktion `vif` des `car`-Paktes bestimmt werden, der Toleranzwert als Kehrwert der VIFs.
+Offensichtlich genügt eine der beiden Statistiken, da sie vollständig ineinander überführbar und damit redundant sind. Empfehlungen als Grenzwert für Kollinearitätsprobleme sind z. B. $VIF_j>10$ ($T_j<0.1$) (siehe [Eid, Gollwitzer, & Schmitt, 2017, S. 712 und folgend](https://hds.hebis.de/ubffm/Record/HEB366849158)). Die Varianzinflationsfaktoren der Prädiktoren im Modell können mit der Funktion `vif` des `car`-Paktes bestimmt werden, der Toleranzwert als Kehrwert des VIFs.
 
 ```{r}
 # Korrelation der Prädiktoren
 cor(Schulleistungen$female, Schulleistungen$IQ)
 ```
 
-Die Prädiktoren sind nur schwach negativ korreliert. Wir schauen uns trotzdem den VIF und die Toleranz an. Dazu übergeben wir wieder das Regressionsmodell an `vif`.
+Die Prädiktoren sind nur schwach negativ korreliert. Wir schauen uns trotzdem den VIF und die Toleranz an. Dazu übergeben wir wieder das definierte Regressionsmodell an `vif`.
  
 ```{r exercise_VIF, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2"}
 # Varianzinflationsfaktoren
@@ -447,10 +441,9 @@ Für unser Modell wird ersichtlich, dass die Prädiktoren praktisch unkorreliert
 
 ## Identifikation von Ausreißern und einflussreichen Datenpunkten
 
-Die Plausibilität unserer Daten ist enorm wichtig. Aus diesem Grund sollten Aureißer oder einflussreiche Datenpunkte  analysiert werden. Diese können bspw. durch Eingabefehler entstehen (Alter von 211 Jahren anstatt 21) oder es sind seltene Fälle (hochintelligentes Kind in einer Normstichprobe), welche so in natürlicherweise (aber mit sehr geringer Häufigkeit) auftreten können. Es muss dann entschieden werden, ob Ausreißer die Repräsentativität der Stichprobe gefährden und ob diese besser ausgeschlossen werden sollten.  
+Die Plausibilität unserer Daten ist enorm wichtig. Aus diesem Grund sollten Aureißer oder einflussreiche Datenpunkte analysiert werden. Diese können bspw. durch Eingabefehler entstehen (Alter von 211 Jahren anstatt 21) oder es sind seltene Fälle (hochintelligentes Kind in einer Normstichprobe), welche so in natürlicher Weise (aber mit sehr geringer Häufigkeit) auftreten können. Es muss dann entschieden werden, ob Ausreißer die Repräsentativität der Stichprobe gefährden und ob diese besser ausgeschlossen werden sollten.  
 
-
-*Hebelwerte* $h_j$ erlauben die Identifikation von Ausreissern aus der gemeinsamen Verteilung der unabhängigen Variablen, d.h. einzelne Fälle, die weit entfernt vom  Mittelwert der gemeisamen Verteilung der unabhängigen Variablen liegen und somit einen starken Einfluss auf die Regressionsgewichte haben können. Diese werden mit der Funktion `hatvalues` ermittelt. Kriterien zur Beurteilung der Hebelwerte variieren, so werden von [Eid et al. (2017, S. 707 und folgend)](https://hds.hebis.de/ubffm/Record/HEB366849158) Grenzen von $2\cdot k / n$ für große und $3\cdot k / n$ für kleine Stichproben vorgeschlagen, in den Vorlesungsfolien werden Werte von $4/n$ als auffällig eingestuft (hierbei ist $k$ die Anzahl an Prädiktoren und $n$ die Anzahl der Beobachtungen). Alternativ zu einem festen Cut-Off-Kriterium kann die Verteilung der Hebelwerte inspiziert und diejenigen Werte kritisch betrachtet werden, die aus der Verteilung ausreißen. Die Funktion `hatvalues` erzeugt die Hebelwerte aus einem Regression-Objekt. Wir wollen diese als Histogramm darstellen.
+*Hebelwerte* $h_j$ erlauben die Identifikation von Ausreißern aus der gemeinsamen Verteilung der unabhängigen Variablen, d.h. einzelne Fälle, die weit entfernt vom  Mittelwert der gemeinsamen Verteilung der unabhängigen Variablen liegen und somit einen starken Einfluss auf die Regressionsgewichte haben können. Diese werden mit der Funktion `hatvalues` ermittelt. Kriterien zur Beurteilung der Hebelwerte variieren, so werden von [Eid et al. (2017, S. 707 und folgend)](https://hds.hebis.de/ubffm/Record/HEB366849158) Grenzen von $2\cdot k / n$ für große und $3\cdot k / n$ für kleine Stichproben vorgeschlagen, in den Vorlesungsfolien werden Werte von $4/n$ als auffällig eingestuft (hierbei ist $k$ die Anzahl an Prädiktoren und $n$ die Anzahl der Beobachtungen). Alternativ zu einem festen Cut-Off-Kriterium kann die Verteilung der Hebelwerte inspiziert und diejenigen Werte kritisch betrachtet werden, die aus der Verteilung ausreißen. Die Funktion `hatvalues` erzeugt die Hebelwerte aus einem Regression-Objekt. Wir wollen diese als Histogramm darstellen.
 
 ```{r exercise_h, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2", fig.height=6, fig.align="center"}
 # Hebelwerte
@@ -474,7 +467,7 @@ ggplot(data = df_h, aes(x = h)) +
 ```
 
 
-*Cooks Distanz* $CD_i$ gibt eine Schätzung, wie stark sich die Regressionsgewichte verändern, wenn eine Person $i$ aus dem Datensatz entfernt wird. Fälle, derem Elimination zu einer deutlichen Veränderung der Ergebnisse führen würden, sollten kritisch geprüft werden. Als einfache Daumenregel gilt, dass $CD_i>1$ auf einen einflussreichen Datenpunkt hinweist. Cooks Distanz kann mit der Funktion `cooks.distance` ermittel werden.
+*Cook's Distanz* $CD_i$ gibt eine Schätzung, wie stark sich die Regressionsgewichte verändern, wenn eine Person $i$ aus dem Datensatz entfernt wird. Fälle, derem Elimination zu einer deutlichen Veränderung der Ergebnisse führen würden, sollten kritisch geprüft werden. Als einfache Daumenregel gilt, dass $CD_i>1$ auf einen einflussreichen Datenpunkt hinweist. Cook's Distanz kann mit der Funktion `cooks.distance` ermittelt werden.
 
 ```{r exercise_CD, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup2", fig.height=6, fig.align="center"}
 # Cooks Distanz
@@ -532,7 +525,7 @@ Was ist an den fünf identifizierten Fällen konkret auffällig?
 * Fall 80: Sehr niedriger IQ, gleichzeitig durchschnittliche bis überdurchschnittliche Lesekompetenz 
 * Fall 99: Sehr niedrige Werte in IQ, Lesekompetenz und Mathematik
 
-Die Entscheidung, ob Ausreißer oder auffällige Datenpunkte aus Analysen ausgeschlossen werden, ist schwierig und kann nicht pauschal beantwortet werden. Im vorliegenden Fall wäre z.B. zu Überlegen, ob die Intelligenztestwerte der Fälle 80 und 99, die im Bereich von Lernbehinderung oder sogar geistiger Behinderung liegen, in einer Stichprobe von Schülern/innen aus Regelschulen als glaubwürdige Messungen interpretiert werden können oder als Hinweise auf mangelndes Commitment bei der Beantwortung.
+Die Entscheidung, ob Ausreißer oder auffällige Datenpunkte aus Analysen ausgeschlossen werden, ist schwierig und kann nicht pauschal beantwortet werden. Im vorliegenden Fall wäre z.B. zu überlegen, ob die Intelligenztestwerte der Fälle 80 und 99, die im Bereich von Lernbehinderung oder sogar geistiger Behinderung liegen, in einer Stichprobe von Schülern/innen aus Regelschulen als glaubwürdige Messungen interpretiert werden können oder als Hinweise auf mangelndes Commitment bei der Beantwortung.
 
 
 #### Aufgaben
@@ -540,23 +533,23 @@ Die Entscheidung, ob Ausreißer oder auffällige Datenpunkte aus Analysen ausges
 
 
 ## Appendix A {#AppendixA}
-### Multikolinearität und Standardfehler
+### Multikollinearität und Standardfehler
 Im Folgenden stehen $\beta$s für _**unstandardisierte**_ Regressionskoeffizienten.
 
 Für eine einfache Regressionsgleichung mit $$Y_i=\beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \varepsilon_i$$
-kann die selbe Gleichung auch in Matrixnotation formuliert werden $$Y = X\beta + \varepsilon.$$ Hier ist $X$ die Systemmatrix, welche die Zeilenvektoren $X_i=(1, x_{i1}, x_{i2})$ enthält. Die Standardfehler, welche die Streuung der Parameter $\beta:=(\beta_0,\beta_1,\beta_2)$ beschreiben, lassen sich wie folgt bestimmen: Wir bestimmen die Matrix $I$ wie folgt
+kann die selbe Gleichung auch in Matrixnotation formuliert werden $$Y = X\beta + \varepsilon.$$ Hier ist $X$ die Systemmatrix, welche die Zeilenvektoren $X_i=(1, x_{i1}, x_{i2})$ enthält. Die Standardfehler, welche die Streuung der Parameter $\beta:=(\beta_0,\beta_1,\beta_2)$ beschreiben, lassen sich wie folgt ermitteln. Wir bestimmen zunächst die Matrix $I$ wie folgt
 $$I:=(X'X)^{-1}\hat{\sigma}^2_e,$$
-wobei $\hat{\sigma}^2_e$ die Resiudalvarianz unserer Regressionanalyse ist (also der nicht-erklärte Anteil an der Varianz von $Y$). Aus der Matrix $I$ erhalten wir die Standardfehler sehr einfach: Sie stehen im Quadrat auf der Diagonale. Das heißt, die Standardfehler sind $SE(\beta)=\sqrt{\text{diag}(I)}$ (Wir nehmen mit $\text{diag}$ die Diagonalelemente aus $I$ und ziehen aus diesen jeweils die Wurzel: der erste Eintrag ist der $SE$ von $\beta_0$; also $SE(\beta_0)=\sqrt{I_{11}}$; der zweite von $\beta_1$;$SE(\beta_1)=\sqrt{I_{22}}$; usw.). Was hat das nun mit der Kolinearität zu tun? Wir wissen, dass in $X'X$ die Information über die Kovariation im Datensatz steckt (*es muss nur noch durch die Stichprobengröße geteilt werden und das Vektorprodukt der Mittelwerte abgezogen werden; eine Zentrierung um die Mittelwert wird damit vorgenommen sowie eine Normierung an der Stichprobengröße*). Beispielsweise lässt sich die empirische Kovarianzmatrix $S$ zwischen zwei Variablen $z_1$ und $z_2$ sehr einfach bestimmen mit $Z:=(z_1, z_2)$:
+wobei $\hat{\sigma}^2_e$ die Residualvarianz unserer Regressionanalyse ist (also der nicht-erklärte Anteil an der Varianz von $Y$). Aus der Matrix $I$ erhalten wir die Standardfehler sehr einfach: Sie stehen im Quadrat auf der Diagonale. Das heißt, die Standardfehler sind $SE(\beta)=\sqrt{\text{diag}(I)}$ (Wir nehmen mit $\text{diag}$ die Diagonalelemente aus $I$ und ziehen aus diesen jeweils die Wurzel: der erste Eintrag ist der $SE$ von $\beta_0$; also $SE(\beta_0)=\sqrt{I_{11}}$; der zweite von $\beta_1$;$SE(\beta_1)=\sqrt{I_{22}}$; usw.). Was hat das nun mit der Kollinearität zu tun? Wir wissen, dass in $X'X$ die Information über die Kovariation im Datensatz steckt (*dafür muss nur noch durch die Stichprobengröße geteilt werden und das Vektorprodukt der Mittelwerte abgezogen werden; damit wir eine Zentrierung um die Mittelwert sowie eine Normierung an der Stichprobengröße vorgenommen*). Beispielsweise lässt sich die empirische Kovarianzmatrix $S$ zweier Variablen $z_1$ und $z_2$ sehr einfach bestimmen mit $Z:=(z_1, z_2)$:
 $$ S=\frac{1}{n}Z'Z - \begin{pmatrix}\overline{z}_1\\\overline{z}_2 \end{pmatrix}\begin{pmatrix}\overline{z}_1&\overline{z}_2 \end{pmatrix}.$$
-Weitere Informationen hierzu (Kovarianzmatrix und Standardfehler) sind im Appendix B (sowie auch in einigen Kapiteln) von [Eid et al. (2017)](https://hds.hebis.de/ubffm/Record/HEB366849158) Unterpunkt 5.2-5.4 bzw. ab Seite 1058 nachzulesen. 
+Weitere Informationen hierzu (Kovarianzmatrix und Standardfehler) sind im Appendix B (sowie auch in einigen Kapiteln von [Eid et al. (2017)](https://hds.hebis.de/ubffm/Record/HEB366849158) Unterpunkt 5.2-5.4 bzw. ab Seite 1058) nachzulesen. 
 
-Insgesamt bedeutet dies, dass die Standardfehler von der Inversen der Kovarianzmatrix unserer Daten sowie von der Residualvarianz abhängen. Sie sind also groß, wenn die Resiudalvarianz groß ist (damit ist die Vorhersage von $Y$ schlecht) oder wenn die Inverse der Kovarianzmatrix groß ist (also wenn die Variablen stark redundant sind und somit hoch mit einander korrelieren). Nehmen wir dazu der Einfachheit halber an, dass $\hat{\sigma}_e^2=1$ (es geht hier nur um eine numerische Präsentation der Effekte, nicht um ein sinnvolles Modell) sowie, dass $n = 100$ (Stichprobengröße). Zusätzlich gehen wir von zentrierten Variablen (Mittelwert von 0) aus. Dann lässt sich aus $X'X$ durch teilen durch $100$ die Kovarianzmatrix der Variablen bestimmen. Wir gucken uns jetzt drei Fälle an mit 
+Insgesamt bedeutet dies, dass die Standardfehler von der Inversen der Kovarianzmatrix unserer Daten sowie von der Residualvarianz abhängen. Sie sind also groß, wenn die Residualvarianz groß ist (damit ist die Vorhersage von $Y$ schlecht) oder wenn die Inverse der Kovarianzmatrix groß ist (also wenn die Variablen stark redundant sind und somit hoch mit einander korrelieren). Nehmen wir dazu der Einfachheit halber an, dass $\hat{\sigma}_e^2=1$ (es geht hier nur um eine numerische Präsentation der Effekte, nicht um ein sinnvolles Modell) sowie $n = 100$ (Stichprobengröße). Zusätzlich gehen wir von zentrierten Variablen (Mittelwert von 0) aus. Dann lässt sich aus $X'X$ durch Division durch $100$ die Kovarianzmatrix der Variablen bestimmen. Wir gucken uns drei Fälle an mit
 
 *Fall 1*: $X'X=\begin{pmatrix}100&0&0\\0&100&0\\0&0&100\end{pmatrix}.\qquad$
 *Fall 2*: $X'X=\begin{pmatrix}100&0&0\\0&100&99\\0&99&100\end{pmatrix} \qquad$  und 
 *Fall 3*: $X'X=\begin{pmatrix}100&0&0\\0&100&100\\0&100&100\end{pmatrix}$.
 
-Hierbei ist zu beachten, dass $X$ die Systemmatrix ist, welche auch die $1$ des Interzepts enthält. Natürlich ist eine Variable von einer Konstanten unabhängig, weswegen die erste Zeile und Spalte von $X'X$ jeweils der Vektor $(100, 0, 0)$ ist. Die zugehörigen Korrelationsmatrizen können durch teilen durch 100 berechnet werden (*da wir zentrierte Variablen haben, die Stichprobengröße gleich 100 ist und die Varianzen der Variablen gerade 100 sind!*). Wir betrachten nur die Minormatrizen, aus welchen die 1. Zeile und die 1. Spalte gestrichen wurden. Diese teilen wir durch 100 und erhalten die Korrelationsmatrix der Variablen:
+Hierbei ist zu beachten, dass $X$ die Systemmatrix ist, welche auch die $1$ des Interzepts enthält. Natürlich ist eine Variable von einer Konstanten unabhängig, weswegen die erste Zeile und Spalte von $X'X$ jeweils der Vektor $(100, 0, 0)$ ist. Die zugehörigen Korrelationsmatrizen können durch Divison durch 100 berechnet werden (*da wir zentrierte Variablen haben, die Stichprobengröße gleich 100 ist und die Varianzen der Variablen gerade 100 sind!*). Wir betrachten nur die Minormatrizen, aus welchen die 1. Zeile und die 1. Spalte gestrichen wurden. Diese teilen wir durch 100 und erhalten die Korrelationsmatrix der Variablen:
 
 
 *Fall 1*: $\Sigma_1=\begin{pmatrix}1&0\\0&1\end{pmatrix}.\qquad$
@@ -575,7 +568,7 @@ sqrt(diag(I_1)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_
 ```
 Die Standardfehler sind nicht sehr groß: alle liegen bei $0.1$.
 
-Im *Fall 2* sind die zwei Variablen fast perfekt (zu $.99$) korreliert - es liegt hohe Multikolinearität vor. Die Inverse ist noch zu bilden. Die Standardfehler sind deutlich erhöht im Vergleich zu *Fall 1*
+Im *Fall 2* sind die zwei Variablen fast perfekt (zu $.99$) korreliert - es liegt hohe Multikollinearität vor. Die Inverse ist noch zu bilden. Die Standardfehler sind deutlich erhöht im Vergleich zu *Fall 1*.
 ```{r}
 XX_2 <- matrix(c(100,0,0,
                0,100,99,
@@ -593,7 +586,7 @@ det(XX_1) # Determinante Fall 1
 ```
 
 
-Im *Fall 3* sind die zwei Variablen perfekt korreliert - es liegt perfekte Multikolinearität vor. Die Inverse ist  **nicht** zu bilden (da $\text{det}(X'X) = 0$). Die Standardfehler sind nicht zu berechnen. Eine Fehlermeldung wird ausgegeben.
+Im *Fall 3* sind die zwei Variablen perfekt korreliert - es liegt perfekte Multikollinearität vor. Die Inverse kann  **nicht** gebildet werden (da $\text{det}(X'X) = 0$). Die Standardfehler können nicht berechnet werden. Eine Fehlermeldung wird ausgegeben.
 ```{r}
 XX_3 <- matrix(c(100,0,0,
                0,100,100,
@@ -613,7 +606,7 @@ sqrt(diag(I_3)) # Wurzel aus den Diagonalelementen der Inverse = SE, wenn sigma_
 #    Lapack routine dgesv: system is exactly singular: U[2,2] = 0
 ```
 
-Der VIF bzw. die Toleranz quantifizieren die Korrelation zwischen den beiden Variablen. Der VIF wäre in diesen Analysen jeweils 1 und 1 im *1. Fall*, 50.25 und 50.25 im *2. Fall* und nicht berechenbar (bzw. $\infty$) im *3. Fall*. Entsprechend wäre die Toleranz 1 und 1 im *1. Fall*, 0.02 und 0.02 im *2. Fall* und 0 und 0 im *3. Fall*.
+Der VIF bzw. die Toleranz quantifizieren die Korrelation zwischen den beiden Variablen. Der VIF wäre in diesen Analysen im *1. Fall* für beide Variablen 1, im *2. Fall* für beide Variabeln 50.25 und im *3. Fall* nicht berechenbar (bzw. $\infty$). Entsprechend wäre die Toleranz im *1. Fall* 1 und 1, im *2. Fall* 0.02 und 0.02 sowie im *3. Fall* 0 und 0.
 
 Dieser Exkurs zeigt, wie sich die Multikolinearität auf die Standardfehler und damit auf die Präzision der Parameterschätzung auswirkt. Inhaltlich bedeutet dies, dass die Prädiktoren redundant sind und nicht klar ist, welchem Prädiktor die Effekte zugeschrieben werden können.
 
@@ -623,7 +616,7 @@ Dieser Exkurs zeigt, wie sich die Multikolinearität auf die Standardfehler und 
 ### Aufgaben
 #### Datensatz (wie beim letzten Termin)
 
-Der Beispieldatensatz enthält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009. Gegenüber dem letzten Termin sind in dieser Version noch mehr Variablen enthalten, insbesondere über die Eltern und Besitztümer im Elternhaus. 
+Der Beispieldatensatz enthält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009.
 
 ```{r data}
 library(car)
@@ -654,7 +647,7 @@ Im Einzelnen enthält der Datensatz die folgenden Variablen:
 
 #### Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen
 
-In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`), der Bildungsabschluss der Mutter (`MotherEdu`) und die Zahl der Bücher zu Hause (`Books`) bedeutsame Prädiktoren für die Lesekompetenz der Schüler/innen sind. Berechnen Sie diese Modell erneut.
+In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`), der Bildungsabschluss der Mutter (`MotherEdu`) und die Zahl der Bücher zu Hause (`Books`) bedeutsame Prädiktoren für die Lesekompetenz der Schüler/innen sind. Berechnen Sie dieses Modell erneut.
 
 
 ```{r}
@@ -667,14 +660,14 @@ summary(lm.beta(m1))
 
 a) durch Inspektion der Residuenplots und 
 
-b) den Breusch–Pagan Test auf nicht-konstante Varianz
+b) den Breusch–Pagan Test auf nicht-konstante Varianz.
 
 
 #### **Aufgabe 2.** Prüfen Sie die Annahme der Linearität
 
 a) durch Inspektion der partiellen Regressionsplots und 
 
-b) des Tests für quadratische Trends, der mit der Funktion `residualPlots` erzeugt wurde.
+b) durch den Test für quadratische Trends, der mit der Funktion `residualPlots` erzeugt wurde.
 
 #### **Aufgabe 3.** Püfen Sie die Normalverteilung der Residuen 
 
@@ -687,14 +680,14 @@ b) über den Shapiro-Wilks-Test sowie den Kolmogorov-Smirnov-Test.
 
 a) durch Inspektion der bivariaten Korrelationen und
 
-b) Berechnung von VIF und Toleranz.
+b) durch Berechnung von VIF und Toleranz.
 
 
 #### **Aufgabe 5.** Ausreißer und einflussreiche Datenpunkte
 
-a) Inspizieren Sie die Verteilung der Hebelwerten $h_i$
+a) Inspizieren Sie die Verteilung der Hebelwerte $h_i$.
 
-b) Inspizieren Sie die Verteilung von Cooks Distanz $CD_i$
+b) Inspizieren Sie die Verteilung von Cooks Distanz $CD_i$.
 
 c) Sichten Sie die Rohdaten und standardisierten Werte auffälliger Fälle (verwenden Sie die Funktion `influencePlot`).
 
