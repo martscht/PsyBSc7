@@ -202,7 +202,7 @@ round(scale(PISA2009)[IDs,c("Reading", "HISEI", "MotherEdu", "Books")],2)
 * Nach dem großzügigsten Kriterium $3\cdot k / n$ liegen drei Fälle über der Grenze ($h_j>0.06$)
 * Cooks Distanz überschreitet für keinen der Fälle die Grenze von $CD_j>1.0$
 * `influencePlot` kennzeichnet vier Fälle als auffällig. Diese können wie folgt charakterisiert werden:
-    * Fall 43: Ausreißer nach unten beim Abschluss der Mutter (kein Abschluss), sonst unauffällig
+    * Fall 43: Ausreißer nach unten beim Abschluss der Mutter (kein Abschluss) sowie niedriger Sozialstatus, sonst unauffällig
     * Fall 124: Ausreißer nach oben beim Sozialstatus bei gleichzeitig eher niedrigem Abschluss der Mutter und eher niedriger Lesekompetenz
     * Fall 129: Sehr niedrige Lesekompetenz, niedriger Sozialstatus & Bildungsabschluss
     * Fall 141: Niedrige Lesekompetenz "trotz" höchstem Abschluss der Mutter und maximal hoher Bücherzahl
