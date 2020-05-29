@@ -1,5 +1,5 @@
 ---
-title: "Sitzung 7: Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte"
+title: "Sitzung 8: Regressionanalyse IV Modellerweiterungen und nichtlineare Effekte"
 output: 
   learnr::tutorial:
     progressive: true
@@ -34,7 +34,7 @@ knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 ## Einleitung und Datensatz (PISA: wie in den Übungen zum letzten Termin) 
 <small> $*$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_ </small>
 
-In dieser Sitzung werden wir uns weitere nichtlineare Effekte in Regressionsmodellen ansehen. Dazu verwenden wir zunächst den Datensatz aus der Übung zur `PsyBSc7::Sitzung_6`, welcher in den Aufgaben verwendet wurde und dessen Analysen in `PsyBsc7::Loesung_7` mit dem richtigen Passwort einsehbar waren. 
+In dieser Sitzung werden wir uns weitere nichtlineare Effekte in Regressionsmodellen ansehen. Dazu verwenden wir zunächst den Datensatz aus der Übung zur `PsyBSc7::Sitzung_7`, welcher in den Aufgaben verwendet wurde und dessen Analysen in `PsyBSc7::Loesung_7` mit dem richtigen Passwort einsehbar waren. 
 Der Beispieldatensatz enthält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009. 
 
 ```{r data}
@@ -60,7 +60,7 @@ m1 <- lm(Reading ~ HISEI + MotherEdu + Books, data = PISA2009)
 summary(lm.beta(m1))
 ```
 
-Die Residuenplots sowie die Testung auf quadratische Trends zeigen an, dass für den Bildungsabschluss der Mutter auch eine quadratische Beziehung besteht:
+Die Residuenplots sowie die Testung auf quadratische Trends zeigen an, dass für den Bildungsabschluss der Mutter auch eine quadratische Beziehung mit der Lesekompetenz besteht:
 
 ```{r, fig.height=6, fig.align="center"}
 # Residuenplots
@@ -91,12 +91,11 @@ Die Frage ist nun, woher die Verstöße gegen die Normalverteilungsannahme komme
 
 
 
-
 ## Aufnahme eines quadratischen Effekts 
 <small> $***$ _zum Teil basierend auf Unterlagen von Prof. Johannes Hartig_ </small>
 
 
-Wird für den Bildungsabschluss der Mutter mit der Funktion `poly` ein linearer und qudratischer Trend in das Regressionsmodell aufgenommen, wird der quadratische Trend signifikant und das Modell erklärt signifikant mehr Varianz als ohne den quadratischen Trend: Um diese Ergebnisse zu sehen müssen wir zunächst ein quadratisches Regressionsmodell schätzen. Wir interessieren uns anschließend für die standardisierten Ergebnisse (`summary` und `lm.beta`). Den quadratischen Verlauf erhalten wir, indem wir `poly` auf den Bildungsstatus der Mutter anwenden. `poly` nimmt als zweites Argument die Potenz, für welche wir uns interessieren; hier 2:
+Wird für den Bildungsabschluss der Mutter mit der Funktion `poly` ein linearer und qudratischer Trend in das Regressionsmodell aufgenommen, wird der quadratische Trend signifikant und das Modell erklärt signifikant mehr Varianz als ohne den quadratischen Trend: Um diese Ergebnisse zu sehen müssen wir zunächst ein quadratisches Regressionsmodell schätzen. Wir interessieren uns anschließend für die standardisierten Ergebnisse (`summary` und `lm.beta`). Den quadratischen Verlauf erhalten wir, indem wir innerhalb des linearen Modells `poly` auf den Bildungsstatus der Mutter anwenden. `poly` nimmt als zweites Argument die Potenz, für welche wir uns interessieren; hier 2:
 
 ```{r exercise_lm_quad, exercise = TRUE, exercise.eval = FALSE}
 # Modell mit linearem + quadratischem Trend für MotherEdu:
@@ -151,7 +150,7 @@ Mit dem folgenden Befehl können wir auf eine simple Weise das Inkrement bestimm
 summary(m1.b)$r.squared - summary(m1)$r.squared # Inkrement
 ```
 
-Wir möchten dieses Inkrement auf Signifikanz prüfen. Dies ging mit dem `anova` Befehl.
+Wir möchten dieses Inkrement auf Signifikanz prüfen. Dies geht mit dem `anova` Befehl.
 
 
 ```{r test_anova, exercise = TRUE, exercise.setup = "exercise_setup1", exercise.eval = FALSE}
@@ -171,7 +170,7 @@ grade_result(
   fail_if(~ (!identical(.result, res) & !identical(.result, sol2)), 'Der Befehl anova muss in diesem Zusammenhang zwei Argumente entgegennehmen: die zwei Regressions-Objekte, die wir zuvor abgespeichert hatten. Schauen Sie in der Übung zuvor an, wie dieses Modell hieß, falls Sie sich nicht sicher sind.'),
     fail_if(~ (identical(.result, sol2)), 'Das ist an sich RICHTIG, allerdings sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m1, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!'),
   pass_if(~ identical(.result, res)),
-  correct = 'Sehr gut! Dies ist der Modellvergleich des ein- und zweifaktoriellen Modells. Hier sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m1, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!',
+  correct = 'Sehr gut! Dies ist der Modellvergleich des lineares und des quadratischen Modells. Hier sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m1, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!',
   incorrect = 'Leider falsch.',
   glue_correct = '{.correct}',
   glue_incorrect = '{.incorrect} {.message}')
@@ -181,7 +180,7 @@ grade_result(
 
 
 
-Erzeugt man für das erweiterte Modell Residuenplots, ist der quadratische Trend beim Bildungsabschluss komplett verschwunden - er ist ja schon im Modell enthalten:
+Erzeugt man für das erweiterte Modell Residuenplots, ist der quadratische Trend beim Bildungsabschluss komplett verschwunden - er ist ja schon im Modell enthalten und bildet sich somit nicht mehr in den Residuen ab:
 
 ```{r, fig.height=6, fig.align="center"}
 residualPlots(m1.b, pch = 16)
@@ -195,9 +194,9 @@ Mit Hilfe von `I()` lassen sich innerhalb des `lm` Befehls zu dem noch weitere F
 
 
 ## Weitere nichtlineare Effekte
-<small> *Im folgenden werden zum Teil fortgeschrittene Inhalte verwendet. Bitte sehen Sie dies als Bonus zum Vorlesungsstoff an.* </small>
+<small> *Im Folgenden werden zum Teil fortgeschrittene Inhalte verwendet. Bitte sehen Sie dies als Bonus zum Vorlesungsstoff an.* </small>
 
-Ein sehr wichtiges Vorhersagemodell zu Zeiten der Corona-Pandemie oder dem starken Bevölkerungswachstum ist das exponentielle Wachstum. Um dieses genauer zu verstehen, werden einige Grundlagen im Umgang mit Exponenten benötigt. Zum Beispiel müssen wir uns überlegen, welche Rate und welche Basis ein exponentieller Verlauf hat. Beispielsweise wächst $10^x$ deutlich schneller als $2^x$. Wie gut kennen Sie sich noch mit Exponenten und Logarithmen aus?
+Ein sehr wichtiges Vorhersagemodell zu Zeiten der Corona-Pandemie oder in Anbetracht von starkem weltweitem Bevölkerungswachstum ist das exponentielle Wachstum. Um dieses genauer zu verstehen, werden einige Grundlagen im Umgang mit Exponenten benötigt. Zum Beispiel müssen wir uns überlegen, welche Rate und welche Basis ein exponentieller Verlauf hat. Beispielsweise wächst $10^x$ deutlich schneller als $2^x$ (für gleiches wachsendes $x$). Wie gut kennen Sie sich noch mit Exponenten und Logarithmen aus?
 
 ```{r letter-a, echo=FALSE}
 question("Welche Aussagen über Logarithmen bzw. Exponenten stimmen?",
@@ -220,7 +219,7 @@ Im folgenden Exkurs haben Sie die Möglichkeit Ihr Wissen nochmal aufzufrischen 
 
 ### Exkurs: Exponenten und Logarithmen
 
-Um eine exponentielle Gleichung nach $x$ aufzulösen wird der Logarithmus verwendet, denn er ist die Umkehrfunktion zum Exponentiellen (siehe beispielsweise hier für eine Wiederholung zum [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html), [Exponenten; Pierce (2019)](http://www.mathsisfun.com/exponent.html) oder [Exponentenrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponent-laws.html)). In der Schule wird zunächst der Logarithmus zur Basis *10* gelehrt. So kann man die Gleichung $10^x = 100$ leicht auflösen: Dazu müssen beide Seiten logarithmiert (zur Basis *10*) werden $\log_{10}(10^x) = \log_{10}(100)$, denn es gilt im Allgemeinen (hier ist $\log_a$ der Logarithmus zur Basis $a$):
+Um eine exponentielle Gleichung nach $x$ aufzulösen wird der Logarithmus verwendet, denn er ist die Umkehrfunktion zum Exponentiellen (siehe beispielsweise hier für eine Wiederholung zum [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html), [Exponenten; Pierce (2019)](http://www.mathsisfun.com/exponent.html) oder [Exponentenrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponent-laws.html)). In der Schule wird zunächst der Logarithmus zur Basis *10* gelehrt. So kann man die Gleichung $10^x = 100$ leicht auflösen: Dazu müssen beide Seiten (zur Basis *10*) logarithmiert werden: $\log_{10}(10^x) = \log_{10}(100)$, denn es gilt im Allgemeinen:
 
 $$\log_a(a)=1$$
 
@@ -229,6 +228,8 @@ $$\log_a(bc)=\log_a(b)+\log_a(c)$$
 $$\log_a(b^c)=c\log_a(b)$$
 
 $$x=\log_a(a^x)=a^{\log_a(x)}$$
+(hier ist $\log_a$ der Logarithmus zur Basis $a$ und $a, b$ und $c$ sind Zahlen, wobei der Einfachheit halber $a,b,c>0$ gelten soll)
+
 
 Also rechnen wir: $\log_{10}(10^x) = x\log_{10}(10)=x*1=x$ auf der linken Seite und $\log_{10}(100)=2$ auf der rechten Seite. So erhalten wir $x=2$ als Lösung. Natürlich wussten wir schon vorher, dass $10^2=100$ ergibt; es ist aber eine schöne Veranschaulichung, wofür Logarithmen unter anderem gebraucht werden.
 
@@ -236,7 +237,8 @@ Es muss allerdings nicht immer der richtige Logarithmus zur jeweiligen Basis sei
 
 $$\log_{a}(x) = \frac{\log_{b}(x)}{\log_{b}(a)},$$ siehe bspw. [Logarithmus und Logarithmusrechenregeln; Pierce (2018)](http://www.mathsisfun.com/algebra/exponents-logarithms.html). Da diese Gesetzmäßigkeit gilt, wird in der Mathematik und auch in der Statistik meist nur der natürliche Logarithmus (*ln; logarithmus naturalis*) verwendet. Die Basis ist hierbei  $e$ ($\approx 2.718\dots$). Mit den obigen Rechenregeln sowie der Rechenregeln für Exponenten können wir jedes exponentielles Wachstum als Wachstum zur Basis *e* darstellen, denn
 
-$$a^x = e^{\text{ln}(a^x)}=e^{x\text{ln}(a)},\quad\text{ z.B. ist }\quad 10^3=e^{\text{ln}(10^3)}=e^{3\text{ln}(10)}=1000$$. 
+$$a^x = e^{\text{ln}(a^x)}=e^{x\text{ln}(a)},\quad\text{ z.B. ist }\quad 10^3=e^{\text{ln}(10^3)}=e^{3\text{ln}(10)}=1000$$
+
 
 Da sich durch *e* und *ln* alle exponentiellen Verläufe darstellen lassen, wird in der Mathematik häufig *log* als das Symbol für den natürlich Logarithmus verwendet; so ist es auch in `R`: ohne weitere Einstellungen ist `log` der natürliche Logarithmus und `exp` ist die Exponentialfunktion. Mit Hilfe von `log(..., base = 10)` erhalten sie beispielsweise den 10er-Logarithmus. Probieren Sie die obige Gleichung selbst aus:
 
@@ -257,20 +259,30 @@ log(9)/log(3) # mit ln
 ### Das Modellieren von exponentiellem Wachstum
 
 
-Wir betrachten nun eine allgemeine exponentielle Wachstumsfunktion $f(x) = a\ b^{c\ x}$ (hierbei ist $a$ ein Vorfaktor, der die Ausprägung an der Stelle $x=0$ beschreibt, $b$ ist die Basis des exponentiellen Wachstums und $c$ ist ein *eigentlich redundanter* Ratenparameter). Wegen der Beliebigkeit der Basis ist dies gleich $f(x) = e^{\text{ln}(a\ b^{c\ x})}=e^{\text{ln}(a) + \text{ln}(b)cx}$. Nun sind $\text{ln}(a)$ und $\text{ln}(b)c$ zwei Konstanten, die wir einfach umbenennen dürfen. Wir können sie beispielsweise $\beta_0$ und $\beta_1$ nennen; also $\beta_0 := \text{ln}(a)$ und $\beta_1:=\text{ln}(b)c$. Folglich steht $f(x) = e^{\beta_0 + \beta_1x}$ für beliebiges exponentielle Wachstum. Gleichzeit bedeutet dies, dass $\text{ln}(f(x)) = \beta_0 + \beta_1x$ eine lineare Funktion ist, welche wir ganz einfach mit einer Regressionanalyse, also `lm` in R, untersuchen können! Wir können somit sagen, dass durch Logarithmieren von $f(x)$, wir in der Lage sind, das exponentielle Wachstum zu *Linearisieren*, also das exponentielle Wachstum in eine lineare Funktion zu transformieren, welche mit Auswertungsinstrumenten für lineare Funktionen untersucht werden können. Dies bedeutet, dass wir nach logarithmierern der abhängigen Variable in der Lage sind die gesamte Klasse der exponentiellen Funktionen/des exponentiellen Wachstums für die Modellierung unserer Daten zu verwenden. Die folgenden zwei Grafiken verdeutlichen dies (Sie können hier die Parameter beliebig verändern und sich den Effekt auf die Grafiken ansehen; die horizontale gestrichelte Linie repräsentiert den Wert $a$, an welchem die Kurve $f$ bzw. $\ln(f)$ die y-Achse schneidet):
+Wir betrachten nun eine allgemeine exponentielle Wachstumsfunktion $$f(x) = a\ b^{c\ x}$$ (hierbei ist $a$ ein Vorfaktor, der die Ausprägung an der Stelle $x=0$ beschreibt, $b$ ist die Basis des exponentiellen Wachstums und $c$ ist ein *eigentlich redundanter* Ratenparameter). Wegen der Beliebigkeit der Basis ist dies gleich $$f(x) = e^{\text{ln}(a\ b^{c\ x})}=e^{\text{ln}(a) + \text{ln}(b)cx}.$$ Nun sind $\text{ln}(a)$ und $\text{ln}(b)c$ zwei Konstanten, die wir einfach umbenennen dürfen. Wir können sie beispielsweise $\beta_0$ und $\beta_1$ nennen; also $\beta_0 := \text{ln}(a)$ und $\beta_1:=\text{ln}(b)c$. Folglich steht $$f(x) = e^{\beta_0 + \beta_1x}$$ für beliebiges exponentielle Wachstum (wir erhalten den Verlauf "$2^x$" indem wir $\beta_0 = \text{ln}(a) = 0$ und $\beta_1=\text{ln}(b)c = \text{ln}(2)$ wählen; also $a=1, b=2$ und $c=1$). Gleichzeit bedeutet dies, dass $$\text{ln}(f(x)) = \beta_0 + \beta_1x$$ eine lineare Funktion ist, welche wir ganz einfach mit einer Regressionanalyse, also `lm` in R, untersuchen können! Wir können somit sagen, dass wir durch Logarithmieren von $f(x)$  in der Lage sind, das exponentielle Wachstum zu *Linearisieren*, also das exponentielle Wachstum in eine lineare Funktion zu transformieren, welche mit Auswertungsinstrumenten für lineare Funktionen untersucht werden können. Dies bedeutet, dass wir nach Logarithmieren der abhängigen Variable in der Lage sind die gesamte Klasse der exponentiellen Funktionen/des exponentiellen Wachstums für die Modellierung unserer Daten zu verwenden. Die folgenden zwei Grafiken verdeutlichen dies (Sie können hier die Parameter beliebig verändern und sich den Effekt auf die Grafiken ansehen; die horizontale gestrichelte Linien repräsentiert jeweils den Wert $a$ bzw. $\text{ln}(a)$, an welchem die Kurve $f$ bzw. $\ln(f)$ die y-Achse schneiden):
 
-```{r exercise_exp_lograph,  exercise = TRUE, exercise.eval = FALSE, fig.height=6, fig.align="center"}
+```{r exercise_exp_lograph,  exercise = TRUE, exercise.eval = FALSE, fig.height=6, fig.align="center", exercise.lines = 25}
+##################
+#### Einstellen der Koeffizienten und berechnen von f(x)
+#### 
 x <- seq(-1,2,0.1) # x = Variablen (als Zahlen zwischen -1 und 2)
 a <- 2   # Vorfaktor, der die Ausprägung an der Stelle x=0 beschreibt
 b <- 3   #  Basis des exponentiellen Wachstums
 c <- 1.5 # *eigentlich redundanter* Ratenparameter
 f <- a*b^(c*x) # f(x), eine exponentiell-wachsende Funktion in x
-plot(x = x, y = f, type = "l", col = "blue", main = "Plot von f(x) vs. x") # plotte f(x) gegen x
-abline(v = 0, lty = 3) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
+
+##################
+#### Plot von f(x) vs. x
+#### 
+plot(x = x, y = f, type = "l", col = "blue", lwd = 2, main = "Plot von f(x) vs. x") # plotte f(x) gegen x
+abline(v = 0, lwd = 0.7) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
 abline(h = a, lty = 3) # im Punkt a schneidet f (das exponentielle Wachstum) die y-Achse (x=0), h = a zeichnet zu y = a eine horizontale Linie
 
-plot(x = x, y = log(f), type = "l", col = "blue", main = "Plot von ln(f(x)) vs. x") # plotte ln(f(x)) gegen x
-abline(v = 0, lty = 3) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
+##################
+#### Plot von ln(f(x)) vs. x
+#### 
+plot(x = x, y = log(f), type = "l", col = "blue", lwd = 2, main = "Plot von ln(f(x)) vs. x") # plotte ln(f(x)) gegen x
+abline(v = 0, lwd = 0.7) # y-Achse, v = 0 zeichnet eine vertikale Linie bei x = 0
 abline(h = log(a), lty = 3)  # im Punkt log(a) schneidet log(f) (das linearisierte exponentielle Wachstum) die y-Achse (x=0), h =llog(a) zeichnet zu y = log(a) eine horizontale Linie
 ```
 
@@ -278,15 +290,15 @@ abline(h = log(a), lty = 3)  # im Punkt log(a) schneidet log(f) (das linearisier
 ### Das Modellieren von exponentiellem Wachstum am Beispiel der Weltbevölkerung von 1800 bis 2020
 
 
-Nun können wir beispielsweise die Entwicklung der Weltbevölkerung von 1800 bis 2020 modellieren. Dazu müssen wir zunächst die Daten einladen:
-Die Dokumentation des Datensatzes mit Datenquellen sind hier einzusehen: [gapminder.org-Dokumentationen](https://www.gapminder.org/data/documentation/gd003/). Schauen wir uns zunächst den Datensatz an.
+Nun können wir beispielsweise die Entwicklung der Weltbevölkerung von 1800 bis 2020 modellieren. Dazu müssen wir zunächst die Daten laden:
+Die Dokumentation des Datensatzes mit Datenquellen sind hier einzusehen: [gapminder.org-Dokumentationen](https://www.gapminder.org/data/documentation/gd003/). Im Paket `PsyBSc7` ist unter dem Namen `WorldPopulation` ein vorverarbeiter Datensatz enthalten. Diesen können wir ganz einfach wie folgt laden und ansehen:
 
 ```{r}
 data("WorldPopulation", package = "PsyBSc7") # Bereits zusammengefasster Datensatz von 1800-2020
 head(WorldPopulation) # Datenstruktur
 ```
 
-In der ersten Spalte steht das Jahr; in der 2. die Weltbevölkerungsgröße. Wir wollen dies uns grafisch ansehen. Verwenden Sie `ggplot`, um die Population (`Population`) gegen das Jahr (`Year`) abzutragen und verwenden Sie `geom_point()`.
+In der ersten Spalte steht das Jahr; in der 2. die Weltbevölkerungsgröße. Wir wollen uns dies grafisch ansehen. Verwenden Sie `ggplot`, um die Population (`Population`) gegen das Jahr (`Year`) abzutragen und verwenden Sie `geom_point()`.
 
 ```{r exercise_graph_pop,  exercise = TRUE, exercise.eval = FALSE, fig.height=6, fig.align="center"}
 ggplot(...)
@@ -306,10 +318,10 @@ ggplot(data = ..., aes(x = ..., y = ...)) + geom_point()
 ggplot(data = WorldPopulation, aes(x = Year, y = Population))+geom_point()
 ```
 
-Das Diagramm lässt deutlich einen nichtlinearen Anstieg der Weltbevölkerung von 1800 bis 2020 vermuten. Auffällig ist auch der leichte Knick, der um 1950 zu vermuten ist und ab welchem die Bevölkerung, deskriptiv gesehen, noch stärker wächst. Dieser Knick ist zum Teil durch das Ende des Krieges, aber auch durch modernere Landwirtschaft und das Aufkommen von neuen Medikamenten (z.B. Penezilin) zu erklären. 
+Das Diagramm lässt deutlich einen nichtlinearen Anstieg der Weltbevölkerung von 1800 bis 2020 vermuten. Auffällig ist auch der leichte Knick, der um 1950 zu vermuten ist und ab welchem die Bevölkerung, deskriptiv gesehen, noch stärker wächst. Dieser Knick ist zum Teil durch das Ende des Krieges, aber auch durch modernere Landwirtschaft und das Aufkommen von neuen Medikamenten (z.B. Penicilline) zu erklären. 
 
 ### Lineares Modell für das Bevölkerungswachstum
-Wir wollen uns naiver Weise ein Regressionmodell, also einen linearen Verlauf, der Weltbevölkerung vorhergesagt durch das Jahr, ansehen.
+Wir wollen uns naiverweise ein lineares Regressionmodell, also einen linearen Verlauf, der Weltbevölkerung vorhergesagt durch das Jahr, ansehen.
 
 
 ```{r, fig.height=6, fig.align="center"}
@@ -333,7 +345,7 @@ ggplot(data = df_res, aes(x = res)) +
      labs(title = "Histogramm der Residuen mit Normalverteilungsdichte\n für das lineare Modell", x = "Residuen") # Füge eigenen Titel und Achsenbeschriftung hinzu
 ```
 
-Durch `+ geom_smooth(method="lm", formula = "y~x")`, kann mit `ggplot` ein linearer Trend inklusive Konfidenzintervall hinzugefügt werden. Obwohl ein linearer Verlauf sehr unwahrscheinlich erscheint, können mit dem linearen Modell bereits `r round(summary(m_l)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte durch die Jahreszahl eklärt werden. Wie der Grafik deutlich zu entnehmen ist, sind die Residuen in dieser Regressionanalyse stark abhängig von der Jahreszahl (negatives Residuum von von a. 1860-1970 und positive Residuen sonst; *Wiederholung*: $\varepsilon_i=Y_i-\hat{Y}_i$, wobei $\hat{Y}_i$ der vorhergesagte Wert ist). Auch wenn wir uns das zugehörige Histogramm der Residuen ansehen, widerspricht dieses der Annahme auf Normalverteilung. 
+Durch `+ geom_smooth(method="lm", formula = "y~x")`, kann mit `ggplot` ein linearer Trend inklusive Konfidenzintervall hinzugefügt werden. Obwohl ein linearer Verlauf sehr unwahrscheinlich erscheint, können mit dem linearen Modell bereits `r round(summary(m_l)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte durch die Jahreszahl eklärt werden. Wie der Grafik deutlich zu entnehmen ist, sind die Residuen in dieser Regressionanalyse stark abhängig von der Jahreszahl (negatives Residuum von a. 1860-1970 und positive Residuen sonst; *Wiederholung*: $\varepsilon_i=Y_i-\hat{Y}_i$, wobei $\hat{Y}_i$ der vorhergesagte Wert ist). Auch wenn wir uns das zugehörige Histogramm der Residuen ansehen, widerspricht dieses der Annahme auf Normalverteilung. 
 
 ### Quadratisches Modell für das Bevölkerungswachstum
 Vielleicht ist auch hier ein quadratischer Effekt versteckt? Wir möchten dem auf den Grund gehen und nutzen wieder die Funktion `poly`, um ein Polynom 2. Grades (eine quadratische Funktion) der Jahreszahl in unsere Analysen mit aufzunehmen.
@@ -384,7 +396,7 @@ grade_result(
   fail_if(~ (!identical(.result, res) & !identical(.result, sol2)), 'Der Befehl anova muss in diesem Zusammenhang zwei Argumente entgegennehmen: die zwei Regressions-Objekte, die wir zuvor abgespeichert hatten. Schauen Sie in der Übung zuvor an, wie dieses Modell hieß, falls Sie sich nicht sicher sind.'),
     fail_if(~ (identical(.result, sol2)), 'Das ist an sich RICHTIG, allerdings sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m_l, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!'),
   pass_if(~ identical(.result, res)),
-  correct = 'Sehr gut! Dies ist der Modellvergleich des ein- und zweifaktoriellen Modells. Hier sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m_l, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!',
+  correct = 'Sehr gut! Dies ist der Modellvergleich des linearen und des quadratischen Modells. Hier sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m_l, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!',
   incorrect = 'Leider falsch.',
   glue_correct = '{.correct}',
   glue_incorrect = '{.incorrect} {.message}')
@@ -404,11 +416,11 @@ ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_smooth(method="lm", formula = "y~poly(x,2)", col = "darkblue")  # plotte quadratischen Verlauf
 ```
 
-Durch den quadratischen Verlauf lassen sich `r round(summary(m_q)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_q)$r.squared*100 - summary(m_l)$r.squared*100, 2)`% entspricht (*mit einer Irrtumswahrscheinlichkeit von 5% ist das Inkrement in der Population nicht null.* Dies ist äquivialent zu folgdender Aussage: *mit einer Irrtumswahrscheinlichkeit von 5% ist der Effektsparameter (der Regressionkoeffizient) des quadratischen Verlaufs in der Population nicht null*; dies spricht folglich für einen quadratischen im Gegensatz zu einem linearen Verlauf). Der Grafik ist deutlich zu entnehmen, dass der quadratische Verlauf nicht weit vom empirischen entfernt liegt.
+Durch den quadratischen Verlauf lassen sich `r round(summary(m_q)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_q)$r.squared*100 - summary(m_l)$r.squared*100, 2)`% entspricht (*mit einer Irrtumswahrscheinlichkeit von 5% ist das Inkrement in der Population nicht null.* Dies ist äquivialent zu folgdender Aussage: *mit einer Irrtumswahrscheinlichkeit von 5% ist der Effektparameter (der Regressionskoeffizient) des quadratischen Verlaufs in der Population nicht null*; dies spricht folglich für einen quadratischen im Gegensatz zu einem linearen Verlauf). Der Grafik ist deutlich zu entnehmen, dass der quadratische Verlauf nicht weit vom empirischen entfernt liegt.
 
 ### Exponentielles Modell für das Bevölkerungswachstum
 
-Nun wollen wir prüfen, ob nicht ein exponentieller Verlauf die Daten noch besser beschreibt. Dazu müssen wir zunächst die Weltpopulation logarithmieren und können anschließend ein lineares Modell verwenden. Transformieren Sie hierzu die Variablen und speichern diese als weitere Spalte in unserem Datensatz ab.
+Nun wollen wir prüfen, ob ein exponentieller Verlauf die Daten noch besser beschreibt. Dazu müssen wir zunächst die Weltpopulation logarithmieren und können anschließend ein lineares Modell verwenden. Transformieren Sie hierzu die Variablen und speichern diese als weitere Spalte in unserem Datensatz ab. Ordnen Sie diese folgendem Namen zu: `WorldPopulation$log_Population <- ...` und geben Sie anschließend `WorldPopulation$log_Population` aus. Der Name ist entscheidend, da wir diesen später weiter verwenden wollen. 
 
 
 
@@ -444,29 +456,20 @@ m_q <- lm(Population ~ poly(Year,2), data = WorldPopulation) # quadratischer Ver
 WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
 ```
 
-Wir wollen anschließend ein einfaches Regressionsmodell schätzen, in welchem die logarithmierte Bevölkerungszahl die abhängige Variable darstellt. Geben Sie die `summary` aus.
+Wir wollen anschließend ein einfaches Regressionsmodell schätzen, in welchem die logarithmierte Bevölkerungszahl die abhängige Variable darstellt. Speichern Sie das `lm` Objekt unter dem Namen `m_log` ab. Geben Sie die `summary` für `m_log` aus.
 
-```{r test_log_Pop_reg,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup3"}
+```{r exercise_log_Pop_reg,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup3"}
 
 ```
 
+```{r exercise_log_Pop_reg-hint-1}
+m_log <- lm(... ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
 
-```{r test_log_Pop_reg-check}
-# Intro into excercise
-WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
+```
 
-
-# Begin grading:
+```{r exercise_log_Pop_reg-solution}
 m_log <- lm(log_Population ~ Year, data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
-res <- summary(m_log)
-
-grade_result(
-  fail_if(~ (!identical(.result, res)), 'Sie müssen die Variable log_Population vorhersagen durch das Jahr. Geben Sie davon die summary aus.'),
-  pass_if(~ identical(.result, res)),
-  correct = 'Sehr gut! Sie haben die logarithmierte Weltbevölkerung durch den  Trend der Zeit vorhergesagt und die summary davon ausgegeben.',
-  incorrect = 'Leider falsch.',
-  glue_correct = '{.correct}',
-  glue_incorrect = '{.incorrect} {.message}')
+summary(m_log)
 ```
 
 ```{r, include = F}
@@ -485,7 +488,7 @@ Das lineare Modell für die logarithmierte Bevölkerunsdichte scheint gut zu den
 ```{r, fig.height=6, fig.align="center"}
 ggplot(data = WorldPopulation, aes(x = Year, y = log_Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")+
-  labs(titel = "Logarithmierte Weltbevölkerung vs. Jahr")
+  labs(title = "Logarithmierte Weltbevölkerung vs. Jahr")
 ```
 
 Wieso erklärt nun das quadratische Modell mehr Variation? Wir wollen die Vorhersage auch retransformiert plotten, um sie mit dem quadratischen Verlauf grafisch vergleichen zu können. Dazu müssen wir die vorhergesagten Werte unseres logarithmischen Modells verwenden und mit mit der Umkehrfunktion des Logarithmus retransformieren. Diese können wir einem `lm`-Objekt mit `predict` entlocken.
@@ -547,51 +550,38 @@ Das Diagramm der retransformierten vorhergesagten Werten signalisiert, dass ein 
 
 
 ```{r exercise_resid_mlog, fig.height=6, fig.align="center",  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup5"}
-residualPlot(...) # Residualplot
+residualPlot(..., col = "red") # Residualplot
 ```
 
 ```{r exercise_resid_mlog-solution}
 # Finale Lösung
-residualPlot(m_log) # Residualplot
+residualPlot(m_log, col = "red") # Residualplot
 ```
 
 Dem Residualplot ist zu entnehmen, dass ein nicht-linearer Verlauf angemessen wäre. Wir gehen dieser Vermutung nach, indem wir dem Log-Plot  einen quadratischen Verlauf hinzufügen.
 
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 ggplot(data = WorldPopulation, aes(x = Year, y = log_Population))+
      geom_point()+geom_smooth(method="lm", formula = "y~x", col = "red")+
   geom_smooth(method="lm", formula = "y~poly(x,2)", col = "gold3")+
-  labs(titel = "Logarithmierte Weltbevölkerung vs. Jahr")
+  labs(title = "Logarithmierte Weltbevölkerung vs. Jahr")
 ```
 
 
 Vielleicht wächst die Bevölkerung sogar schneller als exponentiell? Die gelbe Linie im logarithmierten Plot lässt dies vermuten. Um dies genauer zu untersuchen fügen wir auch in das logarithmierte Modell einen quadratischen Trend der Zeit ein.
 
 ### Quadratisch-exponentielles Modell für das Bevölkerungswachstum
-Dies wollen wir in einem Regressionsmodell der logarithmierten Populationsgröße mit quadratischen Trend (`poly(...,2)`) der Zeit schätzen. Geben Sie hierzu die `summary` aus.
+Dies wollen wir schätzen, indem wir im Regressionsmodell der logarithmierten Populationsgröße  einen quadratischen Trend (`poly(...,2)`) für die Zeit definieren. Geben Sie für dieses Regressionsmodell die `summary` aus.
 
-```{r test_log_Pop_reg_quad,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup5"}
+```{r exercise_log_Pop_reg_quad,  exercise = TRUE, exercise.eval = FALSE, exercise.setup = "exercise_setup5"}
 m_log_quad <- 
+summary(...)
 ```
 
-
-```{r test_log_Pop_reg_quad-check}
-# Intro into excercise
-WorldPopulation$log_Population <- log(WorldPopulation$Population) # Logarithmus der Weltbevölkerung
-
-
-# Begin grading:
+```{r exercise_log_Pop_reg_quad-solution}
 m_log_quad <- lm(log_Population ~ poly(Year, 2), data = WorldPopulation) # lineares Modell mit log(y) als AV (logarithmische Skala)
-res <- summary(m_log_quad)
-
-grade_result(
-  fail_if(~ (!identical(.result, res)), 'Sie müssen die Variable log_Population vorhersagen durch den quadratischen Verlauf des Jahres. Geben Sie davon die summary aus.'),
-  pass_if(~ identical(.result, res)),
-  correct = 'Sehr gut! Sie haben die logarithmierte Weltbevölkerung durch einen quadratischen Trend der Zeit vorhergesagt und die summary davon ausgegeben',
-  incorrect = 'Leider falsch.',
-  glue_correct = '{.correct}',
-  glue_incorrect = '{.incorrect} {.message}')
+summary(m_log_quad)
 ```
 
 ```{r, include = F}
@@ -608,9 +598,9 @@ m_log_quad <- lm(log_Population ~ poly(Year, 2), data = WorldPopulation) # linea
 ```
 
 
-Testen Sie dieses auf Signifikanz mit `anova` im Vergleich zu `m_log`.
+Testen Sie dieses Modell im Vergleich zu `m_log` auf Signifikanz mit `anova` .
 
-```{r test_anova_pop_log,  exercise = TRUE, exercise.eval = FALSE, exercise.setup="exercise_setup2"}
+```{r test_anova_pop_log,  exercise = TRUE, exercise.eval = FALSE, exercise.setup="exercise_setup6"}
 
 ```
 
@@ -629,13 +619,13 @@ grade_result(
   fail_if(~ (!identical(.result, res) & !identical(.result, sol2)), 'Der Befehl anova muss in diesem Zusammenhang zwei Argumente entgegennehmen: die zwei Regressions-Objekte, die wir zuvor abgespeichert hatten. Schauen Sie in der Übung zuvor an, wie dieses Modell hieß, falls Sie sich nicht sicher sind.'),
     fail_if(~ (identical(.result, sol2)), 'Das ist an sich RICHTIG, allerdings sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m_log, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!'),
   pass_if(~ identical(.result, res)),
-  correct = 'Sehr gut! Dies ist der Modellvergleich des ein- und zweifaktoriellen Modells. Hier sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m_log, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!',
+  correct = 'Sehr gut! Dies ist der Modellvergleich des linearen und des quadratischen logarithmierten Modells. Hier sollte dem anova-Befehl immer das "kleinere" (restriktivere) Modell (mit weniger Prädiktoren und Parametern, die zu schätzen sind) zuerst übergeben werden. Hier: m_log, da sonst die df negativ sind und auch die Änderung in den Sum of Sq (Quadratsumme) negativ sind! `R` erkennt dies zwar und testet trotzdem die richtige Differenz auf Signifikanz, aber wir wollen uns besser vollständig korrekt aneignen!',
   incorrect = 'Leider falsch.',
   glue_correct = '{.correct}',
   glue_incorrect = '{.incorrect} {.message}')
 ```
 
-Durch den quadratisch-exponentiellen Verlauf lassen sich `r round(summary(m_log_quad)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_log_quad)$r.squared*100 - summary(m_log)$r.squared*100, 2)`% im Vergleich zum reinen exponentiellen Verlaufsmodell entspricht. Interessant zu sehen ist, dass fast 100% der Variation im Datensatz erklärbar ist. Eine Übersicht über $R^2$ in den vier Modellen ist in [Appendix B](#AppendixB) einzusehen.
+Durch den quadratisch-exponentiellen Verlauf (bzw. den quadratischen Verlauf in den logarithmierten Daten) lassen sich `r round(summary(m_log_quad)$r.squared*100, 2)`% der Variation der Bevölkerungsdichte erklären, was einem signifikantem Varianzinkrement von `r round(summary(m_log_quad)$r.squared*100 - summary(m_log)$r.squared*100, 2)`% im Vergleich zum reinen exponentiellen Verlaufsmodell entspricht. Interessant zu sehen ist, dass fast 100% der Variation im Datensatz erklärbar ist. Eine Übersicht über $R^2$ in den vier Modellen ist in [Appendix B](#AppendixB) einzusehen.
 
 
 Stellen wir dies grafisch dar. Dazu müssen wir wieder die Vorhersage abspeichern. Diese können wir einem `lm`-Objekt mit `predict` entlocken.
@@ -687,6 +677,12 @@ ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
      geom_line(aes(x = Year, y = pred_Pop_exp), col = "red", lwd = 1.5)+
      geom_line(aes(x = Year, y = pred_Pop_exp_quad), col = "gold3", lwd = 2)
 
+# nur quadratisch-exponentiell
+ggplot(data = WorldPopulation, aes(x = Year, y = Population))+
+     geom_point()+
+     geom_line(aes(x = Year, y = pred_Pop_exp_quad), col = "gold3", lwd = 2)+
+  labs(title = "Beobachtetes und durch das quadratisch-exponentielle Modell\n vorhergesagtes Bevölkerungswachstum")
+
 res <- studres(m_log_quad) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 # Grafisch: Histogramm mit Normalverteilungskurve
@@ -705,16 +701,16 @@ residualPlot(m_log_quad)
 Es ist deutlich zu sehen, dass der Knick um 1950 durch das quadratisch-exponentielle Wachstum am besten darzustellen/ zu modellieren ist.
 Das Histogramm der Residuen des logarithmierten quadratischen Modells (welches das quadratisch-exponentielle Wachstum der Bevölkerung darstellt) ist etwas rechts-schief/links-steil. Die Residuenplots zeigen außerdem, dass auch hier die Residuen nicht vollständig unsystematisch sind. Dennoch ist die Resiudalvarianz sehr klein.
 
-Da die Modelle des quadratischen und des quadratisch-exponentiellen Verlaufs nicht geschachtelt sind (*sie gehen nicht auseinander hervor und sind nicht durch Restringieren, bzw. Nullsetzen, von Regressionsparametern aus einander überführbar*) und können daher nicht inferenzstatistisch miteinander verglichen werden. Da das quadratisch-exponentielle Modell mehr Variation als das rein quadratische Modell aufklärt und auch grafisch besser zum Verlauf der Daten passt (*besonders von 1800 bis ca. 1850 sagt das quadratische Modell ein Verkleinern der Bevölkerung vorher*), entscheiden wir uns final für dieses. 
+Da die Modelle des quadratischen und des quadratisch-exponentiellen Verlaufs nicht geschachtelt sind (*sie gehen nicht auseinander hervor und sind nicht durch Restringieren, bzw. Nullsetzen, von Regressionsparametern aus einander überführbar*), können sie nicht inferenzstatistisch miteinander verglichen werden. Da das quadratisch-exponentielle Modell mehr Variation aufklärt als das rein quadratische Modell und auch grafisch besser zum Verlauf der Daten passt (*besonders von 1800 bis ca. 1850 sagt das quadratische Modell ein Verkleinern der Bevölkerung vorher*), entscheiden wir uns final für dieses. 
 
 
 ### Parameterinterpretation des quadratisch-exponentielles Modell für das Bevölkerungswachstum
 
-Was bedeuten nun die Parameter in unserem quadratisch-exponentiellen Modell? Der Regressionskoeffizient des linearen Trends von `poly` liegt bei `r round(coef(m_log_quad)[2], 2)` und der Koeffizient des quadratischen Trends bei `r round(coef(m_log_quad)[3], 2)`. Dies spricht für ein **beschläunigtes exponentielles Wachstum**. Nach diesem Vorhersagemodel scheinen die Menschen sich schneller als exponentiell zu vermehren (zumindest von 1800 bis 2020). Eine Übersicht über die Modelle sehen Sie in [Appendix C](#AppendixC).
+Was bedeuten nun die Parameter in unserem quadratisch-exponentiellen Modell? Der Regressionskoeffizient des linearen Trends von `poly` liegt bei `r round(coef(m_log_quad)[2], 2)` und der Koeffizient des quadratischen Trends bei `r round(coef(m_log_quad)[3], 2)`. Dies spricht für ein **beschleunigtes exponentielles Wachstum**. Nach diesem Vorhersagemodel scheinen die Menschen sich schneller als exponentiell zu vermehren (zumindest von 1800 bis 2020). Eine Übersicht über die Modelle sehen Sie in [Appendix C](#AppendixC).
 
-Wären beide Koeffizienten negativ, so würde dies für *beschleunigtes exponentiellen Zerfall/Abnahme* sprechen. Ist der Koeffizient des quadratische Trends negativ, wird von *exponentiellen Wachstum mit Dämpfung* gesprochen. 
+Wären beide Koeffizienten negativ, so würde dies für *beschleunigten exponentiellen Zerfall/Abnahme* sprechen. Ist der Koeffizient des quadratische Trends negativ, wird von *exponentiellem Wachstum mit Dämpfung* gesprochen. 
 
-Final ist zu sagen, dass die Menschheit am wahrscheinlichsten  exponentiell wächst. Ein quadratisches Modell ist im Allgemeinen nicht sinnvoll. Da wir uns in dieser Übung nur einen kleine Zeitausschnitt angesehen haben, kam es zu diesen Abweichungen. Allerdings würde das geschätzte quadratische Modell für das Jahr `0` eine Bevölkerungszahl von `r predict(object = m_q, newdata = data.frame(Year=c(0)))`, was absolut nicht sinnvoll ist. 
+Final ist zu sagen, dass die Menschheit am wahrscheinlichsten exponentiell wächst. Ein quadratisches Modell ist im Allgemeinen nicht sinnvoll. Da wir uns in dieser Übung nur einen kleine Zeitausschnitt angesehen haben, kam es zu diesen Abweichungen. Allerdings würde das geschätzte quadratische Modell für das Jahr `0` eine Bevölkerungszahl von `r round(predict(object = m_q, newdata = data.frame(Year=c(0)))/10^11, 2)`$*10^{11}$ vorhersagen, was absolut nicht sinnvoll ist. 
 
 
 #### Aufgaben
@@ -735,9 +731,9 @@ Die Funktion `poly` erzeugt sogenannte *orthogonale Polynome*. Das bedeutet, das
 ```{r}
 round(apply(X = cbind(X, X2, X_poly), MARGIN = 2, FUN = mean), 2) # Mittelwerte über die Spalten hinweg berechnen
 round(apply(X = cbind(X, X2, X_poly), MARGIN = 2, FUN = sd), 2) # Standardabweichung über die Spalten hinweg berechnen
-round(cor(cbind(X, X2, X_poly)),2) # Correlationen berechnen
+round(cor(cbind(X, X2, X_poly)),2) # Korrelationen berechnen
 ```
-Die Funktion `apply` führt auf die Matrix, welche dem Argument `X` übergeben wird, entweder über die Zeilen `MARGIN = 1` oder über die Spalten `MARGIN = 2` (hier jeweils gewählt) die Funktion aus, welche im Argument `FUN` angegeben wird. So wird zunächst mit `FUN = mean` der Mittelwert und anschließend mit `FUN = sd` die Standardabweichung von $X, X^2$ sowie `poly(X, 2)` berechnet. Der Korrelationsmatrix ist zu entnehmen, dass $X$ und $X^2$ in diesem Beispiel sehr hoch miteinander korrelieren und somit gleiche lineare Informationen enthalten ($\hat{r}_{X,X^2}$ = `cor(X, X2)` = 0.97), während die linearen und die quadratischen Anteile in `poly(X, 2)` keinerlei lineare Gemeinsamkeiten haben - sie sind unkorreliert (`cor(poly(X,2)1 , poly(X,2)2)` = 0). Ein weiterer Vorteil ist nun, dass wenn die Anteile von `poly(X, 2)` sukkezive in ein Regressionmodell aufgenommen werden, ändern sich die Parameterschätzungen des linearen Terms im Modell nicht. Der Anteil erklärter Varianz bleibt jedoch in allen gleich - die Modelle sind äquivalent, egal auf welche Art und Weise quadratische Terme gebildet werden. 
+Die Funktion `apply` führt an der Matrix, welche dem Argument `X` übergeben wird, entweder über die Zeilen `MARGIN = 1` oder über die Spalten `MARGIN = 2` (hier jeweils gewählt) die Funktion aus, welche im Argument `FUN` angegeben wird. So wird zunächst mit `FUN = mean` der Mittelwert und anschließend mit `FUN = sd` die Standardabweichung von $X, X^2$ sowie `poly(X, 2)` berechnet. Der Korrelationsmatrix ist zu entnehmen, dass $X$ und $X^2$ in diesem Beispiel sehr hoch miteinander korrelieren und somit gleiche lineare Informationen enthalten ($\hat{r}_{X,X^2}$ = `cor(X, X2)` = 0.97), während die linearen und die quadratischen Anteile in `poly(X, 2)` keinerlei lineare Gemeinsamkeiten haben - sie sind unkorreliert (`cor(poly(X,2)1 , poly(X,2)2)` = 0). Ein weiterer Vorteil ist deshalb, dass bei sukzessiver Aufnahme der Anteile von `poly(X, 2)` in ein Regressionmodell, sich die Parameterschätzungen des linearen Terms im Modell nicht (bzw. sehr wenig) ändern. Der Anteil erklärter Varianz bleibt jedoch in allen gleich - die Modelle sind äquivalent, egal auf welche Art und Weise quadratische Terme gebildet werden. 
 
 
 ```{r}
@@ -781,12 +777,12 @@ Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich v
 
 * **Lineares Modell**: $Y_i = \beta_0 + \beta_1t_i + \varepsilon_i$
 
-* **Quadratisches Modell**: $Y_i = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$
+* **Quadratisches Modell**: $Y_i = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$. Hier wurde mit `poly(...,2)` eine Transformation der Variable Zeit vorgenommen, was hier durch "$^*$" dargestellt werden soll.
 
 
-* **Logarithmisches Modell**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i + \varepsilon_i} = e^{\beta_0 + \beta_1t_i} \ e^{\varepsilon_i}$. Diesem Modell ist zu entnehmen, dass der Fehler in Abhängigkeit von der Ausprägung der unabhängigen Variablen (hier: $t_i$) sich unterschiedlich stark auf das Kriterium (die abhängige Variable, hier die Bevölkerungszahl) auswirkt - er hängt also mit der Ausprägung der unabhängigen Variable zusammen. Dies ist im logarithmierten Modell nicht mehr der Fall; es handelt sich hier bis auf die Transformation der abhängigen Variable um ein "normales" Regressionsmodell: Hier verliert sich diese Beziehung zwischen unabhängiger Variable und Fehler!
+* **Logarithmisches Modell**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i + \varepsilon_i} = e^{\beta_0 + \beta_1t_i} \ e^{\varepsilon_i}$. Diesem Modell ist zu entnehmen, dass sich der Fehler in Abhängigkeit von der Ausprägung der unabhängigen Variablen (hier: $t_i$) unterschiedlich stark auf das Kriterium (die abhängige Variable, hier die Bevölkerungszahl) auswirkt - er hängt also mit der Ausprägung der unabhängigen Variable zusammen. Dies ist im logarithmierten Modell nicht mehr der Fall; es handelt sich hier bis auf die Transformation der abhängigen Variable um ein "normales" Regressionsmodell: Hier verliert sich diese Beziehung zwischen unabhängiger Variable und Fehler!
 
-* **Logarithmisches Modell mit quadratischem Term**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i}$.
+* **Logarithmisches Modell mit quadratischem Term**: $\text{ln}(Y_i) = \beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i$ bzw. retransformiert $Y_i = e^{\beta_0 + \beta_1t_i^* + \beta_2t_i^{*2} + \varepsilon_i}$. Hier wurde mit `poly(...,2)` eine Transformation der Variable Zeit vorgenommen, was hier durch "$^*$" dargestellt werden soll.
 
 
 ## Appendix D {#AppendixD}
@@ -795,7 +791,7 @@ Die angenommenen Modell pro Messzeitpunkt $i$ sind von der Konzeption deutlich v
 
 Zur Vorbereitung laden Sie die Daten ein. Entweder via folgendem Code
 
-```{r}
+```{r, eval = F}
 library(ggplot2)
 library(car)
 library(MASS)
@@ -826,44 +822,54 @@ long <- merge(confirmed_long, deaths_long,
 ### Full data ----
 covid <- aggregate(cbind(Confirmed, Deaths) ~ Country.Region + Day, data = long, FUN = 'sum')
 
+### Only data until April 11th ----
+covid_full <- covid
+covid <- covid[covid$Day < 80, ]
+
 ### Subsets ----
 covid_de <- covid[covid$Country.Region == 'Germany', ]
 covid_sel <- covid[covid$Country.Region %in% c('France', 'Germany', 'Italy', 'Spain', 'United Kingdom'), ]
-covid_today <- covid_sel[covid_sel$Day == max(covid_sel$Day), ]
-covid_global <- covid[covid$Day == max(covid$Day), ]
 ```
 
-oder via `PsyBSc7::Aufgabe_2()`.
+oder über `PsyBSc7::Aufgaben_8()`. Die tagesaktuellen Daten finden Sie unter `covid_full`. Wir wollen uns für die Aufgaben jedoch zeitlich einschränken bis zum 11. April. Betrachten Sie in den folgenden Aufgaben bitte immer nur die Daten bis zum 11. April in `covid_sel` und `covid_de`.
 
+#### **Aufgabe 1.**  Verschaffen Sie sich einen Überblick über die Daten:
 
-#### **Aufgabe 1.**  Verschaffen Sie sich einen Überblick über die Daten durch
+a)  Stellen Sie die Verläufe der bestätigten Fälle in den Ländern Frankreich, Deutschland, Italien, Spanien und Großbritannien gegen die Zeit dar  *(Subdatensatz `covid_sel`)*.
 
-a)  Stellen Sie die Verläufe der bestätigten Fälle in den Ländern Frankreich, Deutschland, Italien, Spanien und Groß Britannien gegen die Zeit dar  *(Subdatensatz `covid_sel`)*
+b) Stellen Sie nur den Verlauf der bestätigten Fälle von Deutschland grafisch dar  *(Subdatensatz `covid_de`)*.
 
-b) Stellen Sie nur den Verlauf der bestätigten Fälle von Deutschland grafisch dar  *(Subdatensatz `covid_de`)* 
+c) Stellen Sie den logarithmierten Verlauf der bestätigten Fälle von Deutschland grafisch dar. 
+Tipp: der Logarithmus von 0 ist nicht definiert (`log(0) = -Inf`); diese Werte machen in einer Regressionsanalyse keinen Sinn, weswegen Sie diese durch fehlende Werte (`NA`) ersetzten müssen *(Subdatensatz `covid_de`)* 
 
-c) Stellen Sie den logarithmierten Verlauf der bestätigten Fälle von Deutschland grafisch dar 
-Tipp: der Logarithmus von 0 ist nicht definiert (`log(0) = -Inf`); diese Werte machen in einer Regressionsanalyse keinen sind, weswegen Sie diese durch fehlende Werte (`NA`) ersetzten müssen *(Subdatensatz `covid_de`)* 
-
-d) Löschen Sie die Tage aus dem Datensatz heraus, an welchen noch keine bestätigten Fälle in Deutschland aufgetreten sind
+d) Löschen Sie die Tage aus dem Datensatz heraus, an welchen noch keine bestätigten Fälle in Deutschland aufgetreten sind.
 Tipp:  `is.na(...)` fragt ab, ob Einträge in einem Element fehlen. Entsprechend können mit `!is.na(...)` jene Fälle angesprochen werden, die vorhanden sind. *(Subdatensatz `covid_de`)* 
 
 
 
-#### **Aufgabe 2.** Schauen Sie sich den Verlauf der bestätigten Infektion in Deutschland genauer an durch
+#### **Aufgabe 2.** Schauen Sie sich den Verlauf der bestätigten Infektion in Deutschland genauer an, indem Sie die folgenden Regressionsmodelle berechnen.
 
-a) durch lineare und quadratische Regression
-
-b) lineare Regression der logarithmierten "Confirmed" Cases
-
-c) Passt das Modell zu den Daten? Analysieren Sie die Voraussetzungen 
-
-d) Stellen den logarithmierten sowie den retransformierten Verlauf dar
-
-#### **Aufgabe 3.** Prüfen Sie nun, ob sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können
+a) Berechnen Sie eine lineare und quadratische Regression und vergleichen Sie die beiden Modelle. *(Subdatensatz `covid_de`)*
 
 
-#### **Bonusaufgabe.**: Vergleichen Sie die Koeffizienten des exponentiellen Wachstums zwischen den Ländern (*Diese Aufgabe ist komplett freiwillig und muss nicht gelöst werden, um die Studienleistung zu bekommen.*)
+b) Führen Sie eine lineare Regression der logarithmierten "Confirmed" Cases durch. *(Subdatensatz `covid_de`)*
+
+
+c) Passt das lineare logarithmierte Modell (bzw. das exponentielle Modell) zu den Daten? Analysieren Sie die Voraussetzungen. *(Subdatensatz `covid_de`)*
+
+
+d) Stellen Sie den logarithmierten sowie den retransformierten Verlauf dar. *(Subdatensatz `covid_de`)*
+
+
+
+#### **Aufgabe 3.** Prüfen Sie nun, ob Sie die Vorhersage durch ein quadratisch-exponentielles Modell verbessern können, indem Sie einen quadratischen Trend der Zeit aufnehmen und die Modelle vergleichen.
+*(Subdatensatz `covid_de`)*
+
+
+#### **Bonusaufgabe.**: Vergleichen Sie die Koeffizienten des exponentiellen Wachstums zwischen den Ländern.
+*(Subdatensatz `covid_sel`)*
+
+(*Die Bonusaufgabe ist komplett freiwillig und muss nicht gelöst werden, um die Studienleistung zu erbringen.*)
 
 
 ## Literatur

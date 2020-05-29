@@ -1,5 +1,5 @@
 ---
-title: "Sitzung 6: Regressionanalyse III --- Aufgaben mit Lösungen"
+title: "Sitzung 7: Regressionanalyse III --- Aufgaben mit Lösungen"
 output: 
   learnr::tutorial:
     progressive: true
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 
 ## Datensatz (wie beim letzten Termin)
 
-Der Beispieldatensatz enthält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009. Gegenüber dem letzten Termin sind in dieser Version noch mehr Variablen enthalten, insbesondere über die Eltern und Besitztümer im Elternhaus. 
+Der Beispieldatensatz enthält Daten zu Lesekompetenz aus der deutschen Stichprobe der PISA-Erhebung in Deutschland 2009.
 
 ```{r data}
 library(car)
@@ -59,7 +59,7 @@ Im Einzelnen enthält der Datensatz die folgenden Variablen:
 
 ## Vorhersage von Lesekompetenz mit individuellen Merkmalen der Schüler/innen
 
-In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`), der Bildungsabschluss der Mutter (`MotherEdu`) und die Zahl der Bücher zu Hause (`Books`) bedeutsame Prädiktoren für die Lesekompetenz der Schüler/innen sind. Berechnen Sie diese Modell erneut.
+In der letzten Sitzung hatten wir herausgefunden, dass der Sozialstatus (`HISEI`), der Bildungsabschluss der Mutter (`MotherEdu`) und die Zahl der Bücher zu Hause (`Books`) bedeutsame Prädiktoren für die Lesekompetenz der Schüler/innen sind. Berechnen Sie dieses Modell erneut.
 
 
 ```{r}
@@ -71,7 +71,7 @@ summary(lm.beta(m1))
 ## **Aufgabe 1.** Prüfen Sie die Annahme der Homoskedastizität 
 ### a) durch Inspektion der Residuenplots und 
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 # Residuenplots
 residualPlots(m1, pch = 16)
 ```
@@ -88,9 +88,9 @@ Weder die Grafiken noch der Breusch-Pagan-Test lassen deutliche Verletzungen der
 
 ## **Aufgabe 2.** Prüfen Sie die Annahme der Linearität 
 ### a) durch Inspektion der partiellen Regressionsplots und 
-### b) des Tests für quadratische Trends, der mit der Funktion `residualPlots` erzeugt wurde.
+### b) durch den Test für quadratische Trends, der mit der Funktion `residualPlots` erzeugt wurde.
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 
 # Partielle Regressionsplots
 avPlots(m1, pch = 16)
@@ -103,7 +103,7 @@ Die Effekte von Sozialstatus und Büchern werden durch das lineare Modell gut wi
 
 ## **Aufgabe 3.** Püfen Sie die Normalverteilung der Residuen 
 ### a) grafisch (Histogramm, Q-Q-Plot) und 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 res <- studres(m1) # Studentisierte Residuen als Objekt speichern
 df_res <- data.frame(res) # als Data.Frame für ggplot
 # Grafisch: Histogramm mit Normalverteilungskurve
@@ -141,7 +141,7 @@ Im Histogramm ist zu erkennen, dass die Residuen etwas linksschief / rechtssteil
 cor(PISA2009[,c("HISEI", "MotherEdu", "Books")])
 
 ```
-### b) Berechnung von VIF und Toleranz.
+### b) durch Berechnung von VIF und Toleranz.
 ```{r}
 
 vif(m1)   # VIF
@@ -154,10 +154,10 @@ Die drei Prädiktoren sind alle substanziell positiv korreliert ($r>.40$). VIF /
 
 
 ## **Aufgabe 5.** Ausreißer und einflussreiche Datenpunkte
-### a) Inspizieren Sie die Verteilung der Hebelwerten $h_i$
+### a) Inspizieren Sie die Verteilung der Hebelwerte $h_i$.
 
 
-```{r}
+```{r, fig.height=6, fig.align="center"}
 
 # Hebelwerte
 # Hebelwerte
@@ -170,8 +170,8 @@ ggplot(data = df_h, aes(x = h)) +
  geom_vline(xintercept = 9/n, col = "orange")
 ```
 
-### b) Inspizieren Sie die Verteilung von Cooks Distanz $CD_i$
-```{r}
+### b) Inspizieren Sie die Verteilung von Cooks Distanz $CD_i$.
+```{r, fig.height=6, fig.align="center"}
 # Cooks Distanz
 CD <- cooks.distance(m1) # Cooks Distanz
 df_CD <- data.frame(CD) # als Data.Frame für ggplot
@@ -182,7 +182,7 @@ ggplot(data = df_CD, aes(x = CD)) +
 ```
 
 ### c) Sichten Sie die Rohdaten und standardisierten Werte auffälliger Fälle (verwenden Sie die Funktion `influencePlot`).
-```{r}
+```{r, fig.height=6, fig.align="center"}
 # Blasendiagramm mit Hebelwerten, studentisierten Residuen und Cooks Distanz
 # In "IDs" werden die Zeilennummern der auffälligen Fälle gespeichert
 InfPlot <- influencePlot(m1)
@@ -198,13 +198,14 @@ round(scale(PISA2009)[IDs,c("Reading", "HISEI", "MotherEdu", "Books")],2)
 
 ### Ergebnisinterpretation **Aufgabe 5.**
 
-* Nach dem pauschalen Kriterium $4/n$ ist die Hälfte der Hebelwerte auffällig ($h_j>0.027$). * Nach dem großzügigsten Kriterium $3\cdot k / n$ liegen drei Fälle über der Grenze ($h_j>0.06$)
+* Nach dem pauschalen Kriterium $4/n$ ist die Hälfte der Hebelwerte auffällig ($h_j>0.027$). 
+* Nach dem großzügigsten Kriterium $3\cdot k / n$ liegen drei Fälle über der Grenze ($h_j>0.06$)
 * Cooks Distanz überschreitet für keinen der Fälle die Grenze von $CD_j>1.0$
 * `influencePlot` kennzeichnet vier Fälle als auffällig. Diese können wie folgt charakterisiert werden:
-    * Fall 43: Ausreißer nach unten beim Abschluss der Mutter (kein Abschluss), sonst unauffällig
+    * Fall 43: Ausreißer nach unten beim Abschluss der Mutter (kein Abschluss) sowie niedriger Sozialstatus, sonst unauffällig
     * Fall 124: Ausreißer nach oben beim Sozialstatus bei gleichzeitig eher niedrigem Abschluss der Mutter und eher niedriger Lesekompetenz
     * Fall 129: Sehr niedrige Lesekompetenz, niedriger Sozialstatus & Bildungsabschluss
-    * Fall 141: Niedrige Lesekompetenz "trotz" höchstem Abschluss der Mutter und maxiamal hoher Bücherzahl
+    * Fall 141: Niedrige Lesekompetenz "trotz" höchstem Abschluss der Mutter und maximal hoher Bücherzahl
 * Alle Werte sind hier prinzipiell möglich, weswegen keiner der möglichen Ausreißer zwangsläufig aus den Analysen ausgeschlossen werden muss.
 
 ## Bonus-Analyse

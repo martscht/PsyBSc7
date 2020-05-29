@@ -3,11 +3,14 @@
 \name{Aufgaben}
 \alias{Aufgaben}
 \alias{Aufgaben_2}
+\alias{Aufgaben_8}
 \title{Aufgaben vorbereiten
 
 Mit diesen Funktioenn führen Sie die notwendigen Schritte durch, um die Aufgabenbearbeitung vorzubereiten.}
 \usage{
 Aufgaben_2()
+
+Aufgaben_8()
 }
 \description{
 Aufgaben vorbereiten

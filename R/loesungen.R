@@ -96,6 +96,7 @@ Loesungen_5 <- function(password) {
   }
 }
 
+
 #' @rdname Loesungen
 #' @export
 Loesungen_6 <- function(password) {
@@ -114,7 +115,6 @@ Loesungen_6 <- function(password) {
   }
 }
 
-
 #' @rdname Loesungen
 #' @export
 Loesungen_7 <- function(password) {
@@ -126,12 +126,12 @@ Loesungen_7 <- function(password) {
     devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
   }
   library(gradethis)
-
-    if (digest::digest(password) != "6adb4894cab39c7d479b5284a1a907b2") {
+  
+  if (digest::digest(password) != "6adb4894cab39c7d479b5284a1a907b2") {
     message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
     compile("Reg3_lo")
-  }  
+  }
 }
 
 
@@ -146,12 +146,12 @@ Loesungen_8 <- function(password) {
     devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
   }
   library(gradethis)
-
-  if (digest::digest(password) != "6a1832c69beaea1033bd63fb0387a58a") {
+  
+  if (digest::digest(password) != "8907a926ba43ceb87047b0055529250c") {
     message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
-    message('Leider ist die Lösung noch nicht fertig :(.')
-  }  
+    compile("Reg4_lo")
+  }
 }
 
 

@@ -29,7 +29,7 @@ Dafür nutzen wir die Daten, die [von der Johns Hopkins Universität auf GitHub]
 
 ### Daten herunterladen
 
-Die erste Möglichkeit die Daten zu beziehen, ist es sie als .csv Dateien herunterzuladen und lokal zu speichern. Dafür reichen diese beiden Links aus: [`r fa('download')` Bestätigte Fälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv) und [`r fa('download')` Todesfälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv).
+Die erste Möglichkeit die Daten zu beziehen, ist es sie als .csv Dateien herunterzuladen und lokal zu speichern. Dafür reichen diese beiden Links aus: [`r fontawesome::fa('download')` Bestätigte Fälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv) und [`r fontawesome::fa('download')` Todesfälle](https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv).
 
 Statt den Umweg über externe Dateien zu gehen, können wir aber auch direkt aus R heraus die entsprechenden .csv öffnen und als Objekte anlegen. Das hat den Vorteil, dass die Datei jedes mal, wenn das R-Skript ausgeführt wird, auf den aktuellen Stand gebracht wird.
 

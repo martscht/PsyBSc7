@@ -126,6 +126,9 @@ Sitzung_8 <- function() {
   learnr::run_tutorial('Reg4', package = 'PsyBSc7')
 }
 
+
+
+
 #' @rdname Sitzungen
 #' @export
 Sitzung_9 <- function() {
