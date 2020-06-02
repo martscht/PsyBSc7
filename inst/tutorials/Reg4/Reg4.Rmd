@@ -192,11 +192,12 @@ X <- scale(poly(PISA2009$MotherEdu, 2))
 std_par_ME <- c(0.1588, -0.1436)
 pred_effect_ME <- X %*% std_par_ME
 std_ME <- scale(PISA2009$MotherEdu)
-plot(x = std_ME,  y = pred_effect_ME, pch = 16, col = "blue", cex = 2,
-     ylab = "std. Leseleistung | Others", xlab = "std. Bildungsabschluss der Mutter | Others",
-     main = "Standardisierte bedingte Beziehung zwischen\n Bildungsabschluss der Mutter und Leseleistung")
+data_ME <- data.frame(std_ME, pred_effect_ME)
+ggplot(data = data_ME, aes(x = std_ME,  y = pred_effect_ME)) + geom_point(pch = 16, col = "blue", cex = 4)+
+     labs(x = "std. Leseleistung | Others", y =  "std. Bildungsstatus der Mutter | Others",
+     title = "Standardisierte bedingte Beziehung zwischen\n Bildungsstatus der Mutter und Leseleistung")
 ```
-Die Grafik zeigt die vorhergesagte Beziehung zwischen den standardisierten Werten des Bildungsabschlusses der Mutter sowie der Leseleistung. Hierbei steht erneut `|` für "gegeben" (wie etwa beim Partialplot mit `avPlots` aus der vergangenen Sitzung: `PsyBSc7::Sitzung_7()`). Wir sehen also den um die anderen Variablen im Modell bereinigten Effekt zwischen Bildungsabschluss und Leseleistung. Hierbei ist ein starker mittlerer Anstieg der Leseleistung (-1 bis ca. 0.1) für einen Anstieg des Bildungsabschlusses von deutlich unterdurchschnittlich bis durchschnittlich (von -2.5 bis 0) zu sehen. Danach ist die Beziehung zwischen Leseleistung und Bildungsabschluss fast horizontal (Veränderung geringer als 0.1), was dafür spricht, dass es für einen durchschnittlichen bis überdurchschnittlichen Bildungsabschluss der Mutter (von 0 bis 1.5) kaum eine Beziehung zwischen den Variablen gibt. Dies bedeutet, dass besonders ein geringer Bildungsabschlusses der Mutter drastische Auswirkungen auf die Leseleistung des Kindes hat, es aber fast keinen Unterschied für die Leseleistung macht, wenn die Mutter einen besonders hohen Bildungsabschluss hat.
+Für den Grafik-Code sowie weitere Informationen zu quadaratischen Effekten und Funktionen siehe [Appendix A](#AppendixA). Die Grafik zeigt die vorhergesagte Beziehung zwischen den standardisierten Werten des Bildungsabschlusses der Mutter sowie der Leseleistung. Hierbei steht erneut `|` für "gegeben" (wie etwa beim Partialplot mit `avPlots` aus der vergangenen Sitzung: `PsyBSc7::Sitzung_7()`). Wir sehen also den um die anderen Variablen im Modell bereinigten Effekt zwischen Bildungsabschluss und Leseleistung. Hierbei ist ein starker mittlerer Anstieg der Leseleistung (-1 bis ca. 0.1) für einen Anstieg des Bildungsabschlusses von deutlich unterdurchschnittlich bis durchschnittlich (von -2.5 bis 0) zu sehen. Danach ist die Beziehung zwischen Leseleistung und Bildungsabschluss fast horizontal (Veränderung geringer als 0.1), was dafür spricht, dass es für einen durchschnittlichen bis überdurchschnittlichen Bildungsabschluss der Mutter (von 0 bis 1.5) kaum eine Beziehung zwischen den Variablen gibt. Dies bedeutet, dass besonders ein geringer Bildungsabschlusses der Mutter drastische Auswirkungen auf die Leseleistung des Kindes hat, es aber fast keinen Unterschied für die Leseleistung macht, wenn die Mutter einen besonders hohen Bildungsabschluss hat.
 
 
 Mit Hilfe von `poly(X, p)`, lassen sich Polynome bis zum Grad $p$ (als $X, X^2,\dots,X^{p-1},X^p$) in die Regression mit aufnehmen, ohne, dass sich die Parameterschätzungen der anderen Potenzen von $X$ ändern. Wenn Sie noch mehr über die Funktion `poly` und ihre Vorteile erfahren möchten, dann schauen Sie sich doch mal den [Appendix A](#AppendixA) an. 
@@ -764,7 +765,111 @@ rbind(coef(m1.b1), coef(m1.c1))
 rbind(coef(m1.b2),coef(m1.c2))
 ```
 
+### Code für quadratische Verlaufsgrafik
+Der Code, der die Grafik des standardisierten vorhergesagten bedingten Verlaufs des Bildungsabschlusses der Mutter erzeugt, sieht folgendermaßen aus:
+```{r, fig.align="center", fig.height=6}
+X <- scale(poly(PISA2009$MotherEdu, 2))
+std_par_ME <- c(0.1588, -0.1436)
+pred_effect_ME <- X %*% std_par_ME
+std_ME <- scale(PISA2009$MotherEdu)
+data_ME <- data.frame(std_ME, pred_effect_ME)
+ggplot(data = data_ME, aes(x = std_ME,  y = pred_effect_ME)) + geom_point(pch = 16, col = "blue", cex = 4)+
+     labs(x = "std. Leseleistung | Others", y =  "std. Bildungsstatus der Mutter | Others",
+     title = "Standardisierte bedingte Beziehung zwischen\n Bildungsstatus der Mutter und Leseleistung")
+```
 
+Wie kommen wir nun auf die Interpretation dieser Funktion?
+
+### Einordnung quadratischer Verläufe
+Eine allgemeine quadratische Funktion $f$ hat folgende Gestalt
+$$f(x):=ax^2 + bx + c,$$
+wobei $a\neq 0$, da es sich sonst nicht um eine quadratische Funktion handelt. Wäre $a=0$, würde es sich um eine lineare Funktion mit Achsenabschnitt $c$ und Steigung (Slope) $b$ handeln. Wäre zusätzlich $b=0$, so handelt es sich um eine horizontale Linie bei $y=f(x)=c$. 
+Für betraglich große $x$ fällt $x^2$ besonders ins Gewicht. Damit entscheidet das Vorzeichen von $a$ ob es sich um eine u-formige (falls $a>0$) oder eine umgekehrt-u-förmige Beziehung handelt (falls $a<0$). Die betragliche Größe von $a$ entscheidet hierbei, wie getaucht die u-formige Beziehung (die Parabel) ist. Die reine quadratische Beziehung $f(x)=x^2$ sieht so aus.
+
+```{r, fig.align="center", fig.height=6}
+a <- 1; b <- 0; c <- 0
+x <- seq(-2,2,0.01)
+f <- a*x^2 + b*x + c
+data_X <- data.frame(x, f)
+ggplot(data = data_X, aes(x = x,  y = f)) + 
+     geom_line(col = "black")+
+     labs(x = "x", y =  "f(x)",
+          title = expression("f(x)="~x^2))
+```
+Wir werden diese Funktion immer als Referenz mit in die Grafiken einzeichnen.
+
+```{r, fig.align="center", fig.height=6}
+a <- 0.5; b <- 0; c <- 0
+x <- seq(-2,2,0.01)
+f <- a*x^2 + b*x + c
+data_X <- data.frame(x, f)
+ggplot(data = data_X, aes(x = x,  y = f)) + 
+     geom_line(col = "blue", lwd = 2)+ geom_line(mapping = aes(x, x^2), lty = 3)+
+     labs(x = "x", y =  "f(x)",
+          title = expression("f(x)="~0.5*x^2))
+```
+
+```{r, fig.align="center", fig.height=6}
+a <- 2; b <- 0; c <- 0
+x <- seq(-2,2,0.01)
+f <- a*x^2 + b*x + c
+data_X <- data.frame(x, f)
+ggplot(data = data_X, aes(x = x,  y = f)) + 
+     geom_line(col = "blue", lwd = 2)+ geom_line(mapping = aes(x, x^2), lty = 3)+
+     labs(x = "x", y =  "f(x)",
+          title = expression("f(x)="~2*x^2))
+```
+
+
+```{r, fig.align="center", fig.height=6}
+a <- -1; b <- 0; c <- 0
+x <- seq(-2,2,0.01)
+f <- a*x^2 + b*x + c
+data_X <- data.frame(x, f)
+ggplot(data = data_X, aes(x = x,  y = f)) + 
+     geom_line(col = "blue", lwd = 2)+ geom_line(mapping = aes(x, x^2), lty = 3)+
+     labs(x = "x", y =  "f(x)",
+          title = expression("f(x)="~-x^2))
+```
+
+$c$ bewirkt eine vertikale Verschiebung der Parabel:
+```{r, fig.align="center", fig.height=6}
+a <- 1; b <- 0; c <- 1
+x <- seq(-2,2,0.01)
+f <- a*x^2 + b*x + c
+data_X <- data.frame(x, f)
+ggplot(data = data_X, aes(x = x,  y = f)) + 
+     geom_line(col = "blue", lwd = 2)+ geom_line(mapping = aes(x, x^2), lty = 3)+
+     labs(x = "x", y =  "f(x)",
+          title = expression("f(x)="~x^2+1))
+```
+
+$b$ bewirkt eine horizontale und vertikale Verschiebung, die nicht mehr leicht  vorhersehbar ist. Für $f(x)=x^2+x$ lässt sich beispielsweise durch Umformen leicht erkennen: $f(x)=x^2+x=x(x+1)$, dass diese Funktion zwei Nullstellen bei $0$ und $-1$ hat. Somit ist ersichtlich, dass die Funktion nach unten und links verschoben wird:
+
+```{r, fig.align="center", fig.height=6}
+a <- 1; b <- 1; c <- 0
+x <- seq(-2,2,0.01)
+f <- a*x^2 + b*x + c
+data_X <- data.frame(x, f)
+ggplot(data = data_X, aes(x = x,  y = f)) + 
+     geom_line(col = "blue", lwd = 2)+ geom_line(mapping = aes(x, x^2), lty = 3)+
+     labs(x = "x", y =  "f(x)",
+          title = expression("f(x)="~x^2+x))
+```
+
+Für die genaue Gestallt einer allgemeinen quadratischen Funktion $ax^2 + bx + c$ müssten wir die Nullstellen durch Lösen der Gleichung $ax^2 + bx + c=0$ bestimmen (via p-q Formel oder a-b-c-Formel). Den Scheitelpunkt würden wir durch Ableiten der Gleichung und Nullsetzten bestimmen. Wir müssten also $2ax+b=0$ lösen und dies in die Gleichung einsetzten. Für die Interpretation der Ergebnisse reicht es zu wissen, dass $a$ eine Stauchung bewirkt und entscheind für die Funktion ist, ob sie u-förmig oder invers-u-förmig verläuft.
+
+```{r, fig.align="center", fig.height=6}
+a <- -0.5; b <- 1; c <- 2
+x <- seq(-2,2,0.01)
+f <- a*x^2 + b*x + c
+data_X <- data.frame(x, f)
+ggplot(data = data_X, aes(x = x,  y = f)) + 
+     geom_line(col = "blue", lwd = 2)+ geom_line(mapping = aes(x, x^2), lty = 3)+
+     labs(x = "x", y =  "f(x)",
+          title = expression("f(x)="~-0.5*x^2+x+2))
+```
+$\longrightarrow$ so ähnlich sieht die bedingte Beziehung (kontrolliert für die weiteren Prädiktoren im Modell) zwischen Bildungsabschluss der Mutter und der Leseleistung aus.
 
 ## Appendix B {#AppendixB}
 ### Übersicht über erklärte Varianzanteile
