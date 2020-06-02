@@ -866,14 +866,14 @@ Der Code, der die Grafik des standardisierten vorhergesagten bedingten Verlaufs 
 X <- scale(poly(PISA2009$MotherEdu, 2))
 std_par_ME <- c(0.1588, -0.1436)
 pred_effect_ME <- X %*% std_par_ME
-std_ME <- scale(PISA2009$MotherEdu)
+std_ME <- X[,1]
 data_ME <- data.frame(std_ME, pred_effect_ME)
 ggplot(data = data_ME, aes(x = std_ME,  y = pred_effect_ME)) + geom_point(pch = 16, col = "blue", cex = 4)+
      labs(x = "std. Leseleistung | Others", y =  "std. Bildungsstatus der Mutter | Others",
-     title = "Standardisierte bedingte Beziehung zwischen\n Bildungsstatus der Mutter und Leseleistung")
+          title = "Standardisierte bedingte Beziehung zwischen\n Bildungsstatus der Mutter und Leseleistung")
 ```
 
-Wir verwenden `scale`, um die linearen und quadratischen Anteile des Bildungsabschlusses der Mutter zu standardisieren. Anschließend ist das Interzept der quadratischen Funktion 0 ($c=0$). Die zugehörigen standardisierten Koeffizienten sind $b=0.1588$ und $a=-0.1436$. Somit wissen wir, dass es sich um eine invers-u-förmige Beziehung handelt (ohne die Grafik zu betrachten). Wir speichern die standardisierten Koeffizienten unter `std_par_ME` ab und verwenden anschließend das Matrixprodukt ` X %*% std_par_ME`, um die vorhergesagten Werte via $y_{std,i}=0.1588 ME - 0.1436ME^2$ zu berechnen. Diese vorhergesagten Werte plotten wir nun gegen die standardisierten Werte des Bildungsabschlusses der  Mutter `scale(PISA2009$MotherEdu)`.
+Wir verwenden `scale`, um die linearen und quadratischen Anteile des Bildungsabschlusses der Mutter zu standardisieren und speichern sie in `X`. Anschließend ist das Interzept der quadratischen Funktion 0 ($c=0$, da wir standadisiert haben). Die zugehörigen standardisierten Koeffizienten sind $b=0.1588$ und $a=-0.1436$. Somit wissen wir, dass es sich um eine invers-u-förmige Beziehung handelt (ohne die Grafik zu betrachten). Wir speichern die standardisierten Koeffizienten unter `std_par_ME` ab und verwenden anschließend das Matrixprodukt ` X %*% std_par_ME`, um die vorhergesagten Werte via $y_{std,i}=0.1588 ME - 0.1436ME^2$ zu berechnen. Diese vorhergesagten Werte plotten wir nun gegen die standardisierten Werte des Bildungsabschlusses der  Mutter, welcher in der ersten Spalte von `X` steht: `X[,1]`.
 
 ## Appendix B {#AppendixB}
 ### Übersicht über erklärte Varianzanteile
