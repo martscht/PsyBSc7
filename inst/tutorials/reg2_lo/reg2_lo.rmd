@@ -1,5 +1,5 @@
 ---
-title: "Sitzung 5: Regressionsanalyse II - Modelloptimierung"
+title: "Sitzung 6: Regressionsanalyse II - Modelloptimierung"
 output: 
   learnr::tutorial:
     progressive: false
