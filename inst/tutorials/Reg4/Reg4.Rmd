@@ -199,8 +199,14 @@ ggplot(data = data_ME, aes(x = std_ME,  y = pred_effect_ME)) + geom_point(pch = 
 ```
 Für den Grafik-Code sowie weitere Informationen zu quadaratischen Effekten und Funktionen siehe [Appendix A](#AppendixA). Die Grafik zeigt die vorhergesagte Beziehung zwischen den standardisierten Werten des Bildungsabschlusses der Mutter sowie der Leseleistung. Hierbei steht erneut `|` für "gegeben" (wie etwa beim Partialplot mit `avPlots` aus der vergangenen Sitzung: `PsyBSc7::Sitzung_7()`). Wir sehen also den um die anderen Variablen im Modell bereinigten Effekt zwischen Bildungsabschluss und Leseleistung. Hierbei ist ein starker mittlerer Anstieg der Leseleistung (-1 bis ca. 0.1) für einen Anstieg des Bildungsabschlusses von deutlich unterdurchschnittlich bis durchschnittlich (von -2.5 bis 0) zu sehen. Danach ist die Beziehung zwischen Leseleistung und Bildungsabschluss fast horizontal (Veränderung geringer als 0.1), was dafür spricht, dass es für einen durchschnittlichen bis überdurchschnittlichen Bildungsabschluss der Mutter (von 0 bis 1.5) kaum eine Beziehung zwischen den Variablen gibt. Dies bedeutet, dass besonders im unterdurchschnittlichen Bereich der mütterlichen Bildung Unterschiede zwischen Müttern einen starken Zusammenhang mit der Leseleistung ihrer Kinder zeigen. Wenn das Bildungsniveau der Mutter jedoch durchschnittlich oder überdurchschnittlich ist, scheint der Zusammenhang beinahe zu verschwinden. 
 
-Die grobe Gestallt der Beziehung hätten wir auch aus dem Koeffizienten ablesen können. Der Koeffizient des quadratischen Teils war negativ, was für eine invers-u-förmige (konkave) Funktion steht. Das Einzeichnen hilft uns jedoch, das genaue Ausmaß zu verstehen (siehe auch [Appendix A](#AppendixA)).
+Die grobe Gestalt der Beziehung hätten wir auch aus dem Koeffizienten ablesen können. Der Koeffizient des quadratischen Teils war negativ, was für eine invers-u-förmige (konkave) Funktion steht. Das Einzeichnen hilft uns jedoch, das genaue Ausmaß zu verstehen (siehe auch [Appendix A](#AppendixA)). Auch hatten wir gesehen, dass der lineare Teil des Bildungsabschlusses der Mutter keinen statistisch signifikanten Beitrag zur Vorhersage geleistet hat. Jedoch gehört zu einer quadratischen Funktion immer auch ihr linearer Anteil dazu. Aus diesem Grund können wir unsere Stichprobe nur angemessen beschreiben, wenn wir den linearen Trend des Bildungsabschlusses der Mutter im Regressionsmodell beibehalten. Um das genaue Ausmaß besser zu verstehen, manipulieren Sie doch einmal die Beziehung, die wir soeben grafisch gesehen haben im folgenden interaktiven Block. Hierbei können Sie den linearen und den quadratischen Effekt verändern und sich die Auswirkungen auf die Grafik (die Beziehung zwischen Bildungsabschluss der Mutter und Leseleistung) ansehen. Die Default-Einstellungen sind identisch zu der oberen Grafik. `curve` plottet eine Linie und nimmt `x` automatisch als Argument der Funktion, somit wird $f(x)=\text{linear}*x+\text{quadratisch}*x^2$ geplottet. Probieren Sie doch einmal aus, was passiert, wenn Sie den linearen Teil auf 0 setzen oder das Vorzeichen des quadratischen Anteils ändern!
+```{r exercise_curve, exercise = T, fig.align="center", fig.height=6}
+linear <- .1588
+quadratisch <- -.1436
 
+curve(linear * x + quadratisch * x^2, 
+      xlim = c(-2, 2))
+```
 
 Mit Hilfe von `poly(X, p)`, lassen sich Polynome bis zum Grad $p$ (als $X, X^2,\dots,X^{p-1},X^p$) in die Regression mit aufnehmen, ohne, dass sich die Parameterschätzungen der anderen Potenzen von $X$ ändern. Wenn Sie noch mehr über die Funktion `poly` und ihre Vorteile erfahren möchten, dann schauen Sie sich doch mal den [Appendix A](#AppendixA) an. 
 
@@ -774,7 +780,7 @@ Wie kommen wir nun auf die Interpretation der quadratischen Beziehung?
 Eine allgemeine quadratische Funktion $f$ hat folgende Gestalt
 $$f(x):=ax^2 + bx + c,$$
 wobei $a\neq 0$, da es sich sonst nicht um eine quadratische Funktion handelt. Wäre $a=0$, würde es sich um eine lineare Funktion mit Achsenabschnitt $c$ und Steigung (Slope) $b$ handeln. Wäre zusätzlich $b=0$, so handelt es sich um eine horizontale Linie bei $y=f(x)=c$. 
-Für betraglich große $x$ fällt $x^2$ besonders ins Gewicht. Damit entscheidet das Vorzeichen von $a$ ob es sich um eine u-formige (falls $a>0$) oder eine umgekehrt-u-förmige Beziehung handelt (falls $a<0$). Die betragliche Größe von $a$ entscheidet hierbei, wie getaucht die u-formige Beziehung (die Parabel) ist. Die reine quadratische Beziehung $f(x)=x^2$ sieht so aus.
+Für betraglich große $x$ fällt $x^2$ besonders ins Gewicht. Damit entscheidet das Vorzeichen von $a$, ob es sich um eine u-formige (falls $a>0$) oder eine umgekehrt-u-förmige (falls $a<0$) Beziehung handelt. Die betragliche Größe von $a$ entscheidet hierbei, wie gestaucht die u-förmige Beziehung (die Parabel) ist. Die reine quadratische Beziehung $f(x)=x^2$ sieht so aus:
 
 ```{r, fig.align="center", fig.height=6}
 a <- 1; b <- 0; c <- 0
@@ -821,7 +827,7 @@ ggplot(data = data_X, aes(x = x,  y = f)) +
      labs(x = "x", y =  "f(x)",
           title = expression("f(x)="~-x^2))
 ```
-Diese invers-u-förmige Beziehung ist eine konkave Funktion. Dies lässt sich leicht merken, da in *konkav* fast das englische Wort *cave* vorkommt: eine konkave Funktion stellt eine Art *Höhleneingang* dar.
+Diese invers-u-förmige Beziehung ist eine konkave Funktion. Als Eselsbrücke für das Wort *konkav*, welches fast das englische Wort *cave* enthält, können wir uns merken: eine konkave Funktion stellt eine Art *Höhleneingang* dar.
 
 $c$ bewirkt eine vertikale Verschiebung der Parabel:
 ```{r, fig.align="center", fig.height=6}
@@ -835,7 +841,7 @@ ggplot(data = data_X, aes(x = x,  y = f)) +
           title = expression("f(x)="~x^2+1))
 ```
 
-$b$ bewirkt eine horizontale und vertikale Verschiebung, die nicht mehr leicht  vorhersehbar ist. Für $f(x)=x^2+x$ lässt sich beispielsweise durch Umformen leicht erkennen: $f(x)=x^2+x=x(x+1)$, dass diese Funktion zwei Nullstellen bei $0$ und $-1$ hat. Somit ist ersichtlich, dass die Funktion nach unten und links verschoben wird:
+$b$ bewirkt eine horizontale und vertikale Verschiebung, die nicht mehr leicht vorhersehbar ist. Für $f(x)=x^2+x$ lässt sich beispielsweise durch Umformen leicht erkennen: $f(x)=x^2+x=x(x+1)$, dass diese Funktion zwei Nullstellen bei $0$ und $-1$ hat. Somit ist ersichtlich, dass die Funktion nach unten und links verschoben ist:
 
 ```{r, fig.align="center", fig.height=6}
 a <- 1; b <- 1; c <- 0
@@ -848,7 +854,7 @@ ggplot(data = data_X, aes(x = x,  y = f)) +
           title = expression("f(x)="~x^2+x))
 ```
 
-Für die genaue Gestallt einer allgemeinen quadratischen Funktion $ax^2 + bx + c$ müssten wir die Nullstellen durch Lösen der Gleichung $ax^2 + bx + c=0$ bestimmen (via p-q Formel oder a-b-c-Formel). Den Scheitelpunkt würden wir durch Ableiten der Gleichung und Nullsetzten bestimmen. Wir müssten also $2ax+b=0$ lösen und dies in die Gleichung einsetzten. Für die Interpretation der Ergebnisse reicht es zu wissen, dass $a$ eine Stauchung bewirkt und entscheind für die Funktion ist, ob sie u-förmig oder invers-u-förmig verläuft.
+Für die genaue Gestalt einer allgemeinen quadratischen Funktion $ax^2 + bx + c$ würden wir die Nullstellen durch Lösen der Gleichung $ax^2 + bx + c=0$ bestimmen (via *p-q Formel* oder *a-b-c-Formel*). Den Scheitelpunkt würden wir durch Ableiten und Nullsetzen der Gleichung bestimmen. Wir müssten also $2ax+b=0$ lösen und dies in die Gleichung einsetzen. Wir könnten auch die binomischen Formeln nutzen, um die Funktion in die Gestalt $f(x):=a'(x-b')^2+c'$ oder $f(x):=a'(x-b'_1)(x-b_2')+c'$ zu bekommen, falls die Nullstellen reell sind (also das Gleichungssystem *lösbar* ist), da wir so die Nullstellen ablesen können als $b'$ oder $b_1'$ und $b_2'$, falls $c=0$. Für die Interpretation der Ergebnisse reicht es zu wissen, dass $a$ eine Stauchung bewirkt und entscheind dafür ist, ob die Funktion u-förmig oder invers-u-förmig verläuft.
 
 ```{r, fig.align="center", fig.height=6}
 a <- -0.5; b <- 1; c <- 2
@@ -860,7 +866,7 @@ ggplot(data = data_X, aes(x = x,  y = f)) +
      labs(x = "x", y =  "f(x)",
           title = expression("f(x)="~-0.5*x^2+x+2))
 ```
-$\longrightarrow$ so ähnlich sieht die bedingte Beziehung (kontrolliert für die weiteren Prädiktoren im Modell) zwischen Bildungsabschluss der Mutter und der Leseleistung aus.
+$\longrightarrow$ so ähnlich sieht die bedingte Beziehung (kontrolliert für die weiteren Prädiktoren im Modell) zwischen Bildungsabschluss der Mutter und Leseleistung aus.
 
 ### Code für quadratische Verlaufsgrafik
 Der Code, der die Grafik des standardisierten vorhergesagten bedingten Verlaufs des Bildungsabschlusses der Mutter erzeugt, sieht folgendermaßen aus:
@@ -875,7 +881,7 @@ ggplot(data = data_ME, aes(x = std_ME,  y = pred_effect_ME)) + geom_point(pch = 
           title = "Standardisierte bedingte Beziehung zwischen\n Bildungsabschluss der Mutter und Leseleistung")
 ```
 
-Wir verwenden `scale`, um die linearen und quadratischen Anteile des Bildungsabschlusses der Mutter zu standardisieren und speichern sie in `X`. Anschließend ist das Interzept der quadratischen Funktion 0 ($c=0$, da wir standadisiert haben). Die zugehörigen standardisierten Koeffizienten sind $b=0.1588$ und $a=-0.1436$, die wir aus der standardisierten `summary` abgelesen haben. Somit wissen wir, dass es sich um eine invers-u-förmige Beziehung handelt (ohne die Grafik zu betrachten). Wir speichern die standardisierten Koeffizienten unter `std_par_ME` ab und verwenden anschließend das Matrixprodukt ` X %*% std_par_ME`, um die vorhergesagten Werte via $y_{std,i}=0.1588 ME - 0.1436ME^2$ zu berechnen. Diese vorhergesagten Werte `pred_effect_ME` plotten wir nun gegen die standardisierten Werte des Bildungsabschlusses der  Mutter `std_ME`, welcher in der ersten Spalte von `X` steht: `X[,1]`.
+Wir verwenden `scale`, um die linearen und quadratischen Anteile des Bildungsabschlusses der Mutter zu standardisieren und speichern sie in `X`. Anschließend ist das Interzept der quadratischen Funktion 0 ($c=0$, da wir standardisiert haben). Die zugehörigen standardisierten Koeffizienten sind $b=0.1588$ und $a=-0.1436$, die wir aus der standardisierten `summary` abgelesen haben. Somit wissen wir, dass es sich um eine invers-u-förmige Beziehung handelt (ohne die Grafik zu betrachten). Wir speichern die standardisierten Koeffizienten unter `std_par_ME` ab und verwenden anschließend das Matrixprodukt ` X %*% std_par_ME`, um die vorhergesagten Werte via $y_{std,i}=0.1588 ME - 0.1436ME^2$ zu berechnen. Diese vorhergesagten Werte `pred_effect_ME` plotten wir nun gegen die standardisierten Werte des Bildungsabschlusses der  Mutter `std_ME`, welche in der ersten Spalte von `X` stehen: `X[, 1]`.
 
 ## Appendix B {#AppendixB}
 ### Übersicht über erklärte Varianzanteile
