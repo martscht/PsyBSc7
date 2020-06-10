@@ -1,6 +1,6 @@
 ---
 title: "Sitzung 10: ANOVA II (zweifaktoriell)"
-output: 
+output:
   learnr::tutorial:
     progressive: false
     allow_skip: true
@@ -15,24 +15,43 @@ library(learnr)
 library(ez)
 library(emmeans)
 
-data(conspiracy, package = 'PsyBSc7')
+library(gradethis)
+knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 
-knitr::opts_chunk$set(echo = FALSE)
+source('startup.R')
+
+data(conspiracy, package = 'PsyBSc7')
 ```
 
-## Übungs-Datensatz
+## Einführung
+
+In der letzten Sitzung haben wir die einfaktorielle Varianzanalyse behandelt. Die spezifische Benennung als *einfaktoriell* verdeutlicht schon, dass wir hier ansetzen und Erweiterungen vornehmen können. In dieser Sitzung geht es vor allem um die *zweifaktorielle* Varianzanalyse. Ziel dieser Analyse ist es gleichzeitig Gruppenunterschiede auf mehreren Variablen zu untersuchen und dabei zu zu überprüfen, ob Kombinationen von Gruppen besondere Auswirkungen haben.
+
+Wir arbeiten wieder mit dem `conspiracy` Datensatz, der im Paket integriert ist:
+
+```{r, eval = FALSE}
+data(conspiracy, package = 'PsyBSc7')
+```
+
+Wenn Sie diesen Datensatz runtergeladen haben und aus der Datei laden wollen, können Sie den üblichen `load`-Befehl nutzen:
+
+```{r, eval = FALSE}
+load('conspiracy.rda')
+```
+
+Eine kurze Übersicht über den Datensatz zeigt:
 
 ```{r}
-conspiracy <- readRDS('conspiracy.rds')
 dim(conspiracy)
 head(conspiracy)
 ```
 
-Der Datensatz enthält die Werte von 2451 Personen auf 9 Variablen und stammt aus einer Untersuchung zum Thema verschwörungstheoretische Überzegungen. Die ersten vier Variablen enthalten Informationen über den demographischen Hintergrund der Personen: höchster Bildungsabschluss, Typ des Wohnortes, Geschlecht und Alter. Die fünf restlichen Variablen sind Skalenwerte bezüglich verschiedener subdimensionen verschwörungstheoretischer Überzeugungen: GM (goverment malfeasance), MG (malevolent global conspiracies), ET (extraterrestrial cover-up), PW (personal well-being) und CI (control of information).
+Der Datensatz enthält die Werte von 2451 Personen auf 9 Variablen. Er stammt aus einer Untersuchung zum Thema verschwörungstheoretische Überzegungen. Die ersten vier Variablen enthalten Informationen über den demographischen Hintergrund der Personen: höchster Bildungsabschluss, Typ des Wohnortes, Geschlecht und Alter. Die fünf restlichen Variablen sind Skalenwerte bezüglich verschiedener subdimensionen verschwörungstheoretischer Überzeugungen: GM (goverment malfeasance), MG (malevolent global conspiracies), ET (extraterrestrial cover-up), PW (personal well-being) und CI (control of information).
+
 
 ## Einfaktorielle ANOVA
 
-In der letzten Sitzung zeigte sich, dass die Überzeugung, dass die Existenz von Außerirdischen durch eine globale Verschwörung verdeckt wird, von dem höchsten Bildungsabschluss (`edu`) und von der Art des Wohngebiets (`urban`) abhängig ist. Zur Berechnung der einfaktoriellen ANOVAs wurde das `ez`-Paket verwendet:
+In der letzten Sitzung zeigte sich, dass die Überzeugung, dass die Existenz von Außerirdischen durch eine globale Verschwörung verdeckt wird, von dem höchsten Bildungsabschluss (`edu`) und von der Art des Wohngebiets (`urban`) abhängig ist. Zur Berechnung der einfaktoriellen ANOVAs wurde das `ez`-Paket verwendet. Dieses Paket brauchen wir weiterhin:
 
 ```{r}
 library(ez)
@@ -44,33 +63,87 @@ Wie schon in der letzten Sitzung, ist es zunächst erforderlich eine Personen-ID
 conspiracy$id <- as.factor(1:nrow(conspiracy))
 ```
 
-Die einfaktorielle ANOVA ergab bezüglich des Wohnortes:
+Führen Sie noch einmal die einfaktorielle ANOVA bezüglich des Wohnortes durch, um sich zu vergegenwärtigen, wie der `ezANOVA`-Befehl funktioniert!
 
-```{r}
-ezANOVA(conspiracy, wid = id, dv = ET, between = urban, detailed = TRUE)
+
+```{r id_gen, echo = FALSE}
+conspiracy$id <- as.factor(1:nrow(conspiracy))
 ```
 
-und die Ergebnisse aus den Übungsuafgaben ergaben bezüglich des Bildungabschlusses:
+```{r aov_urban, exercise = TRUE, exercise.setup = 'id_gen'}
 
-```{r}
-ezANOVA(conspiracy, wid = id, dv = ET, between = edu, detailed = TRUE)
 ```
 
-Um dies rein deskriptiv anhand der gruppenspezifischen Mittelwerte zu betrachten, kann mit einer Vielzahl von Funktionen gearbeitet werden. Eine gängige Variante ist der `tapply`-Befehl:
+```{r aov_urban-hint-1}
+# ezANOVA für einfaktorielle ANOVAs braucht vier Argumente:
+ezANOVA(data = ...,
+  wid = ...,
+  dv = ...,
+  between = ...)
+```
+
+```{r aov_urban-hint-2}
+# wid kennzeichnet den Within-Identifier, eine Personen ID Variable
+```
+
+```{r aov_urban-hint-3}
+# dv ist die dependent (abhängige) Variable
+```
+
+```{r aov_urban-hint-4}
+# between ist die unabhängige Variable, die zwischen Personen unterscheidet
+# (eine Gruppierungsvariable)
+```
+
+```{r aov_urban-check}
+conspiracy$id <- as.factor(1:nrow(conspiracy))
+solu1 <- ezANOVA(conspiracy, wid = id, dv = ET, between = urban)
+solu2 <- ezANOVA(conspiracy, wid = id, dv = ET, between = urban, detailed = TRUE)
+
+solu3 <- ezANOVA(conspiracy, wid = id, dv = ET, between = edu)
+solu4 <- ezANOVA(conspiracy, wid = id, dv = ET, between = edu, detailed = TRUE)
+
+grade_result(
+  pass_if(~ identical(.result, solu1), 'Durch den detailed = TRUE können Sie zusätzlich die Quadratsummen erhalten.'),
+  pass_if(~ identical(.result, solu2)),
+  fail_if(~ identical(.result, solu3), 'Sie haben die falsche Gruppierungsvariable genutzt!'),
+  fail_if(~ identical(.result, solu4), 'Sie haben die falsche Gruppierungsvariable genutzt!'),
+  fail_if(~ !(identical(.result, solu1) | identical(.result, solu2))),
+  correct = 'Sehr gut! So wird die einfaktorielle ANOVA mit dem ez-Paket umgesetzt.',
+  incorrect = 'Leider falsch.',
+  glue_correct = '{.correct} {.message}',
+  glue_incorrect = '{.incorrect} {.message}')
+```
+
+Die Ergebnisse zeigen, dass die Annahme der Homoskedastizität nicht verworfen werden muss und dass es bedeutsame Unterschiede zwischen verschiedenen Wohnorten hinsichtlich der verschwörungstheoretischen Überzeugung gibt, dass die Existenz Außerirdischer absichtlich verschleiert wird.
+
+Die Ergebnisse aus den Übungsuafgaben ergaben bezüglich des Bildungabschlusses:
+
+```{r, echo = FALSE}
+ezANOVA(conspiracy, wid = id, dv = ET, between = edu, white.adjust = TRUE)
+```
+
+Hier musste die Annahme der Homoskedastizität verworfen werden, sodass eine Adjustierung der Inferenzstatistik durchgeführt werden sollte. In beiden Fällen erhalten wir das generalisierte $\eta^2$, also einen Schätzer der Effektstärke. Um dies in der Skala der ursprünglichen Variablen zu interpretieren, können wir uns rein deskriptiv die gruppenspezifischen Mittelwerte angucken. Dazu kann mit einer Vielzahl von Funktionen gearbeitet werden. Eine gängige Variante ist der `tapply`-Befehl:
 
 ```{r}
 tapply(conspiracy$ET, list(conspiracy$urban), mean)
 tapply(conspiracy$ET, list(conspiracy$edu), mean)
 ```
 
-Mögliche Alternativen:
+Probieren Sie gerne aus, ob Ihnen noch Alternativen einfallen! In den Tipps finden Sie zwei weitere Möglichkeiten:
 
-```{r, eval = FALSE}
+```{r g_means, exercise = TRUE}
+
+```
+
+```{r g_means-hint-1}
 # Mithilfe des aggregate-Befehls
 aggregate(conspiracy$ET, conspiracy$urban, mean)
 aggregate(conspiracy$ET, conspiracy$edu, mean)
+```
 
-# Mithilfe des describeBy aus dem psych-Paket
+```{r g_means-hint-2}
+# Mithilfe des describeBy-Befehls aus dem psych-Paket
 describeBy(conspiracy$ET, conspiracy$urban)
 describeBy(conspiracy$ET, conspiracy$edu)
 ```
@@ -94,7 +167,7 @@ Im `ez`-Paket sind neben den Funktionen zur direkten Berechnung von Varianzanaly
   - `dv = `: die abhängige Variable (dependent variable)
   - `between = `: eine Gruppierungsvariable (die *zwischen* Personen unterscheidet)
 
-Um mehrere Variablen als unabhängige Variablen zu deklarieren, kann mit dem `c()` ein Vektor eröffnet werden, der an das Argument `between` weitergegeben wird. 
+Um mehrere Variablen als unabhängige Variablen zu deklarieren, kann mit dem `c()` ein Vektor eröffnet werden, der an das Argument `between` weitergegeben wird.
 
 ```{r}
 ezStats(conspiracy, dv = ET, wid = id, between = c(urban, edu))
@@ -102,24 +175,24 @@ ezStats(conspiracy, dv = ET, wid = id, between = c(urban, edu))
 
 Neben $N$, $\bar{x}$ und $\sigma$ wird in der Ausgabe auch Fishers Least Significant Difference ausgebeben. Diese kennzeichnet den minimalen Mittelwertsunterschied, der im direkten Vergleich zweier Gruppen signifkant wäre. Schon an dieser Stelle werden wir von `ez` darauf hingewiesen, dass die Gruppen ungleich groß sind und dies in der ANOVA zu Problemen führen könnte.
 
-Für eine grafische Darstellung der Mittelwerte, kann `ezPlot` benutzt werden. Der Befehl nimmt die gleichen Argumente entgegen wie `ezStats`, benötigt aber zusätzlich eine Aussage darüber, welche Variable auf der x-Achse abgetragen werden soll (`x = `) und welche Variable farblich unterschieden werden soll (`split = `).
+Für eine grafische Darstellung der Mittelwerte, kann `ezPlot` benutzt werden. Der Befehl nimmt die gleichen Argumente entgegen wie `ezStats`, benötigt aber zusätzlich eine Aussage darüber, welche Variable auf der x-Achse abgetragen werden soll (`x = `) und welche Variable farblich unterschieden werden soll (`split = `). Mit dieser Funktion wird dann ein `ggplot` erstellt. Diesen könnten Sie mit dem, was wir in der 2. Sitzung besprochen haben auch händisch erstellen! `ezPlot` nimmt Ihnen hier aber ein wenig Arbeit ab:
 
 ```{r}
 ezPlot(conspiracy, dv = ET, wid = id, between = c(urban, edu),
   x = urban, split = edu)
 ```
 
-Wie zu erkennen ist, übersetzt die `ezPlot` Funktion die Eingabe in einen `ggplot`. Die FLSD wird hier in Form von Error-Bars dargestellt - durch diese kann also abgeschätzt werden, welche Mittelwerte sich statistisch bedeutsam unterscheiden.
+Die FLSD wird hier in Form von Error-Bars dargestellt - durch diese kann also abgeschätzt werden, welche Mittelwerte sich statistisch bedeutsam unterscheiden.
 
 
 ## Zweifaktorielle Varianzanalyse
 
-Mithilfe der zweifaktoriellen Varianzanalyse können drei zentralen Fragen beantwortet werden (Eid, Gollwitzer & Schmitt, 2015, S. 432): 
+Mithilfe der zweifaktoriellen Varianzanalyse können drei zentralen Fragen beantwortet werden (Eid, Gollwitzer & Schmitt, 2015, S. 432):
 
   1. Lassen sich Unterschiede in der AV auf Unterschiede in der 1. UV zurückführen? (Haupteffekt 1)
   2. Lassen sich Unterschiede in der AV auf Unterschiede in der 2. UV zurückführen? (Haupteffekt 2)
   3. Hängt der Einfluss der 1. UV auf die AV von der 2. UV ab, bzw. hängt der Einfluss der 2. UV von der 1. UV ab? (Interaktionseffekt)
-  
+
 Im Beispiel wären die Fragen also:
 
   1. Lassen sich Unterschiede in der ET-Überzeugung (`ET`) auf die Art des Wohnorts (`urban`) zurückführen?
@@ -140,10 +213,10 @@ Die drei Nullhypothesen werden in der zweifaktoriellen ANOVA geprüft. Die für 
 ezANOVA(conspiracy, dv = ET, wid = id, between = c(urban, edu), detailed = TRUE)
 ```
 
-Der Levene Test fällt in diesem Fall statistisch bedeutsam aus, sodass die Homoskedastizitätsannahme (in diesem Fall: die Varianz ist in allen 9 Gruppen identisch) verworfen werden muss. `ezANOVA` liefert eine eingebaute Korrekturmöglichkeit (HC3 von MacKinnon J. G. & White H., 1985), die mithilfe `white.adjust = TRUE` angefordert werden kann:
+Der Levene Test fällt in diesem Fall statistisch bedeutsam aus, sodass die Homoskedastizitätsannahme (in diesem Fall: die Varianz ist in allen 9 Gruppen identisch) verworfen werden muss. `ezANOVA` liefert eine eingebaute Korrekturmöglichkeit (HC3 von MacKinnon J. G. & White H., 1985), die mithilfe `white.adjust = TRUE` angefordert werden kann. Probieren Sie das unten aus! Wie verändert das die Ergebnisse, die Ihnen ausgegeben werden?
 
-```{r}
-ezANOVA(conspiracy, dv = ET, wid = id, between = c(urban, edu), detailed = TRUE, white.adjust = TRUE)
+```{r two_way_adjust, exercise = TRUE, exercise.eval = FALSE, exercise.setup = 'id_gen'}
+ezANOVA(conspiracy, dv = ET, wid = id, between = c(urban, edu), detailed = TRUE)
 ```
 
 In diesem Fall werden beide Haupteffekte statistisch bedeutsam, die Interaktion allerdings nicht. Inhaltlich heißt das, dass sowohl die Art des Wohnorts als auch das Bildungsniveau einen Einfluss auf die verschwörungstheoretische Überzeugung haben. Über die jeweiligen Effekte hinaus, ist die spezifische Kombination aus Wohnort und Bildungsniveau für diese Überzeugung irrelevant.
@@ -151,22 +224,65 @@ In diesem Fall werden beide Haupteffekte statistisch bedeutsam, die Interaktion 
 
 ## Post-Hoc Analyse und Kontraste
 
-Mit Tukeys Honest Significant Difference können, wie auch letzte Sitzung, alle möglichen Gruppenkombinationen verglichen werden. In diesem Fall ergeben sich allerdings 36 Vergleiche, sodass es außerordentlich ineffizient ist, alle Tests durchzuführen. 
+### Alle Gruppenvergleiche
+
+Mit Tukeys Honest Significant Difference können, wie auch letzte Sitzung, alle möglichen Gruppenkombinationen verglichen werden.
 
 ```{r}
 TukeyHSD(aov(ET ~ urban*edu, conspiracy))
 ```
 
-Durch die Grundgedanken des klassischen Nullhypothesentestens muss das $\alpha$-Fehlerniveau auf alle *durchgeführten* Tests korrigiert werden. In dieser Stelle können daher *geplante Kontraste* genutzt werden, um a-priori definierte, theoretisch relevante Vergleich durchzuführen. Dafür ist das `emmeans`-Paket empfehlenswert:
+Leider ist das Ergebnis etwas unübersichtlich, weil sich in diesem Fall 36 Vergleiche ergeben. Mit ein paar Funktionen aus dem `emmeans`-Paket können wir versuchen, das optisch etwas aufzubereiten. Dafür zunächst das Paket laden:
 
 ```{r}
 library(emmeans)
 ```
 
-Um Kontraste definieren zu können, müssen wir zunächst in Erfahrung bringen, in welcher Reihenfolge die Gruppenkombinationen intern repräsentiert werden. Dafür kann man mit der `emmeans`-Funktion ein Objekt anlegen, welches alle Kombinationen enthält. Als Argument erwartet die Funktion ein `aov`-Objekt (wie auch die `TukeyHSD`-Funktion) und eine Angabe der relevanten unabhängigen Variablen:
+In diesem Paket gibt es, die wenig überraschend benannte `emmeans`-Funktion, mit der wir alle weiteren Analysen vorbereiten müssen:
 
 ```{r}
 emm <- emmeans(aov(ET ~ urban*edu, conspiracy), ~ urban * edu)
+```
+
+Diese Funktion nimmt als erstes Argument das gleiche `aov`-Objekt entgegen wie `TukeyHSD`. Als Zweites müssen wir definieren, welche unabhängigen Variablen uns in der Post-Hoc Analyse interessieren. Weil wir hier alle Gruppen betrachten möchten, können wir einfach die gleiche Struktur der unabhängigen Variablen wiederholen: `~ urban * edu`.
+
+Wenn wir uns das entstandene Objekt angucken, sehen wir eine Tabelle mit 7 Spalten:
+
+```{r}
+emm
+```
+
+Die ersten beiden Spalten  (`urban`, `edu`) geben an, welche Ausprägungen unsere beiden unabhängigen Variablen haben. Die erste Zeile bezieht sich also auf Personen aus einem ländlichen Gebiet, die keinen Highschool-Abschluss haben. Die dritte Spalte (`emmean`) ist der Gruppenmittelwert, die vierte der dazugehörige Standardfehler (`SE`), dann die fünfte die Freiheitsgrade (`df`) und in die letzten beiden Spalten geben das Konfidenzintervall des Mittelwerts an (`lower.CL`, `upper.CL`).
+
+Mittelwerte und Konfidenzintervalle können wir uns sehr einfach direkt plotten lassen:
+
+```{r, fig = TRUE}
+plot(emm)
+```
+
+Diese Abbildung können wir um eine Aussage über die direkten Vergleiche erweitern:
+
+```{r, fig = TRUE}
+plot(emm, comparisons = TRUE)
+```
+
+Die neu hinzugekommenen roten Pfeile geben uns einen Hinweis dazu, welche Gruppen sich unterscheiden. Wenn zwei rote Pfeile überlappen, gibt es keinen statistisch bedeutsamen Unterschied. Wenn Sie das nicht tun, unterscheiden sich die beiden Gruppenmittelwerte auf dem festgeleten $\alpha$-Fehlerniveau (per Voreinstellung 5%) statistisch bedeutsam.
+
+Eine zweite Möglichkeit, die Ergebnisse ein wenig übersichtlicher zu gestalten sind *pairwise $p$-value plots*. Im `emmeans`-Paket werden diese über `pwpp` angefordert:
+
+```{r, fig = TRUE}
+pwpp(emm)
+```
+
+In dieser Abbildung ist auf der x-Achse der $p$-Wert des Mittelwertvergleichs dargestellt. Auf der y-Achse werden die Gruppen anhand ihrer deskriptiven Mittelwerte sortiert und abgetragen (dabei sind alle Abstände zwischen zwei Gruppen gleich groß, egal wie groß der Mittelwertsunterschied auf der abhängigen Variable tatsächlich ist).
+
+### Kontraste
+
+In Situationen mit vielen Gruppen ist es außerordentlich ineffizient alle Vergleiche durchzuführen. Durch die Grundgedanken des Nullhypothesentestens muss das $\alpha$-Fehlerniveau auf alle *durchgeführten* Tests korrigiert werden. Nach klassischer Bonferroni-Korrektur wäre das korrigierte $\alpha$-Fehlerniveau in diesem Fall also $\frac{.05}{36} = `r round(.05/36, 4)`$ um eine echte Irrtumswahrscheinlichkeit von 5% aufrecht zu erhalten. An dieser Stelle können daher *geplante Kontraste* genutzt werden, um a-priori definierte, theoretisch relevante Vergleiche durchzuführen. So kann die Anzahl der Tests auf die theoretisch notwendigen reduziert werden und mit einer weniger restriktiven Korrektur gerechnet werden.
+
+Um Kontraste definieren zu können, müssen wir zunächst in Erfahrung bringen, in welcher Reihenfolge die Gruppenkombinationen intern repräsentiert werden. Diese Reihenfolge haben wir bereits im `emm`-Objekt gesehen:
+
+```{r}
 emm
 ```
 
@@ -190,9 +306,53 @@ Mit dem `contrast`-Befehl kann der festgelegte Kontrast geprüft werden:
 contrast(emm, list(cont1))
 ```
 
-Dieser Kontrast entspricht dem ersten Vergleich des oben durchgeführten `TukeyHSD`, unterscheidet sich jedoch im $p$-Wert. Der hier bestimmte $p$-Wert ist nicht korrigiert (weil nur ein Kontrast geprüft wurde), der oben aufgeführte hingegen auf 36 Tests Bonferroni korrigiert.
+Dieser Kontrast entspricht dem ersten Vergleich des oben durchgeführten `TukeyHSD`, unterscheidet sich jedoch im $p$-Wert. Der hier bestimmte $p$-Wert ist nicht korrigiert (weil nur ein Kontrast geprüft wurde), der oben aufgeführte ist hingegen auf 36 Tests Tukey-korrigiert.
 
-Mithilfe der Kontrast-Vektoren können komplexe Hypothesen geprüft werden. Beispielsweise könnten wir vergleichen, inwiefern sich Personen aus städtischer Umgebung ($j = 3$) mit mindestens High School Abschluss von Personen ohne High School Abschluss unterscheiden:
+Probieren Sie es einmal selbst aus, indem Sie einen Kontrast aufstellen, der den Unterschied zwischen Personen mit Highschool-Abschluss und Personen ohne Highschool-Abschluss, die in Städten wohnen, prüft!
+
+```{r, hs_contrast-setup}
+emm <- emmeans(aov(ET ~ urban*edu, conspiracy), ~ urban * edu)
+cont1 <- c(1, -1, 0, 0, 0, 0, 0, 0, 0)
+```
+
+```{r hs_contrast, exercise = TRUE}
+
+```
+
+```{r hs_contrast-hint-1}
+# In emm sehen sie die Reihenfolge der Gruppen
+emm
+```
+
+```{r hs_contrast-hint-2}
+# Relevant sind die Gruppen urban - not highschool und urban - highschool
+```
+
+```{r hs_contrast-hint-3}
+# Stellen Sie sicher, dass ihr Kontrastvektor in der Summe 0 ergibt
+# Für das vorherige Beispiel:
+sum(cont1) == 0
+```
+
+<!-- ```{r hs_contrast-check} -->
+<!-- # emm <- emmeans(aov(ET ~ urban*edu, conspiracy), ~ urban * edu) -->
+<!-- # con1 <- c(0, 0, -1, 0, 0, 1, 0, 0, 0) -->
+<!-- # sol1 <- contrast(emm, list(con1)) -->
+<!-- #  -->
+<!-- # con2 <- c(0, 0, 1, 0, 0, -1, 0, 0, 0) -->
+<!-- # sol2 <- contrast(emm, list(con2)) -->
+<!-- #  -->
+<!-- # grade_result( -->
+<!-- #   pass_if(~ identical(.result, sol1)), -->
+<!-- #   pass_if(~ identical(.result, sol2)), -->
+<!-- #   correct = 'Sehr gut! In diesem Fall zeigt sich kein bedeutsamer Unterschied.', -->
+<!-- #   incorrect = 'Leider falsch. Prüfen Sie noch einmal genau Ihren Kontrastvektor!', -->
+<!-- #   glue_correct = '{.correct}', -->
+<!-- #   glue_incorrect = '{.incorrect}') -->
+<!-- ``` -->
+
+
+Mithilfe der Kontrast-Vektoren können auch komplexe Hypothesen geprüft werden. Beispielsweise könnten wir vergleichen, inwiefern sich Personen aus städtischer Umgebung ($j = 3$) mit mindestens High School Abschluss von Personen ohne High School Abschluss unterscheiden:
 
 ```{r}
 cont2 <- c(0, 0, 1, 0, 0, -.5, 0, 0, -.5)
@@ -206,7 +366,29 @@ Weil sowohl `cont1` als auch `cont2` durchgeführt werden, muss für das multipl
 contrast(emm, list(cont1, cont2), adjust = 'bonferroni')
 ```
 
-## Zusatz: Quadratsummen-Typ
+## Aufgaben
+
+Nutzen Sie für die Aufgaben den Datensatz `nature`. 
+
+```{r}
+data(nature, package = 'PsyBSc7')
+str(nature)
+```
+
+Dieser Datensatz enthält Beobachtungen von 743 Personen auf 8 Variablen und ist ein Teil eines größeren Datensatzes, der auf [https://openpsychometrics.org/](https://openpsychometrics.org/) zur Verfügung gestellt wird. 
+
+Die sechs Variablen Q1A bis Q6A beziehen sich auf die Skala zur Erhebung der Naturverbundenheit (z.B. "My relationship to nature is an important part of who I am") von Nisbet & Zelenski (2013). Das Antwortformat ist 5-stufig, wobei höhere Werte stets eine stärkere Naturverbundenheit zum Ausdruck bringen. Darüber hinaus enthält der Datensatz zwei nominalskalierte Variablen: `urban` - der Typ des Ortes, an dem eine Person aufgewachsen ist - und `continent` - der Kontinent auf dem die teilnehmende Person aufgewachsen ist. 
+
+  1. Datenvorbereitung: Erstellen Sie einen Skalenwert für die Naturverbundenheit als dem Mittelwert der 6 Items Q1A bis Q6A. Legen Sie diesen Skalenwert als neue Variable mit dem Namen `NV` (*N*atur*V*erbundenheit) an. Erstellen Sie außerdem - zur Vorbereitung der `ez`-Funktionen eine ID-Variable mit dem Namen `ID`.
+  2. Verschaffen Sie sich einen Überblick über die Zellenhäufigkeiten und -mittelwerte auf der NV-Skala in den Gruppenkombinationen aus `urban` und `continent`.
+  3. Lassen Sie sich die gruppenspezifischen Mittelwerte in einer Grafik ausgeben.
+  4. Führen Sie eine Zweifaktorielle ANOVA durch und interpretieren Sie die Ergebnisse. Berücksichtigen Sie dabei, ob die Homoskedastizitätsannahme beibehalten werden kann.
+  5. Vor der Untersuchung wurden zusätzlich zu den, in der ANOVA geprüften Hypothesen auch spezfisiche Erwartungen bezüglich einzelner Gruppen formuliert, die Sie nun in Form von Kontrasten prüfen können. Prüfen Sie die beiden Kontraste gleichzeitig und stellen Sie sicher, dass eine Inflation des $\alpha$-Fehlers vermieden wird.
+    5a. Personen, die in ländlichen Gebieten aufgewachsen sind, unterscheiden sich in der Naturverbundenheit von Personen, die nicht in ländlichen Gegenden aufgewachsen sind.
+    5b. Städtisch aufgewachsene Europäer\*innen unterscheiden sich bedeutsam von städtisch aufgewachsenen Amerikaner\*innen  in der Naturverbundenheit.
+
+
+## Appendix A: Quadratsummen-Typ
 
 Bei mehrfaktoriellen ANOVAs können die Quadratsummen auf unterschiedliche Arten berechnet werden. Verbreitet sind dabei 3 Typen, zwischen denen man sich anhand der inhaltlichen Hypothesen entscheiden sollte.
 
@@ -234,4 +416,4 @@ Typ III unterscheidet sich von Typ II nur darin, dass bei der Berechnung nicht a
 ezANOVA(conspiracy, dv = ET, wid = id, between = c(urban, edu), type = 3)
 ```
 
-Generell ist Typ II besser geeignet um die Quadratsummen von Haupteffekten zu bestimmen, wenn Interaktionen empirisch nicht von 0 verschieden sind. Wenn Interaktionen von 0 verschieden sind, wird (unabhängig vom QS-Typ) davon abgeraten die Haupteffekte zu interpretieren, sodass deren Bestimmung in diesem Fall wenig Relevanz hat. Die Terme höchste Ordnung (hier die Interaktion) sind zwischen Typ II und Typ III identisch, sodass die Interpretation der Interaktion durch die Wahl nicht beeinflusst wird.
+Generell ist Typ II besser geeignet um die Quadratsummen von Haupteffekten zu bestimmen, wenn Interaktionen empirisch nicht von 0 verschieden sind. Wenn Interaktionen von 0 verschieden sind, wird (unabhängig vom QS-Typ) davon abgeraten die Haupteffekte zu interpretieren, sodass deren Bestimmung in diesem Fall wenig Relevanz hat. Die Terme höchster Ordnung (hier die Interaktion) sind zwischen Typ II und Typ III identisch, sodass die Interpretation der Interaktion durch die Wahl nicht beeinflusst wird. Von Typ I wird generell abgeraten (wie Ihnen `ezANOVA` auch direkt mitteilt).
