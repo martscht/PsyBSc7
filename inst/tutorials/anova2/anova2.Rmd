@@ -384,8 +384,8 @@ Die sechs Variablen Q1A bis Q6A beziehen sich auf die Skala zur Erhebung der Nat
   3. Lassen Sie sich die gruppenspezifischen Mittelwerte in einer Grafik ausgeben.
   4. Führen Sie eine Zweifaktorielle ANOVA durch und interpretieren Sie die Ergebnisse. Berücksichtigen Sie dabei, ob die Homoskedastizitätsannahme beibehalten werden kann.
   5. Vor der Untersuchung wurden zusätzlich zu den, in der ANOVA geprüften Hypothesen auch spezfisiche Erwartungen bezüglich einzelner Gruppen formuliert, die Sie nun in Form von Kontrasten prüfen können. Prüfen Sie die beiden Kontraste gleichzeitig und stellen Sie sicher, dass eine Inflation des $\alpha$-Fehlers vermieden wird.
-    5a. Personen, die in ländlichen Gebieten aufgewachsen sind, unterscheiden sich in der Naturverbundenheit von Personen, die nicht in ländlichen Gegenden aufgewachsen sind.
-    5b. Städtisch aufgewachsene Europäer\*innen unterscheiden sich bedeutsam von städtisch aufgewachsenen Amerikaner\*innen  in der Naturverbundenheit.
+     * Personen, die in ländlichen Gebieten aufgewachsen sind, unterscheiden sich in der Naturverbundenheit von Personen, die nicht in ländlichen Gegenden aufgewachsen sind.
+     * Städtisch aufgewachsene Europäer\*innen unterscheiden sich bedeutsam von städtisch aufgewachsenen Amerikaner\*innen  in der Naturverbundenheit.
 
 
 ## Appendix A: Quadratsummen-Typ
