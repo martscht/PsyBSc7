@@ -25,7 +25,7 @@ data(conspiracy, package = 'PsyBSc7')
 
 ## Einführung
 
-In der letzten Sitzung haben wir die einfaktorielle Varianzanalyse behandelt. Die spezifische Benennung als *einfaktoriell* verdeutlicht schon, dass wir hier ansetzen und Erweiterungen vornehmen können. In dieser Sitzung geht es vor allem um die *zweifaktorielle* Varianzanalyse. Ziel dieser Analyse ist es gleichzeitig Gruppenunterschiede auf mehreren Variablen zu untersuchen und dabei zu zu überprüfen, ob Kombinationen von Gruppen besondere Auswirkungen haben.
+In der letzten Sitzung haben wir die einfaktorielle Varianzanalyse behandelt. Die spezifische Benennung als *einfaktoriell* verdeutlicht schon, dass wir hier ansetzen und Erweiterungen vornehmen können. In dieser Sitzung geht es vor allem um die *zweifaktorielle* Varianzanalyse. Ziel dieser Analyse ist es gleichzeitig Gruppenunterschiede auf mehreren Variablen zu untersuchen und dabei zu überprüfen, ob Kombinationen von Gruppen besondere Auswirkungen haben.
 
 Wir arbeiten wieder mit dem `conspiracy` Datensatz, der im Paket integriert ist:
 
@@ -51,7 +51,7 @@ Der Datensatz enthält die Werte von 2451 Personen auf 9 Variablen. Er stammt au
 
 ## Einfaktorielle ANOVA
 
-In der letzten Sitzung zeigte sich, dass die Überzeugung, dass die Existenz von Außerirdischen durch eine globale Verschwörung verdeckt wird, von dem höchsten Bildungsabschluss (`edu`) und von der Art des Wohngebiets (`urban`) abhängig ist. Zur Berechnung der einfaktoriellen ANOVAs wurde das `ez`-Paket verwendet. Dieses Paket brauchen wir weiterhin:
+In der letzten Sitzung zeigte sich, dass die Überzeugung, dass die Existenz von Außerirdischen durch eine globale Verschwörung verdeckt wird (`ET`), von dem höchsten Bildungsabschluss (`edu`) und von der Art des Wohngebiets (`urban`) abhängig ist. Zur Berechnung der einfaktoriellen ANOVAs wurde das `ez`-Paket verwendet. Dieses Paket brauchen wir weiterhin:
 
 ```{r}
 library(ez)
@@ -138,12 +138,13 @@ Probieren Sie gerne aus, ob Ihnen noch Alternativen einfallen! In den Tipps find
 
 ```{r g_means-hint-1}
 # Mithilfe des aggregate-Befehls
-aggregate(conspiracy$ET, conspiracy$urban, mean)
-aggregate(conspiracy$ET, conspiracy$edu, mean)
+aggregate(conspiracy$ET, list(conspiracy$urban), mean)
+aggregate(conspiracy$ET, list(conspiracy$edu), mean)
 ```
 
 ```{r g_means-hint-2}
 # Mithilfe des describeBy-Befehls aus dem psych-Paket
+library(psych)
 describeBy(conspiracy$ET, conspiracy$urban)
 describeBy(conspiracy$ET, conspiracy$edu)
 ```
@@ -368,16 +369,16 @@ contrast(emm, list(cont1, cont2), adjust = 'bonferroni')
 
 ## Aufgaben
 
-Nutzen Sie für die Aufgaben den Datensatz `nature`. 
+Nutzen Sie für die Aufgaben den Datensatz `nature`.
 
 ```{r}
 data(nature, package = 'PsyBSc7')
 str(nature)
 ```
 
-Dieser Datensatz enthält Beobachtungen von 743 Personen auf 8 Variablen und ist ein Teil eines größeren Datensatzes, der auf [https://openpsychometrics.org/](https://openpsychometrics.org/) zur Verfügung gestellt wird. 
+Dieser Datensatz enthält Beobachtungen von 743 Personen auf 8 Variablen und ist ein Teil eines größeren Datensatzes, der auf [https://openpsychometrics.org/](https://openpsychometrics.org/) zur Verfügung gestellt wird.
 
-Die sechs Variablen Q1A bis Q6A beziehen sich auf die Skala zur Erhebung der Naturverbundenheit (z.B. "My relationship to nature is an important part of who I am") von Nisbet & Zelenski (2013). Das Antwortformat ist 5-stufig, wobei höhere Werte stets eine stärkere Naturverbundenheit zum Ausdruck bringen. Darüber hinaus enthält der Datensatz zwei nominalskalierte Variablen: `urban` - der Typ des Ortes, an dem eine Person aufgewachsen ist - und `continent` - der Kontinent auf dem die teilnehmende Person aufgewachsen ist. 
+Die sechs Variablen Q1A bis Q6A beziehen sich auf die Skala zur Erhebung der Naturverbundenheit (z.B. "My relationship to nature is an important part of who I am") von Nisbet & Zelenski (2013). Das Antwortformat ist 5-stufig, wobei höhere Werte stets eine stärkere Naturverbundenheit zum Ausdruck bringen. Darüber hinaus enthält der Datensatz zwei nominalskalierte Variablen: `urban` - der Typ des Ortes, an dem eine Person aufgewachsen ist - und `continent` - der Kontinent auf dem die teilnehmende Person aufgewachsen ist.
 
   1. Datenvorbereitung: Erstellen Sie einen Skalenwert für die Naturverbundenheit als dem Mittelwert der 6 Items Q1A bis Q6A. Legen Sie diesen Skalenwert als neue Variable mit dem Namen `NV` (*N*atur*V*erbundenheit) an. Erstellen Sie außerdem - zur Vorbereitung der `ez`-Funktionen eine ID-Variable mit dem Namen `ID`.
   2. Verschaffen Sie sich einen Überblick über die Zellenhäufigkeiten und -mittelwerte auf der NV-Skala in den Gruppenkombinationen aus `urban` und `continent`.
