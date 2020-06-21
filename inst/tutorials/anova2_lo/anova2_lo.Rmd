@@ -1,0 +1,89 @@
+---
+title: "Sitzung 10: R-Skripte zu den Aufgaben"
+output: 
+  learnr::tutorial:
+    progressive: false
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
+---
+
+## Lösungen zu den Aufgaben
+
+Nutzen Sie für die Aufgaben den Datensatz `nature`.
+
+```{r}
+data(nature, package = 'PsyBSc7')
+str(nature)
+```
+
+Dieser Datensatz enthält Beobachtungen von 743 Personen auf 8 Variablen und ist ein Teil eines größeren Datensatzes, der auf [https://openpsychometrics.org/](https://openpsychometrics.org/) zur Verfügung gestellt wird.
+
+Die sechs Variablen Q1A bis Q6A beziehen sich auf die Skala zur Erhebung der Naturverbundenheit (z.B. "My relationship to nature is an important part of who I am") von Nisbet & Zelenski (2013). Das Antwortformat ist 5-stufig, wobei höhere Werte stets eine stärkere Naturverbundenheit zum Ausdruck bringen. Darüber hinaus enthält der Datensatz zwei nominalskalierte Variablen: `urban` - der Typ des Ortes, an dem eine Person aufgewachsen ist - und `continent` - der Kontinent auf dem die teilnehmende Person aufgewachsen ist.
+
+### 1. Datenvorbereitung: Erstellen Sie einen Skalenwert für die Naturverbundenheit als dem Mittelwert der 6 Items Q1A bis Q6A. Legen Sie diesen Skalenwert als neue Variable mit dem Namen `NV` (*N*atur*V*erbundenheit) an. Erstellen Sie außerdem - zur Vorbereitung der `ez`-Funktionen eine ID-Variable mit dem Namen `ID`.
+
+```{r}
+nature$NV <- rowMeans(nature[, 1:6])
+nature$ID <- as.factor(rownames(nature))
+```
+
+### 2. Verschaffen Sie sich einen Überblick über die Zellenhäufigkeiten und -mittelwerte auf der NV-Skala in den Gruppenkombinationen aus `urban` und `continent`.
+
+```{r}
+# Variante 1: table() und tapply()
+table(nature$urban, nature$continent)
+tapply(nature$NV, data.frame(nature$urban, nature$continent), mean)
+
+# Variante 2: mit ezStats()
+library(ez)
+ezStats(nature, NV, ID, between = list(urban, continent))
+```
+
+Die sechs Gruppen sind ungleich besetzt, was dazu führt, dass der Quadratsummentyp genau bedacht werden muss. Die FLSD lässt vermuten, dass unkorrigierte, direkte Vergleiche der Gruppen statistisch bedeutsam sind.
+
+### 3. Lassen Sie sich die gruppenspezifischen Mittelwerte in einer Grafik ausgeben.
+
+```{r}
+# Mit continent auf der x-Achse, urban farbig unterschieden
+ezPlot(nature, NV, ID, between = list(urban, continent),
+  x = continent, split = urban)
+
+# Mit urban auf der x-Achse, continent farbig unterschieden
+ezPlot(nature, NV, ID, between = list(urban, continent),
+  x = urban, split = continent)
+```
+
+### 4. Führen Sie eine Zweifaktorielle ANOVA durch und interpretieren Sie die Ergebnisse. Berücksichtigen Sie dabei, ob die Homoskedastizitätsannahme beibehalten werden kann.
+
+```{r}
+ezANOVA(nature, NV, ID, between = list(urban, continent))
+```
+
+Es liegt ein bedeutsamer Haupteffekt des Kontinents vor, wohingegen der Haupteffekt der Variable `urban` nicht statistisch bedeutsam ist. Der Interaktionseffekt ist statistisch bedeutsam. Letzteres zeigt an, dass die Unterschiede zwischen Amerikaner\*innen und Europaer\*innen sich in Abhängigkeit von der Art des Ortes, an dem Personen aufgewachsen sind, unterscheiden. Die Abbildungen aus der letzten Aufgabe deuten darauf hin, dass es bei Amerikaner\*innen keinen Effekt der Art des Ortes gibt, wohingegen bei Europäer\*innen ein deutlicher Trend vorliegt (je städtischer, desto weniger Naturverbundenheit).
+
+### 5. Vor der Untersuchung wurden zusätzlich zu den, in der ANOVA geprüften Hypothesen auch spezfisiche Erwartungen bezüglich einzelner Gruppen formuliert, die Sie nun in Form von Kontrasten prüfen können. Prüfen Sie die beiden Kontraste gleichzeitig und stellen Sie sicher, dass eine Inflation des $\alpha$-Fehlers vermieden wird.
+
+```{r}
+library(emmeans)
+emm <- emmeans(aov(NV ~ urban * continent, nature), ~ urban * continent)
+emm
+```
+
+
+#### 5a. Personen, die in ländlichen Gebieten aufgewachsen sind, unterscheiden sich in der Naturverbundenheit von Personen, die nicht in ländlichen Gegenden aufgewachsen sind.
+
+```{r}
+c5a <- c(1, -.5, -.5, 1, -.5, -.5)
+```
+
+#### 5b. Städtisch aufgewachsene Europäer\*innen unterscheiden sich bedeutsam von städtisch aufgewachsenen Amerikaner\*innen  in der Naturverbundenheit.
+
+```{r}
+c5b <- c(0, 0, 1, 0, 0, -1)
+contrast(emm, list(c5a, c5b), adjust = 'bonferroni')
+```
+
+Der Unterschied zwischen ländlich und nicht ländlich aufgewachsenen Personen ist nicht statistisch bedeutsam. Die zweite Hypothese (dass städtisch aufgewachsene Europäer\*innen sich bedeutsam von städtisch aufgewachsenen Amerikaner\*innen unterscheiden) konnte korroboriert werden. Das Ergebnis deutet darauf hin, dass Amerikaner\*innen eine stärkere Naturverbundenheit berichten.

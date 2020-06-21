@@ -187,9 +187,9 @@ Loesungen_10 <- function(password) {
   }
   library(gradethis)
   
-  if (digest::digest(password) != '???') {
+  if (digest::digest(password) != 'd80a449086d4afa9ea0e22d12e9f2bc2') {
     message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
   }  else {
-    message('Leider ist die Lösung noch nicht fertig :(.')
+    compile('anova2_lo')
   }
 }

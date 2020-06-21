@@ -117,7 +117,7 @@ grade_result(
 
 Die Ergebnisse zeigen, dass die Annahme der Homoskedastizität nicht verworfen werden muss und dass es bedeutsame Unterschiede zwischen verschiedenen Wohnorten hinsichtlich der verschwörungstheoretischen Überzeugung gibt, dass die Existenz Außerirdischer absichtlich verschleiert wird.
 
-Die Ergebnisse aus den Übungsuafgaben ergaben bezüglich des Bildungabschlusses:
+Die Ergebnisse aus den Übungsaufgaben ergaben bezüglich des Bildungabschlusses:
 
 ```{r, echo = FALSE}
 ezANOVA(conspiracy, wid = id, dv = ET, between = edu, white.adjust = TRUE)
