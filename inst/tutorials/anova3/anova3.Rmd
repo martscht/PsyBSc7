@@ -1,0 +1,189 @@
+---
+title: "Sitzung 11: ANOVA III (messwiederholt)"
+output:
+  learnr::tutorial:
+    progressive: false
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
+---
+
+
+## Einführung
+
+In den letzten beiden Sitzungen ging es darum Unterschiede *zwischen* Personen zu untersuchen, indem wir Mittelwertsunterschiede zwischen verschiedenen Gruppen von Personen geprüft haben (in englischsprachiger Literatur wird dies als *between subjects* ANOVA bezeichnet). In dieser Sitzung soll es darum gehen, Unterschiede *innerhalb* von Personen (im Englischen *within subjects* ANOVA) zu untersuchen. Diese Unterschiede können dabei z.B. dadurch entstehen, dass wir unterschiedliche Zeitpunkte untersuchen. Die *Messwiederholung* muss nicht zwingend durch Zeit zustande kommen - andere Möglichkeiten der Messwiederholung sind z.B. unterschiedliche Tests oder Informationsquellen. Wir könnten Verhaltensauffälligkeiten von Kindern erheben, indem wir sie durch Psychotherapeutinnen und -therapeuten beobachten lassen, die Eltern befragen und die Kita-Erzieher und -Erzieherinnen befragen. Auch so messen wir wiederholt das Gleiche und können untersuchen, inwiefern sich hierbei mittlere Unterschiede zeigen. Diese Analysen von Messwiederholungen lassen sich zudem mit den Zwischen-Subjekt Analysen kombinieren, die wir bereits behandelt haben.
+
+### Datensatz
+
+Wieder nutzen wir einen Datensatz, der im Paket `PsyBSc7` enthalten ist:
+
+```{r}
+data(alc, package = 'PsyBSc7')
+dim(alc)
+head(alc)
+```
+
+Der Datensatz stammt aus einer Erhebung von Curran, Stice & Chassin (1997) in der der Alkoholkonsum von Jugendlichen längsschnittlich untersucht wurde. Die enthaltenen Variablen sind der Personen-Identifikator (`id`), das Alter zum Erhebungszeitpunkt (`age`), das dichotom kodierte Geschlecht (`male`, mit 0 = weiblich), die selbstberichtete Häufigkeit, mit der Alkohol konsumiert wird (`alcuse` ein Durchschnittswert über mehrere Items mit 0 = nie und 7 = täglich), die berichtete Menge von Peers, die Alkohol konsumieren (`peer` ein Durchschnittswert über mehrere Items mit 0 = keine und 5 = alle) und ob derjenige/diejenige Kind eines Alkoholikers ist (`coa`, "child of alcoholic", mit 0 = nein).
+
+## Datenstruktur: Long-Format vs. Wide-Format
+
+Bei der Formattierung von sozialwissenschaftlichen Datensätzen können zwei generelle Typen unterschieden werden: das Long-Format und das Wide-Format. Die Bezeichnung bezieht sich dabei (meistens) auf die Anordnung von Messwiederholungen der gleichen Personen. Im geladenen Datensatz stellt eine Zeile jeweils eine Messung einer Person zu einem Zeitpunkt dar. Jede Personen-ID kommt also mehrmals vor:
+
+```{r}
+table(alc$id)
+```
+
+In diesem Fall gibt es drei Messzeitpunkte, die anhand des Alters der Proband\*innen kodiert sind:
+
+```{r}
+table(alc$age)
+```
+
+Manche Analyseverfahren benötigen Datensätze im langen Format (wie z.B. die Messwiederholte ANOVA mit `ez`), andere benötigen Datensätze im breiten Format (wie z.B. multivariate Regression). Für die Transformation der Daten aus einem in das andere Format gibt es die `reshape`-Funktion, welche unterschiedliche Argumente benötigt, je nachdem in welche Richtung die Daten transformiert werden sollen. Um die vorliegenden Daten ins breite Format zu überführen, benötigt die Funktion mindestens fünf Argumente:
+
+  - `data`: der Datensatz
+  - `v.names`: Variablen die wiederholt gemessen wurden (und sich über die Messungen unterscheiden können)
+  - `timevar`: die Variable, die Wiederholungen kennzeichnet
+  - `idvar`: der Personen-Identifikator
+  - `direction`: das Zielformat des neuen Datensatzes
+
+```{r}
+alc_wide <- reshape(alc, v.names = 'alcuse', timevar = 'age', idvar = 'id', direction = 'wide')
+head(alc_wide)
+```
+
+Für Variablen, die nicht explizit aufgeführt werden wird von `reshape` angenommen, dass es nicht wiederholte gemessene "feste" Variablen sind. Im vorliegenden Fall sind Geschlecht und die Menge alkoholkonsumierender Peers nur ein mal gemessen wurden und können daher nicht über Messzeitpunkte variieren. Um Variablen bei der Transformation aus dem Datensatz zu entfernen, kann das `drop` Argument genutzt werden.
+
+Um die entgegengesetzte Transformation zu erwirken, muss statt des `v.names` Arguments mit `varying` gearbeitet werden. In diesem Argument müssen in einer Liste die Gruppen von Variablen angegeben werden, die als eine, messwiederholte Variable im langen Format dargestellt werden sollen.
+
+```{r}
+alc_long <- reshape(alc_wide, varying = list(alcuse = c('alcuse.14', 'alcuse.15', 'alcuse.16')), timevar = 'age', idvar = 'id', times = c(14, 15, 16), direction = 'long')
+head(alc_long)
+```
+
+In diesem Fall wird mit `timevar` der Name der neuen Variable angegeben, die die Wiederholungen identifizieren soll (per Voreinstellung wird hier "time" als Name genutzt). In diesem speziellen Fall muss zusätzlich mit `times` angegeben werden, welche Ausprägungen diese Zeitvariable haben soll - hier wäre die Voreinstellung die Wiederholungen durchzuzählen (in diesem Fall also 1, 2 und 3).
+
+Wenn ein Datensatz durch `reshape` umgewandelt wurde - z.B. dann, wenn man einen Datensatz mit unterschiedlichen Auswertungsansätze untersucht und zwischen den Formaten wechseln muss - kann er mit `reshape(data)` direkt in seine Ursprungsform zurückgewandelt werden.
+
+
+## ANOVA mit Messwiederholung auf einem Faktor
+
+Zur Untersuchung von Veränderung können die, in den letzten Sitzungen behandelten, Funktionen aus dem `ez`-Paket genutzt werden. In diesem Fall ist von Interesse, wie sich der Alkoholkonsum von Jugendlichen zwischen 14 und 16 verändert. Dafür sollte zunächst deksriptiv betrachtet werden, wie die Mittelwerte sich über die Zeit verändern:
+
+```{r}
+library(ez)
+ezStats(alc, alcuse, id, within = age)
+```
+
+Statt das Argument `between` zu nutzen, wie in den letzten Sitzungen, wird mithilfe des `within` Arguments die Variable benannt die zwischen Messungen *innerhalb* der gleichen Personen unterscheidet. Deskriptiv zeigt sich also ein Anstieg des Alkoholkonsums über die Jahre. Grafisch dargestellt:
+
+```{r}
+ezPlot(alc, alcuse, id, within = age,
+  x = age)
+```
+
+Als Äquivalent zur Homoskedastizitätsannahme in der ANOVA ohne Messwiederholung, wird in der ANOVA mit Messwiederholung die *Sphärizitätsannahme* getroffen. Unter dieser Annahme sollten die Differenzen zwischen allen Zeitpunkten identisch sein (vgl. Eid, Gollwitzer & Schmitt, 2015, S. 474 f.). Im breiten Datenformat sind diese Differenzen einfach zu erstellen:
+
+```{r}
+alc_wide$diff_1415 <- alc_wide$alcuse.15 - alc_wide$alcuse.14
+alc_wide$diff_1416 <- alc_wide$alcuse.16 - alc_wide$alcuse.14
+alc_wide$diff_1516 <- alc_wide$alcuse.16 - alc_wide$alcuse.15
+var(alc_wide[, c('diff_1415', 'diff_1416', 'diff_1516')])
+```
+
+Rein deskriptiv lässt sich erkennen, dass die Varianz der Differenz zwischen 14 und 16 Jahren beinahe doppelt so groß ist, wie die zwischen 14 und 15 Jahren. Wie schon bei der Homoskedastizitätsannahme, wird auch die Sphärizität von `ezANOVA` mitgetestet:
+
+```{r}
+ezANOVA(alc, alcuse, id, within = age)
+```
+
+Der sogenannte "Mauchly Test" zeigt hier an, dass es bedeutsame Abweichungen von der Annahme der Sphärizität gibt, die Annahme also nicht als gegeben betrachtet werden kann. Weil diese Situation bei sehr vielen Messwiederholungen vorkommt, gibt es eine Reihe verbreiteter Korrekturen, von denen `ezANOVA` die Greenhouse-Geisser und die Huynh-Feldt Korrekturen anbietet. Es hat sich gezeigt, dass die Greenhouse-Geisser Korrektur mitunter zu strikt ist (also zu selten bedeutsame Ergebnisse gefunden werden), weswegen beide Varianten ausgegeben werden.
+
+In diesem Fall können also der ersten Tabelle $F$-Wert und generalisiertes $\eta^2$ entnommen werden, der korrekte $p$-Wert bezüglich der Hypothesenprüfung sollte allerdings der dritten Tabelle entnommen werden, weil der Mauchly Test gezeigt hat, dass die Sphärizitätsannahme nicht hält.
+
+
+## Effektgröße und Intraklassenkorrelation
+
+Die Intraklassenkorrelation (ICC) bezeichnet generell das Ausmaß in dem die Varianz von Beobachtungen von der "Klasse" abhängen, aus dem diese Beobachtungen kommen. Im Fall von Längsschnittanalysen bedeutet das, dass die ICC das Ausmaß von intraindividueller Stabilität anzeigt. Effektgrößen sollten unter Berücksichtigung dieser Stabilität interpretiert werden. Eine generelle Richtlinie für die ICC-bedingte Interpretation von $\eta^2$ liefert Cohen (1988), hier dargestellt nach Eid, Gollwitzer & Schmitt (2015, S. 478):
+
+ICC | klein | mittel | groß
+--- | ----- | ------ | ----
+.20 | .012  | .072   | .167
+.40 | .016  | .094   | .211
+.60 | .024  | .135   | .286
+.80 | .048  | .238   | .444
+
+Die ICC kann generell als $\frac{\sigma^2_{\pi}}{\sigma^2_{\pi} + \sigma^2_{\epsilon}}$ berechnet werden. Dabei ist $\sigma^2_{\pi}$ die Personenvarianz und $\sigma^2_{\epsilon}$ die Residualvarianz. Beide können direkt aus den mittleren Quadratsummen berechnet werden. Alternativ kann die `ICC`-Funktion aus dem `psych`-Paket genutzt werden:
+
+```{r}
+psych::ICC(alc_wide[, c('alcuse.14', 'alcuse.15', 'alcuse.16')])
+```
+
+Der in diesem Fall relevante ICC-Typ ist als ICC1 gelistet. In diesem Fall bedeutet es also, dass ca. 50% der Unterschiede zwischen Messungen auf stabile Personeneigenschaften zurückgehen. In Anbetracht dieser ICC, hat das Alter also einen kleinen Effekt auf das Ausmaß an Alkoholkonsum bei Jugendlichen.
+
+
+## Kontraste
+
+Wie für ANOVA ohne Messwiederholung, kann auch in diesem Fall mit dem `emmeans`-Paket die Kontrastanalyse durchgeführt werden.
+
+```{r}
+library(emmeans)
+```
+
+Die `contrast`-Funktion des Pakets benötigt als Input ein `aov`-Objekt. Um zu kennzeichnen, dass es sich um eine ANOVA mit Messwiederholung handelt, muss dabei `Error()` benutzt werden um die Personen ID und den Zeitvariable in Beziehung zu setzen:
+
+```{r}
+# aov-Objekt erzeugen
+wdh_aov <- aov(alcuse ~ age + Error(id/age), data = alc)
+
+# Kontraste vorbereiten
+em <- emmeans(wdh_aov, ~ age)
+em
+```
+
+Bei messwiederholten Designs mit dem Ziel Veränderung über die Zeit zu untersuchen, ist es meist sinnvoll zu prüfen, ob die Veränderung über die Zeit durch eine einfache Funktion beschrieben werden kann. Meistens werden dazu Polynome genutzt, welche für $t - 1$ Grade bestimmt werden können. Für drei Messzeitpunkte, kann also der quadratische Trend geprüft werden:
+
+```{r}
+contrast(em, interaction = 'poly')
+```
+
+Es zeigt sich in diesem Fall also ein bedeutsamer linearer, aber kein bedeutsamer quadratischer Trend. Der direkte Vergleich aller Zeitpunkte kann via `method = 'pairwise'` erreicht werden. Außerdem resultieren die Voreinstellungen in einem Vergleich aller Zeitpunkte mit dem globalen Mittel:
+
+```{r}
+# Alle paarweisen Vergleiche
+contrast(em, method = 'pairwise')
+
+# Vergleiche mit dem Mittel
+contrast(em)
+```
+
+
+## Split-Plot ANOVA
+
+Untersuchungen, in denen mehrere Gruppen und mehrere Messungen gleichzeitig betrachtet werden, werden häufig Split-Plot Designs genannt. Im aktuellen Datensatz können Jugendliche danach in Gruppen eingeteilt werden, ob ihre Eltern Alkoholiker sind. Die entsprechende Syntax für das `ez`-Paket ist eine einfache Kombination aus der Syntax für die beiden bisher behandelten Typen der ANOVA:
+
+```{r}
+# Deskriptive Statistiken
+ezStats(alc, alcuse, id, age, between = coa)
+
+# Grafische Darstellung
+ezPlot(alc, alcuse, id, age, between = coa,
+  x = age, split = coa)
+```
+
+
+```{r}
+ezANOVA(alc, alcuse, id, age, between = coa)
+```
+
+Obwohl `ez` den Mauchly Test für Sphärizität mitliefert, ist im Fall des Split-Plot Designs die eigentliche Annahme die Gleichheit der Varianz-Kovarianz-Matrizen der messwiederholten Variablen über alle Gruppen hinweg. Dieser Annahme kann mithilfe des Box-M-Test geprüft werden, welcher allerdings in nur wenigen Paketen implementiert ist, weil er in der Mehrheit aller empirischen Anwendungen statistisch bedeutsam ist. Wer ihn dennoch durchführen möchte, findet ihn z.B. im `heplots` Paket:
+
+```{r}
+heplots::boxM(alc_wide[, c('alcuse.14', 'alcuse.15', 'alcuse.16')], group = alc_wide$coa)
+```
+
+Nach Eid, Gollwitzer & Schmitt (2015, S. 494) ist die ANOVA gegenüber der Verletzung der Homgenitätsannahme bezüglich der Kovarianzmatrizen dann robust, wenn die Sphärizitätsannahme nicht verworfen werden muss. Sollte diese ebenfalls verworfen werden müssen, können entweder die zuvor dargestellten Korrekturen genutzt werden oder eine "echte" robuste Variante (z.B. im WRS2-Paket) genutzt werden.
+
+Bezüglich der Ergebnisse der ANOVA zeigt sich, dass das Alter und ob ein Elternteil Alkoholiker ist einen bedeutsamen Einfluss auf das Trinkverhalten von Jugendlichen haben. Dass die Interaktion nicht statistisch bedeutsam ist, deutet darauf hin, dass die Entwicklung über die Zeit zwischen beiden Gruppen von Jugendlichen parallel verläuft.
