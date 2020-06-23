@@ -276,18 +276,6 @@ Der in diesem Fall relevante ICC-Typ ist als ICC1 gelistet. In diesem Fall bedeu
 
 ## Kontraste {#Kontraste}
 
-```{r, echo = FALSE}
-alc_long <- reshape(data = alc,
-  varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')),
-  direction = 'long',
-  timevar = 'age',
-  times = c(14, 15, 16),
-  v.names = 'alcuse')
-
-alc_long$age <- as.factor(alc_long$age)
-```
-
-
 Wie für ANOVA ohne Messwiederholung, kann auch in diesem Fall mit dem `emmeans`-Paket die Kontrastanalyse durchgeführt werden.
 
 ```{r}
@@ -298,7 +286,8 @@ Die `contrast`-Funktion des Pakets benötigt als Input ein `aov`-Objekt. Um zu k
 
 ```{r}
 # aov-Objekt erzeugen
-wdh_aov <- aov(alcuse ~ age + Error(id/age), data = alc_long)
+wdh_aov <- aov(alcuse ~ age + Error(id/age), 
+  data = alc_long)
 
 # Kontraste vorbereiten
 em <- emmeans(wdh_aov, ~ age)
