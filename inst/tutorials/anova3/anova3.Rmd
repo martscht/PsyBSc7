@@ -276,6 +276,18 @@ Der in diesem Fall relevante ICC-Typ ist als ICC1 gelistet. In diesem Fall bedeu
 
 ## Kontraste {#Kontraste}
 
+```{r, echo = FALSE}
+alc_long <- reshape(data = alc,
+  varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')),
+  direction = 'long',
+  timevar = 'age',
+  times = c(14, 15, 16),
+  v.names = 'alcuse')
+
+alc_long$age <- as.factor(alc_long$age)
+```
+
+
 Wie für ANOVA ohne Messwiederholung, kann auch in diesem Fall mit dem `emmeans`-Paket die Kontrastanalyse durchgeführt werden.
 
 ```{r}
