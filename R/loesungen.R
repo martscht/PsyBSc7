@@ -193,3 +193,22 @@ Loesungen_10 <- function(password) {
     compile('anova2_lo')
   }
 }
+
+#' @rdname Loesungen
+#' @export
+Loesungen_11 <- function(password) {
+  library(learnr)
+  if (!('fontawesome' %in% rownames(installed.packages()))) {
+    devtools::install_github("rstudio/fontawesome", upgrade = 'never')
+  }
+  if (!('gradethis' %in% rownames(installed.packages()))) {
+    devtools::install_github('rstudio-education/gradethis', upgrade = 'never')
+  }
+  library(gradethis)
+  
+  if (digest::digest(password) != '013999e6fc9e97e6d40e91caa2afc6cb') {
+    message('Leider haben Sie nicht das richtige Passwort eingegeben.', call. = FALSE)
+  }  else {
+    compile('anova3_lo')
+  }
+}
