@@ -1,0 +1,104 @@
+---
+title: "Sitzung 11: R-Skripte zu den Aufgaben"
+output:
+  learnr::tutorial:
+    progressive: false
+    allow_skip: true
+    includes:
+      after_body: footer.html
+      in_header: header.html
+runtime: shiny_prerendered
+---
+
+## Lösungen zu den Aufgaben
+
+Nutzen Sie für die Aufgaben den Datensatz `RA`, der in diesem Paket enthalten. Dieser Datensatz enthält Beobachtungen von 95 Personen auf 7 Variablen.
+
+```{r}
+data(RA, package = 'PsyBSc7')
+str(RA)
+```
+
+Die Daten entstammen einer Interventionsstudie mit Jugendlichen in der 8. Klasse. Ziel der Intervention war die Reduktion von Bullying durch die Steigerung sozialer Kompetenzen. In diesem Datensatz ist das durch Peers berichtete, relational aggressive Verhalten (`ra1`, `ra2`, `ra3`) zentral. Für jede Person wurden die Peer-Berichte zu jedem der drei Messzeitpunkte gemittelt. Die Messzeitpunkte sind einmal vor der Intervention, dann direkt nach der Intervention und dann 9 Monate nach der Intervention. Die Intervention (`group`) wurde in zwei Varianten (eine intensive, langfristige Intervetion `IG Long` und eine leichter durchzuführende, kurze Intervention `IG Short`) durchgeführt. Zusätzlich wurde eine Kontrollgruppe (`CG`) erhoben.
+
+## 1. Überführen Sie den Datensatz in das lange Format, welches für ANOVAs mit Messwiederholungen im `ez`-Paket notwendig ist. Wandeln Sie anschließend die Zeit-Variable in einen Faktor um.
+
+```{r}
+RA_long <- reshape(RA, varying = list(c('ra1', 'ra2', 'ra3')), idvar = 'id', direction = 'long')
+RA_long$time <- as.factor(RA_long$time)
+```
+
+
+## 2. Untersuchen Sie den Mittelwertsverlauf der relationalen Aggression mithilfe von Deskriptivstatistik und einer Abbildung. Nutzen Sie dabei die Interventions- bzw. Kontrollgruppen als Zwischensubjektfaktor.
+
+```{r}
+library(ez)
+ezStats(RA_long, ra1, id, within = time, between = group)
+ezPlot(RA_long, ra1, id, within = time, between = group,
+  x = time, split = group)
+```
+
+## 3. Prüfen Sie mithilfe einer ANOVA die Veränderungen in der peer-berichteten relationalen Aggression im Vergleich der drei Gruppen! Interpretieren Sie die Ergebnisse.
+
+```{r}
+ezANOVA(RA_long, ra1, id, within = time, between = group)
+```
+
+Die Sphärizitätsannahme ist nicht verletzt, sodass die unkorrigierte Inferenzstatistik aus der ersten Ergebnistabelle zur Interpretation herangezogen werden kann. Es zeigt sich ein signifikanter Haupteffekt der Gruppe und ein bedeutsamer Interaktionseffekt. Aufgrund des bedeutsamen Interaktionseffekts und des genutzten Quadratsummentyps (Typ II) sollte von der Interpretation des Haupteffekts abgesehen werden.
+
+Die bedeutsame Interaktion zeigt an, dass sich die drei Gruppen in ihrer Veränderung unterscheiden. Aus der Abbildung, die in der vorangegangenen Aufgabe erzeugt wurde, lässt sich ableiten, dass die relationale Aggression in der Kontrollgruppe vom ersten zum zweiten Zeitpunkt ansteigt, wohingegen sie in beiden Interventionsgruppen sinkt.
+
+## 4. Eine Annahme der Studie war es, dass die lange Intervention bessere Ergebnisse erzielen sollte als die Kurze. Untersuchen Sie diese Hypothese mit der geeigneten Analyse!
+
+Zur Prüfung ist ebenfalls eine ANOVA mit Messwiederholungen notwendig; lediglich die Kontrollgruppe muss aus der Analyse ausgeschlossen werden.
+
+```{r}
+RA_ig <- RA_long[RA_long$group != 'CG', ]
+ezANOVA(RA_ig, ra1, id, within = time, between = group)
+```
+
+Die Ergebnisse der ANOVA zeigen an, dass es sowohl bedeutsame Unterschiede zwischen den Gruppen, als auch zwischen den Zeitpunkten gibt. Dass der Interaktionseffekt nicht statistisch bedeutsam ist, zeigt aber, dass nicht widerlegt werden kann, dass beide Interventionsansätze gleich gut funktionieren.
+
+## 5. Prüfen Sie mit der geeigneten Analyse, ob die Randomisierung ausreichend gut funktioniert hat (also ob die drei Gruppen *vor* der Intervention gleiche Mittelwerte hatten).
+
+In diesem Fall kann mithilfe einer einfaktoriellen Varianzanalyse der Unterschied zwischen den drei Gruppen zum ersten Messzeitpunkt untersucht werden. Dafür kann der Originaldatensatz (im Querformat) genutzt werden.
+
+```{r}
+ezANOVA(RA, ra1, id, between = group)
+```
+
+Die ANOVA zeigt an, dass es einen bedeutsamen Unterschied zwischen den Gruppen vor der Intervention gibt - die Gleichverteilung der relationalen Aggression zwischen den Gruppen also nicht erfolgreich war. Mithilfe von Tukeys HSD kann untersucht werden, welche Gruppen sich bedeutend unterscheiden.
+
+```{r}
+TukeyHSD(aov(ra1 ~ group, RA))
+```
+
+Die beiden Interventionsgruppen unterscheiden sich vor der Durchführung der Intervention in ihrer relationalen Aggression. Dabei ist der Mittelwert der langen Intervetionsgruppe bedeutend höher als der der kurzen Intervetionsgruppe.
+
+## 6. (Bonus) Untersuchen Sie mithilfe geplanter Kontraste, ob in einer der beiden Interventionsgruppen Langzeiteffekte zu finden sind - also ob die Mittelwerte sich in diesen beiden Gruppen zwischen t1 und t3 bedeutsam verändert haben.
+
+Zunächst muss ein `emmeans`-Objekt erstellt werden, mit welchem Kontrastberechnungen durchgeführt werden können.
+
+```{r}
+library(emmeans)
+aov_obj <- aov(ra1 ~ time * group + Error(id/time), RA_long)
+em <- emmeans(aov_obj, ~ time*group)
+em
+```
+
+Die beiden Kontraste, die für diese Aufgabe von Relevanz sind, vergleichen jeweils `IG Long` zu T1 mit `IG Long` zu T3 und `IG Short` zu T1 mit `IG Short` zu T3. Als Vektoren ausgedrückt also:
+
+```{r}
+con1 <- c(-1, 0, 1, 0, 0, 0, 0, 0, 0)
+con2 <- c(0, 0, 0, -1, 0, 1, 0, 0, 0)
+contrast(em, list(con1, con2), adjust = 'bonferroni')
+```
+
+In den beiden Interventionsgruppen sind keine Langzeiteffekte zu finden. Eine ähnliche Aussage entsteht, wenn man die beiden Langzeiteffekte mit $t$-Tests für abhängige Stichproben prüft.
+
+```{r}
+t.test(RA$ra1[RA$group == 'IG Long'], RA$ra3[RA$group == 'IG Long'], paired = TRUE)
+t.test(RA$ra1[RA$group == 'IG Short'], RA$ra3[RA$group == 'IG Short'], paired = TRUE)
+```
+
+In diesem Fall ist nach Bonferroni-Korrektur das kritische $\alpha$-Niveau 0.025.
