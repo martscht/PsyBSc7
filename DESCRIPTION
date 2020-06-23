@@ -16,4 +16,4 @@ License: CC BY-NC-SA 4.0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
-Depends: R (>= 3.6.0), learnr, shiny, ggplot2, psych, digest, maps, gganimate, car, MASS, lm.beta, ppcor, olsrr, ez, emmeans
+Depends: R (>= 3.6.0), learnr, shiny, ggplot2, psych, digest, maps, gganimate, car, MASS, lm.beta, ppcor, olsrr, ez, emmeans, heplots
