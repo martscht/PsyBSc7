@@ -10,6 +10,30 @@ output:
 runtime: shiny_prerendered
 ---
 
+```{r setup, include=FALSE}
+library(learnr)
+library(ez)
+library(emmeans)
+
+library(gradethis)
+knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
+
+source('startup.R')
+
+data(alc, package = 'PsyBSc7')
+```
+
+```{r longdata, echo = FALSE}
+alc_long <- reshape(data = alc,
+  varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')),
+  direction = 'long',
+  timevar = 'age',
+  times = c(14, 15, 16),
+  v.names = 'alcuse')
+
+alc_long$age <- as.factor(alc_long$age)
+```
+
 
 ## Einführung
 
@@ -25,23 +49,136 @@ dim(alc)
 head(alc)
 ```
 
-Der Datensatz stammt aus einer Erhebung von Curran, Stice & Chassin (1997) in der der Alkoholkonsum von Jugendlichen längsschnittlich untersucht wurde. Die enthaltenen Variablen sind der Personen-Identifikator (`id`), das Alter zum Erhebungszeitpunkt (`age`), das dichotom kodierte Geschlecht (`male`, mit 0 = weiblich), die selbstberichtete Häufigkeit, mit der Alkohol konsumiert wird (`alcuse` ein Durchschnittswert über mehrere Items mit 0 = nie und 7 = täglich), die berichtete Menge von Peers, die Alkohol konsumieren (`peer` ein Durchschnittswert über mehrere Items mit 0 = keine und 5 = alle) und ob derjenige/diejenige Kind eines Alkoholikers ist (`coa`, "child of alcoholic", mit 0 = nein).
+Der Datensatz stammt aus einer Erhebung von Curran, Stice & Chassin (1997) in der der Alkoholkonsum von Jugendlichen längsschnittlich untersucht wurde. Die enthaltenen Variablen sind der Personen-Identifikator (`id`), das dichotom kodierte Geschlecht (`male`, mit 0 = weiblich), das berichtete Ausmaß in dem Peers Alkohol konsumieren (`peer` ein Durchschnittswert über mehrere Items mit 0 = keine und 5 = alle) und ob derjenige/diejenige Kind eines Alkoholikers ist (`coa`, "child of alcoholic", mit 0 = nein). Darüber hinaus gibt es zu drei verschiedenen Zeitpunkten (jeweils im Alter von 14, 15 und 16) die selbstberichtete Häufigkeit, mit der Alkohol konsumiert wird (`alcuse` ein Durchschnittswert über mehrere Items mit 0 = nie und 7 = täglich).
 
-## Datenstruktur: Long-Format vs. Wide-Format
+### Datenformat und `reshape`
 
-Bei der Formattierung von sozialwissenschaftlichen Datensätzen können zwei generelle Typen unterschieden werden: das Long-Format und das Wide-Format. Die Bezeichnung bezieht sich dabei (meistens) auf die Anordnung von Messwiederholungen der gleichen Personen. Im geladenen Datensatz stellt eine Zeile jeweils eine Messung einer Person zu einem Zeitpunkt dar. Jede Personen-ID kommt also mehrmals vor:
+Die Unterscheidung zwischen Long- und Wide-Format hatten wir schon in der 2. Sitzung (`ggplot2`) gesehen. Als kurze Erinnerung: Bei der Formattierung von sozialwissenschaftlichen Datensätzen können zwei generelle Typen unterschieden werden: das Long-Format und das Wide-Format. Die Bezeichnung bezieht sich dabei (meistens) auf die Anordnung von Messwiederholungen der gleichen Personen. Im geladenen Datensatz stellt eine Zeile jeweils eine Person zu einem Zeitpunkt dar. Jede Personen-ID kommt also genau ein mal vor:
 
 ```{r}
 table(alc$id)
 ```
 
-In diesem Fall gibt es drei Messzeitpunkte, die anhand des Alters der Proband\*innen kodiert sind:
+Manche Analyseverfahren benötigen Datensätze im langen Format (wie z.B. die Messwiederholte ANOVA mit `ez`), andere benötigen Datensätze im breiten Format (wie z.B. multivariate Regression).  Die Umwandlung zwischen den beiden Formaten hatten wir in der 2. Sitzung mit `reshape` durchgeführt.
 
-```{r}
-table(alc$age)
+Probieren Sie kurz aus, ob Sie sich noch daran erinnern (oder rekonstruieren können) wie Sie den Datensatz ins lange Format übertragen! Nennen Sie den neuen Datensatz am besten `alc_long` und lassen Sie sich am Ende der Umstellung die ersten 6 Zeilen mit `head` ausgeben (*der letzte Schritt ist nötig, damit geprüft werden kann, ob Sie die Umstellung richtig gemacht haben*). Beachten Sie, dass die Variablen `male`, `peer` und `coa` jeweils nur einmal (zu Beginn der Studie) gemessen wurden und dass für die Zeiten das Alter (14, 15 und 16) statt 1, 2 und 3 vergeben werden sollten.
+
+```{r reshape, exercise = TRUE, exercise.eval = FALSE, eval = FALSE}
+# Umwandeln des Datensatzes
+alc_long <- ...
+
+# Kopfzeilen ausgeben
+head(alc_long)
 ```
 
-Manche Analyseverfahren benötigen Datensätze im langen Format (wie z.B. die Messwiederholte ANOVA mit `ez`), andere benötigen Datensätze im breiten Format (wie z.B. multivariate Regression). Für die Transformation der Daten aus einem in das andere Format gibt es die `reshape`-Funktion, welche unterschiedliche Argumente benötigt, je nachdem in welche Richtung die Daten transformiert werden sollen. Um die vorliegenden Daten ins breite Format zu überführen, benötigt die Funktion mindestens fünf Argumente:
+```{r reshape-hint-1, eval = FALSE}
+# Notwendige Argumente
+alc_long <- reshape(data = ...,
+  varying = list(...),
+  direction = ...)
+```
+
+```{r reshape-hint-2, eval = FALSE}
+# Zusatz für bessere Aufbereitung
+alc_long <- reshape(data = ...,
+  varying = list(...),
+  direction = ...,
+  timevar = 'age',
+  v.names = 'alcuse',
+  times = c(14, 15, 16))
+```
+
+
+```{r reshape-check}
+tmp <- reshape(data = alc,
+  varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')),
+  direction = 'long',
+  timevar = 'age',
+  v.names = 'alcuse',
+  times = c(14, 15, 16))
+
+sol <- head(tmp)
+
+grade_result(
+  pass_if(~ identical(.result, sol), 'Sie können die kommende Wiederholung überspringen und direkt mit der ANOVA weitermachen!'),
+  pass_if(~ all(sol == .result) & !identical(.result, sol), 'Der Datensatz an sich ist korrekt, aber im folgenden werden etwas andere Namen für die Variablen genutzt, als die die Sie hier vergeben haben.'),
+  fail_if(~ !(all(sol == .result)) & all(.result[, attr(.result, 'reshapeLong')$timevar] == 1), 'Versuchen Sie für die Zeitvariable die Ausprägung des Alters statt 1, 2 und 3 zu vergeben!'),
+  correct = 'Sehr gut! So können Sie den Datensatz ins lange Format übertragen!',
+  incorrect = 'Leider falsch. Im Anschluss finden Sie einen Abschnitt, in dem die Umwandlung vom breiten ins lange Datenformat noch einmal detailliert besprochen wird.',
+  glue_correct = '{.correct} {.message}',
+  glue_incorrect = '{.incorrect} {.message}')
+```
+
+### Wiederholung: `reshape`
+
+Für die Transformation der Daten aus einem in das andere Format gibt es die `reshape`-Funktion, welche unterschiedliche Argumente benötigt, je nachdem in welche Richtung die Daten transformiert werden sollen. Hier wollen wir aus dem breiten Format ins lange Format transformieren, um die Daten hinterher für die Varianzanalyse mit Messwiederholung nutzen zu können.
+
+Weil die Benennung und Handhabung von Argumenten in `reshape` mitunter etwas unübersichtlich ist, empfiehlt es sich mit `?reshape` (in einem neuen R-Fenster) die Hilfe aufzurufen. Für die Umwandlung von breit nach lang sind drei Argumente zwingend erforderlich:
+
+  - `data`: der Datensatz
+  - `varying`: eine Liste der Variablen, die wiederholt gemessen wurden
+  - `direction`: die Richtung, in die der Datensatz transformiert werden soll (hier `'long'`)
+
+Im Minimalfall sieht die Umwandlung also so aus:
+
+```{r}
+alc_long <- reshape(data = alc,
+  varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')),
+  direction = 'long')
+
+head(alc_long)
+```
+
+Das Argument `varying` bedarf vielleicht einer zweiten Betrachtung: hier wird eine Liste von Vektoren erstellt. Die Vektoren enthalten jeweils die Namen der Variablen, die zusammen Messwiederholungen der gleichen Variable sind. Wenn wir z.B. einen weiteren Satz aus drei Variablen hätten, die `weeduse` hieße, würde diese Liste so aussehen:
+
+```{r, eval = FALSE}
+varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16'),
+  c('weeduse.14', 'weeduse.15', 'weeduse.16'))
+```
+
+Per Voreinstellung werden alle Variablen übernommen, die nicht explizit als `varying` angegeben werden. Diese Variablen haben dann für jede Zeile, die die gleiche Person betrifft auch den gleichen Wert. Wenn wir die Werte für die erste Person betrachten:
+
+```{r}
+alc_long[alc_long$id == 1, ]
+```
+
+sehen wir diese Variablen in den ersten vier Spalten wieder (`r names(alc_long)[1:4]`). Die nächste Variable ist die Zeitvariable, die von R automatisch als `time` benannt wird. Wenn wir etwas anderes nutzen möchten, können wir mit `timevar` explizit einen Namen vergeben (weil die Wiederholungen das Alter der Jugendlichen sind, bietet sich `age` an):
+
+```{r}
+alc_long <- reshape(data = alc,
+  varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')),
+  direction = 'long',
+  timevar = 'age')
+
+head(alc_long)
+```
+
+Das Problem mit dieser neuen Variable ist jetzt noch, dass Sie nicht das korrekte Alter der Jugendlichen kodiert, sondern stattdessen einfach bei 1 anfängt und hoch zählt. Auch das können wir per Argument ändern:
+
+```{r}
+alc_long <- reshape(data = alc,
+  varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')),
+  direction = 'long',
+  timevar = 'age',
+  times = c(14, 15, 16))
+
+head(alc_long)
+```
+
+Zu guter Letzt wird für die neuen Variablen automatisch der erste Name wiederverwendet. Hier ist der Name der neuen, messwiederholten Variable als `alcuse.14`. Weil in der Variable aber jetzt nicht mehr nur der Alkoholkonsum im 14. Lebensjahr enthalten ist, sondern für alle Jahre von 14 bis 16, bietet es sich an, hier auch einen allgemeineren Namen zu verwenden:
+
+```{r}
+alc_long <- reshape(data = alc,
+  varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')),
+  direction = 'long',
+  timevar = 'age',
+  times = c(14, 15, 16),
+  v.names = 'alcuse')
+
+head(alc_long)
+```
+ 
+Der Vollständigkeit halber können wir auch noch überlegen, wie man diesen Datensatz dann wieder in das breite Format zurück übertragen kann. Dafür benötigt man fünf Argumente:
 
   - `data`: der Datensatz
   - `v.names`: Variablen die wiederholt gemessen wurden (und sich über die Messungen unterscheiden können)
@@ -50,61 +187,74 @@ Manche Analyseverfahren benötigen Datensätze im langen Format (wie z.B. die Me
   - `direction`: das Zielformat des neuen Datensatzes
 
 ```{r}
-alc_wide <- reshape(alc, v.names = 'alcuse', timevar = 'age', idvar = 'id', direction = 'wide')
+alc_wide <- reshape(alc_long, v.names = 'alcuse', timevar = 'age', idvar = 'id', direction = 'wide')
 head(alc_wide)
 ```
 
-Für Variablen, die nicht explizit aufgeführt werden wird von `reshape` angenommen, dass es nicht wiederholte gemessene "feste" Variablen sind. Im vorliegenden Fall sind Geschlecht und die Menge alkoholkonsumierender Peers nur ein mal gemessen wurden und können daher nicht über Messzeitpunkte variieren. Um Variablen bei der Transformation aus dem Datensatz zu entfernen, kann das `drop` Argument genutzt werden.
-
-Um die entgegengesetzte Transformation zu erwirken, muss statt des `v.names` Arguments mit `varying` gearbeitet werden. In diesem Argument müssen in einer Liste die Gruppen von Variablen angegeben werden, die als eine, messwiederholte Variable im langen Format dargestellt werden sollen.
-
-```{r}
-alc_long <- reshape(alc_wide, varying = list(alcuse = c('alcuse.14', 'alcuse.15', 'alcuse.16')), timevar = 'age', idvar = 'id', times = c(14, 15, 16), direction = 'long')
-head(alc_long)
-```
-
-In diesem Fall wird mit `timevar` der Name der neuen Variable angegeben, die die Wiederholungen identifizieren soll (per Voreinstellung wird hier "time" als Name genutzt). In diesem speziellen Fall muss zusätzlich mit `times` angegeben werden, welche Ausprägungen diese Zeitvariable haben soll - hier wäre die Voreinstellung die Wiederholungen durchzuzählen (in diesem Fall also 1, 2 und 3).
+Für Variablen, die nicht explizit aufgeführt werden wird von `reshape` wieder angenommen, dass es nicht wiederholt gemessene "feste" Variablen sind. Im vorliegenden Fall sind Geschlecht und die Menge alkoholkonsumierender Peers nur ein mal gemessen wurden und können daher nicht über Messzeitpunkte variieren. Um Variablen bei der Transformation aus dem Datensatz zu entfernen, kann das `drop` Argument genutzt werden.
 
 Wenn ein Datensatz durch `reshape` umgewandelt wurde - z.B. dann, wenn man einen Datensatz mit unterschiedlichen Auswertungsansätze untersucht und zwischen den Formaten wechseln muss - kann er mit `reshape(data)` direkt in seine Ursprungsform zurückgewandelt werden.
 
 
-## ANOVA mit Messwiederholung auf einem Faktor
+## Einfaktorielle ANOVA (mit Messwiederholung)
 
-Zur Untersuchung von Veränderung können die, in den letzten Sitzungen behandelten, Funktionen aus dem `ez`-Paket genutzt werden. In diesem Fall ist von Interesse, wie sich der Alkoholkonsum von Jugendlichen zwischen 14 und 16 verändert. Dafür sollte zunächst deksriptiv betrachtet werden, wie die Mittelwerte sich über die Zeit verändern:
+Zur Untersuchung von Veränderung können wir die, in den letzten Sitzungen behandelten, Funktionen aus dem `ez`-Paket wieder benutzen. Dafür gucken wir uns zuerst die Deskriptivstatistik an und führen dann die ANOVA durch.
+
+### Deskriptivstatistik
+
+In diesem Fall ist von Interesse, wie sich der Alkoholkonsum von Jugendlichen zwischen 14 und 16 verändert. Dafür können wir zunächst deksriptiv betrachten, wie die Mittelwerte sich über die Zeit verändern:
 
 ```{r}
 library(ez)
-ezStats(alc, alcuse, id, within = age)
+ezStats(alc_long, alcuse, id, within = age)
 ```
 
-Statt das Argument `between` zu nutzen, wie in den letzten Sitzungen, wird mithilfe des `within` Arguments die Variable benannt die zwischen Messungen *innerhalb* der gleichen Personen unterscheidet. Deskriptiv zeigt sich also ein Anstieg des Alkoholkonsums über die Jahre. Grafisch dargestellt:
+`ezStats` wartet hier direkt mit einer Warnung auf, die darauf hinweist, dass `age` als numerische Variable vorliegt. Weil in der Varianzanalyse davon ausgegangen wird, dass die unabhängigen Variablen nominalskaliert sind, möchte das `ez`-Paket sie auch im dazugehörigen Format. Deswegen wandeln wir die Altersvariable schnell in einen `factor` um:
 
 ```{r}
-ezPlot(alc, alcuse, id, within = age,
+alc_long$age <- as.factor(alc_long$age)
+```
+
+Jetzt sollte der `ezStats`-Befehl ohne die Warnung funktionieren:
+
+```{r ezStats, exercise = TRUE, exercise.eval = FALSE}
+ezStats(alc_long, alcuse, id, within = age)
+```
+
+Statt das Argument `between` zu nutzen, wie in den letzten Sitzungen, wird mithilfe des `within` Arguments die Variable benannt die zwischen Messungen *innerhalb* der gleichen Personen unterscheidet. In diesem Fall unterscheiden sich die Messungen der gleichen Personen um das Alter, zu dem Sie befragt wurden. Deskriptiv zeigt sich (vielleicht nicht allzu überraschend) ein Anstieg des Alkoholkonsums über die Jahre. Grafisch dargestellt:
+
+```{r}
+ezPlot(alc_long, alcuse, id, within = age,
   x = age)
 ```
 
-Als Äquivalent zur Homoskedastizitätsannahme in der ANOVA ohne Messwiederholung, wird in der ANOVA mit Messwiederholung die *Sphärizitätsannahme* getroffen. Unter dieser Annahme sollten die Differenzen zwischen allen Zeitpunkten identisch sein (vgl. Eid, Gollwitzer & Schmitt, 2015, S. 474 f.). Im breiten Datenformat sind diese Differenzen einfach zu erstellen:
+Hier, wie in der letzten Sitzung, sind die Intervalle um die Mittelwerte herum die FLSD - wenn sich zwei Mittelwerte um diesen Betrag unterscheiden, sollten sie auch statistisch bedeutsam sein.
+
+### `ezANOVA` für Messwiederholungen
+
+Als Äquivalent zur Homoskedastizitätsannahme in der ANOVA ohne Messwiederholung, wird in der ANOVA mit Messwiederholung die *Sphärizitätsannahme* getroffen. Unter dieser Annahme sollten die Varianzen der Differenzen zwischen allen Zeitpunkten identisch sein (vgl. Eid, Gollwitzer & Schmitt, 2015, S. 474 f.). Im breiten Datenformat sind diese Differenzen einfach zu erstellen:
 
 ```{r}
-alc_wide$diff_1415 <- alc_wide$alcuse.15 - alc_wide$alcuse.14
-alc_wide$diff_1416 <- alc_wide$alcuse.16 - alc_wide$alcuse.14
-alc_wide$diff_1516 <- alc_wide$alcuse.16 - alc_wide$alcuse.15
-var(alc_wide[, c('diff_1415', 'diff_1416', 'diff_1516')])
+alc$diff_1415 <- alc$alcuse.15 - alc$alcuse.14
+alc$diff_1416 <- alc$alcuse.16 - alc$alcuse.14
+alc$diff_1516 <- alc$alcuse.16 - alc$alcuse.15
+var(alc[, c('diff_1415', 'diff_1416', 'diff_1516')])
 ```
 
 Rein deskriptiv lässt sich erkennen, dass die Varianz der Differenz zwischen 14 und 16 Jahren beinahe doppelt so groß ist, wie die zwischen 14 und 15 Jahren. Wie schon bei der Homoskedastizitätsannahme, wird auch die Sphärizität von `ezANOVA` mitgetestet:
 
 ```{r}
-ezANOVA(alc, alcuse, id, within = age)
+ezANOVA(alc_long, alcuse, id, within = age)
 ```
 
-Der sogenannte "Mauchly Test" zeigt hier an, dass es bedeutsame Abweichungen von der Annahme der Sphärizität gibt, die Annahme also nicht als gegeben betrachtet werden kann. Weil diese Situation bei sehr vielen Messwiederholungen vorkommt, gibt es eine Reihe verbreiteter Korrekturen, von denen `ezANOVA` die Greenhouse-Geisser und die Huynh-Feldt Korrekturen anbietet. Es hat sich gezeigt, dass die Greenhouse-Geisser Korrektur mitunter zu strikt ist (also zu selten bedeutsame Ergebnisse gefunden werden), weswegen beide Varianten ausgegeben werden.
+Der sogenannte "Mauchly Test" zeigt hier an, dass es bedeutsame Abweichungen von der Annahme der Sphärizität gibt, die Annahme also nicht als gegeben betrachtet werden kann. Weil diese Situation sehr häufig vorkommt, gibt es eine Reihe verbreiteter Korrekturen, von denen `ezANOVA` die Greenhouse-Geisser und die Huynh-Feldt Korrekturen anbietet. Es hat sich gezeigt, dass die Greenhouse-Geisser Korrektur mitunter zu strikt ist (also zu selten bedeutsame Ergebnisse gefunden werden), weswegen beide Varianten ausgegeben werden.
 
-In diesem Fall können also der ersten Tabelle $F$-Wert und generalisiertes $\eta^2$ entnommen werden, der korrekte $p$-Wert bezüglich der Hypothesenprüfung sollte allerdings der dritten Tabelle entnommen werden, weil der Mauchly Test gezeigt hat, dass die Sphärizitätsannahme nicht hält.
+In diesem Fall können also der ersten Tabelle $F$-Wert und generalisiertes $\eta^2$ entnommen werden, der korrekte $p$-Wert bezüglich der Hypothesenprüfung sollte allerdings der dritten Tabelle entnommen werden, weil der Mauchly Test gezeigt hat, dass die Sphärizitätsannahme nicht hält. 
+
+In unserem Fall (egal, ob wir Greenhouse-Geisser oder Huynh-Feldt nutzen) zeigt sich ein bedeutsamer Unterschied im Alkoholkonsum zwischen dem 14, 15 und 16. Lebensjahr. Ob es sich hier um einen konstanten Anstieg handelt, der Alkoholkonsum stetig abnimmt, oder aber im Alter von 15 Jahren den Höhepunkt erreicht können wir aus diesen Ergebnissen allein nicht unterscheiden. Wie in den letzten beiden Sitzungen: die ANOVA bietet uns einen Omnibustest dafür, *ob* es Unterschiede gibt. Um genauer zu verstehen, *welche* Unterschiede es gibt, können wir [Kontraste](#Kontraste) nutzen.
 
 
-## Effektgröße und Intraklassenkorrelation
+### Effektgröße und Intraklassenkorrelation
 
 Die Intraklassenkorrelation (ICC) bezeichnet generell das Ausmaß in dem die Varianz von Beobachtungen von der "Klasse" abhängen, aus dem diese Beobachtungen kommen. Im Fall von Längsschnittanalysen bedeutet das, dass die ICC das Ausmaß von intraindividueller Stabilität anzeigt. Effektgrößen sollten unter Berücksichtigung dieser Stabilität interpretiert werden. Eine generelle Richtlinie für die ICC-bedingte Interpretation von $\eta^2$ liefert Cohen (1988), hier dargestellt nach Eid, Gollwitzer & Schmitt (2015, S. 478):
 
@@ -118,13 +268,13 @@ ICC | klein | mittel | groß
 Die ICC kann generell als $\frac{\sigma^2_{\pi}}{\sigma^2_{\pi} + \sigma^2_{\epsilon}}$ berechnet werden. Dabei ist $\sigma^2_{\pi}$ die Personenvarianz und $\sigma^2_{\epsilon}$ die Residualvarianz. Beide können direkt aus den mittleren Quadratsummen berechnet werden. Alternativ kann die `ICC`-Funktion aus dem `psych`-Paket genutzt werden:
 
 ```{r}
-psych::ICC(alc_wide[, c('alcuse.14', 'alcuse.15', 'alcuse.16')])
+psych::ICC(alc[, c('alcuse.14', 'alcuse.15', 'alcuse.16')])
 ```
 
 Der in diesem Fall relevante ICC-Typ ist als ICC1 gelistet. In diesem Fall bedeutet es also, dass ca. 50% der Unterschiede zwischen Messungen auf stabile Personeneigenschaften zurückgehen. In Anbetracht dieser ICC, hat das Alter also einen kleinen Effekt auf das Ausmaß an Alkoholkonsum bei Jugendlichen.
 
 
-## Kontraste
+## Kontraste {#Kontraste}
 
 Wie für ANOVA ohne Messwiederholung, kann auch in diesem Fall mit dem `emmeans`-Paket die Kontrastanalyse durchgeführt werden.
 
@@ -132,58 +282,256 @@ Wie für ANOVA ohne Messwiederholung, kann auch in diesem Fall mit dem `emmeans`
 library(emmeans)
 ```
 
-Die `contrast`-Funktion des Pakets benötigt als Input ein `aov`-Objekt. Um zu kennzeichnen, dass es sich um eine ANOVA mit Messwiederholung handelt, muss dabei `Error()` benutzt werden um die Personen ID und den Zeitvariable in Beziehung zu setzen:
+Die `contrast`-Funktion des Pakets benötigt als Input ein `aov`-Objekt. Um zu kennzeichnen, dass es sich um eine ANOVA mit Messwiederholung handelt, muss dabei `Error()` benutzt werden um die Personen ID und die Zeitvariable in Beziehung zu setzen:
 
 ```{r}
 # aov-Objekt erzeugen
-wdh_aov <- aov(alcuse ~ age + Error(id/age), data = alc)
+wdh_aov <- aov(alcuse ~ age + Error(id/age), data = alc_long)
 
 # Kontraste vorbereiten
 em <- emmeans(wdh_aov, ~ age)
 em
 ```
 
-Bei messwiederholten Designs mit dem Ziel Veränderung über die Zeit zu untersuchen, ist es meist sinnvoll zu prüfen, ob die Veränderung über die Zeit durch eine einfache Funktion beschrieben werden kann. Meistens werden dazu Polynome genutzt, welche für $t - 1$ Grade bestimmt werden können. Für drei Messzeitpunkte, kann also der quadratische Trend geprüft werden:
+### Polynomiale Kontraste
+
+Bei messwiederholten Designs mit dem Ziel Veränderung über die Zeit zu untersuchen, ist es meist sinnvoll zu prüfen, ob die Veränderung über die Zeit durch eine einfache Funktion der Zeit beschrieben werden kann. In der letzten Sitzung hatten wir den `contrast`-Befehl gesehen, um beliebige Kontraste zu definieren und in der Vorlesung wurden verschiedene Typen von Kontrasten besprochen. Für den Zeitverlauf werden häufig Polynome genutzt, wie Sie sie in der 4. Regressionssitzung gesehen haben.
+
+Die erste Funktion, die üblicherweise getestet wird ist der lineare Verlauf. Dabei wird unterstellt, dass die Mittelwerte auf einer geraden Linie liegen, die eine uns vorerst unbekannte Steigung hat. Wie bei Eid, Gollwitzer & Schmitt (2015, S. 481) dargestellt, ergibt sich daraus die Linearkombination
+
+$$\Lambda = K_1 \cdot \mu_1 + K_2 \cdot \mu_2 + \ldots + K_J \cdot \mu_J$$
+
+wobei $K_j$ die jeweiligen Kontrastkoeffizienten sind. Wie in der letzten Sitzung behandelt, wird für Kontrastkoeffizienten die Restriktion aufgestellt, dass $\sum_{j=1}^{J} K_j = 0$ (die Summe aller Kontrastkoeffizienten muss 0 sein). Für einen linearen Trend müssen die $K_j$ jetzt so gewählt, dass sie mit den Zeitabständen zwischen den wiederholten Messungen korrespondieren. In unserem Fall geht es um 3 aufeinanderfolgende Jahre - die Abstände zwischen den Wiederholungen sind also gleich - sodass der lineare Vektor einfach ist:
+
+```{r}
+lin_cont <- c(-1, 0, 1)
+```
+
+Wie schon für die Kontraste in der letzten Sitzung wird hierbei die Nullhypothese getestet, dass $H_0 : -1 \cdot \mu_1 + 0 \cdot \mu_2 + 1 \cdot \mu_3 = 0$. Im Fall von drei Wiederholungen ist der lineare Trend also einfach die Differenz zwischen 1. und 3. Messung.
+
+Wir können uns angucken, inwiefern der lineare Verlauf eine realistische Behauptung über den Mittelwertsverlauf ist. Wie in der letzten Sitzung behandelt, erstellen wir mit `ezPlot` automatisch einen `ggplot` mit der gleichen Snytax wie bei `ezANOVA`. Der Grund, aus dem `ggplot2` als Paket so beliebt ist, ist dass es modular funktioniert und wir unsere Abbildungen schichten können (wie in der 2. Sitzung behandelt). Wenn Pakete also `ggplot2`-Abbildungen erstellen, können wir diese einfach durch andere `ggplot2`-Komponenten ergänzen (wenn wir vorher `ggplot2` geladen haben):
+
+```{r}
+library(ggplot2)
+```
+
+Zur Erinnerungen können Sie die Abbildung nach Ihren Wünschen umgestalten, wie in der 2. Sitzung besprochen:
+
+```{r ezplot_theme, exercise = TRUE, exercise.eval = FALSE}
+# ezPlot siehe oben
+ezPlot(alc_long, alcuse, id, within = age,
+  x = age) +
+# beliebige ggplot Erweiterungen anfügen
+  theme_minimal() +
+  xlab('Alter')
+```
+
+Um Verläufe darzustellen, hatten wir in der 2. und der 8. Sitzung `geom_smooth()` gesehen. Weil diese Geometrie als Schicht auf den ursprünglichen Plot gelegt werden kann, können wir den linearen Verlauf veranschaulichen:
+
+```{r}
+ezPlot(alc_long, alcuse, id, within = age,
+  x = age) +
+  geom_smooth(aes(x = as.numeric(age)), method = 'lm', se = FALSE)
+```
+
+Weil wir für `ezANOVA` das Alter in einen Faktor umgewandelt hatten, müssen wir es für `geom_smooth` erst noch in einer numerische Variable zurücküberführen (`as.numeric`). Dann wählen wir mit `method = 'lm'` das lineare Modell und unterdrücken mit `se = FALSE` das Konfidenzintervall um die Regressiongerade. In unserem Kontrast für den linearen Effekt prüfen wir den Anstieg dieser Gerade (oben als $\Lambda$ notiert):
+
+```{r}
+contrast(em, list(lin_cont))
+```
+
+Im nächsten Schritt können wir prüfen, ob ein quadratischer Effekt vorliegt. Für diesen Effekt ist es eventuell nicht so direkt einleuchtend, wie der Kontrastvektor aussehen muss. Auch hier gilt, dass $\sum_{j=1}^{J} K_j = 0$ sein muss und gleichzeitig müssen wir drei Zahlen finden, die einen quadratischen Verlauf darstellen. Darüber hinaus, müssen der quadratische Kontrast und der lineare Kontrast *orthogonal* sein, wenn wir sie gleichzeitig prüfen wollen. Um Ihnen das Leben ein wenig zu erleichtern, können Sie folgende Tabelle konsultieren, wenn Sie gleichabständige Messungen vorliegen haben und polynomiale Kontraste definieren wollen:
+
+| Zeitpunkte | Polynom | Vektor |
+|:---:|:---:|:---------:|
+| 2 | 1 (linear) | $[-1, 1]$
+| | | |
+| 3 | 1 (linear) | $[-1, 0, 1]$
+|  | 2 (quadratisch) | $[1, -2, 1]$
+|  | |
+| 4 | 1 (linear) | $[-3, -1, 1, 3]$ 
+|  | 2 (quadratisch) | $[1, -1, -1, 1]$
+|  | 3 (kubisch) | $[-1, 3, -3, 1]$
+
+Diese Tabelle ist natürlich ziemlich lange erweiterbar. Wie Sie sehen, können Polynome immer für $t-1$ Grade bestimmt werden - für drei Messzeitpunkte, kann also bis zum quadratischen Trend geprüft werden. Abgebildet sieht der quadratische Verlauf der Mittelwerte so aus:
+
+```{r}
+ezPlot(alc_long, alcuse, id, within = age,
+  x = age) +
+  geom_smooth(aes(x = as.numeric(age)), method = 'lm', se = FALSE) +
+  geom_smooth(aes(x = as.numeric(age)), method = 'lm', se = FALSE,
+    formula = y ~ x + I(x^2), color = 'red')
+```
+
+
+Probieren Sie aus, ob es in den Daten einen bedeutsamen quadratischen Trend gibt, indem Sie dafür den entsprechenden Kontrast definieren und die Kontrastprüfung gleichzeitig für den linearen und quadratischen Effekt durchführen! Vergessen Sie dabei nicht, die $p$-Werte eine Bonferroni-Korrektur zu unterziehen!
+
+```{r quadtrend-setup}
+alc_long <- reshape(data = alc,
+  varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')),
+  direction = 'long',
+  timevar = 'age',
+  times = c(14, 15, 16),
+  v.names = 'alcuse')
+
+alc_long$age <- as.factor(alc_long$age)
+lin_cont <- c(-1, 0, 1)
+wdh_aov <- aov(alcuse ~ age + Error(id/age), data = alc_long)
+em <- emmeans(wdh_aov, ~ age)
+```
+
+
+```{r quadtrend, exercise = TRUE, exercise.setup = 'quadtrend-setup'}
+qua_cont <- c(1, -2, 1)
+contrast(em, list(lin_cont, qua_cont),
+  adjust = 'bonferroni')
+```
+
+```{r quadtrend-hint-1}
+# Linearer Kontrastvektor
+lin_cont <- c(-1, 0, 1)
+```
+
+```{r quadtrend-hint-2}
+# contrast nimmt als 2. Argument die Liste zu bestimmender
+# Kontraste entgegen
+contrast(em, list(lin_cont))
+```
+
+```{r quadtrend-hint-3}
+# mit adjust = ... können Korrekturen angefordert werden
+contrast(em, list(lin_cont),
+  adjust = ...)
+```
+
+<!-- *Does not work for some reason* -->
+
+<!-- ```{r quadtrend-check} -->
+<!-- alc_long <- reshape(data = alc, -->
+<!--   varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')), -->
+<!--   direction = 'long', -->
+<!--   timevar = 'age', -->
+<!--   times = c(14, 15, 16), -->
+<!--   v.names = 'alcuse') -->
+
+<!-- alc_long$age <- as.factor(alc_long$age) -->
+<!-- lin_cont <- c(-1, 0, 1) -->
+<!-- wdh_aov <- aov(alcuse ~ age + Error(id/age), data = alc_long) -->
+<!-- em <- emmeans(wdh_aov, ~ age) -->
+
+<!-- qua_cont <- c(1, -2, 1) -->
+
+<!-- sol <- emmeans::contrast(em, list(lin_cont, qua_cont), -->
+<!--   adjust = 'bonferroni') -->
+<!-- fal1 <- emmeans::contrast(em, list(lin_cont, qua_cont)) -->
+<!-- fal2 <- emmeans::contrast(em, list(qua_cont)) -->
+<!-- fal3 <- emmeans::contrast(em, list(lin_cont)) -->
+
+<!-- grade_result( -->
+<!--   pass_if(~ identical(sol, .result), 'Wie Sie sehen liegt in diesem Fall kein bedeutsamer quadratischer Trend vor.'), -->
+<!--   fail_if(~ identical(fal1, .result), 'Bedenken Sie, dass hier mehrere Kontraste durchgeführt werden. Die Inferenzstatistik sollte korrigiert werden, um alpha-Fehler Kumulierung zu vermeiden.'), -->
+<!--   fail_if(~ identical(fal2, .result), 'Wie bei der Regression sollten Polynome niedrigerer Ordnung berücksichtigt werden, wenn wir polynomiale Trends prüfen. In diesem Fall fehlt der lineare Trend.'), -->
+<!--   fail_if(~ identical(fal3, .result), 'So wird nur der lineare Trend geprüft.'), -->
+<!--   correct = 'Sehr gut!', -->
+<!--   incorrect = 'Leider falsch.', -->
+<!--   glue_correct = '{.correct} {.message}', -->
+<!--   glue_incorrect = '{.incorrect} {.message}') -->
+<!-- ``` -->
+
+### Abkürzungen für typische Kontraste
+
+Damit wir nicht für jede Datenkonstellation riesige Tabellen von orthogonalen Kontrasten parat haben müssen, können wir in der `contrast`-Funktion einige typische Kontrast in abgekürzter Fassung anfordern. Für polynomiale Kontraste, z.B.
 
 ```{r}
 contrast(em, interaction = 'poly')
 ```
 
-Es zeigt sich in diesem Fall also ein bedeutsamer linearer, aber kein bedeutsamer quadratischer Trend. Der direkte Vergleich aller Zeitpunkte kann via `method = 'pairwise'` erreicht werden. Außerdem resultieren die Voreinstellungen in einem Vergleich aller Zeitpunkte mit dem globalen Mittel:
+Es zeigt sich in diesem Fall also ein bedeutsamer linearer, aber kein bedeutsamer quadratischer Trend. Wie schon zuvor, können wir hier mit `adjust` eine Bonferroni-Korrektur vornehmen:
+
+```{r}
+contrast(em, interaction = 'poly',
+  adjust = 'bonferroni')
+```
+
+Der direkte Vergleich aller Zeitpunkte kann via `method = 'pairwise'` erreicht werden. Außerdem resultieren die Voreinstellungen in einem Vergleich aller Zeitpunkte mit dem globalen Mittel:
 
 ```{r}
 # Alle paarweisen Vergleiche
-contrast(em, method = 'pairwise')
+contrast(em, method = 'pairwise',
+  adjust = 'bonferroni')
 
 # Vergleiche mit dem Mittel
-contrast(em)
+contrast(em,
+  adjust = 'bonferroni')
 ```
+
+Letzteres ist dann nützlich, wenn man sehr viele Zeitpunkte (oder Gruppen) hat. Dann bietet es sich an zu prüfen möchte, ob es spezifische Instanzen gibt, die "auffällig" vom Durchschnittswert abweichen, statt sehr viele Einzelvergleiche zu definieren. Dies gilt besonders dann, wenn man keine natürliche Referenzkategorie hat - wie z.B. einen Prätest oder eine Kontrollgruppe.
 
 
 ## Split-Plot ANOVA
 
-Untersuchungen, in denen mehrere Gruppen und mehrere Messungen gleichzeitig betrachtet werden, werden häufig Split-Plot Designs genannt. Im aktuellen Datensatz können Jugendliche danach in Gruppen eingeteilt werden, ob ihre Eltern Alkoholiker sind. Die entsprechende Syntax für das `ez`-Paket ist eine einfache Kombination aus der Syntax für die beiden bisher behandelten Typen der ANOVA:
+Untersuchungen, in denen mehrere Gruppen und mehrere Messungen gleichzeitig betrachtet werden, werden häufig Split-Plot Designs genannt. Im aktuellen Datensatz können Jugendliche danach in Gruppen eingeteilt werden, ob ihre Eltern Alkoholiker sind (`coa`). Die entsprechende Syntax für das `ez`-Paket ist eine einfache Kombination aus der Syntax für die beiden Typen der ANOVA, die wir bereits behandelt haben:
 
 ```{r}
 # Deskriptive Statistiken
-ezStats(alc, alcuse, id, age, between = coa)
+ezStats(alc_long, 
+  dv = alcuse, 
+  wid = id, 
+  within = age, 
+  between = coa)
 
 # Grafische Darstellung
-ezPlot(alc, alcuse, id, age, between = coa,
+ezPlot(alc_long, 
+  dv = alcuse, 
+  wid = id, 
+  within = age, 
+  between = coa,
   x = age, split = coa)
 ```
 
+Der Plot verdeutlicht bereits, was in dieser Situation die drei zentralen Fragestellungen sind: 
+
+  - Verändert sich der Alkoholkonsum über die Zeit? (Haupteffekt A)
+  - Unterscheiden sich Kinder von Alkoholikern von Kindern nicht alkoholabhängiger Eltern in ihrem mittleren Alkoholkonsum? (Haupteffekt B)
+  - Unterscheidet sich die Veränderung im Alkoholkonsum zwischen den beiden Gruppen von Kindern? (Interaktionseffekt)
+  
+In sehr vielen psychologischen Studien ist der Interaktionseffekt der relevante Effekt. Insbesondere wenn experimentelle Studien durchgeführt werden, ist die Annahme, dass die Gruppen sich zu Beginn nicht unterscheiden (randomisierte Gruppenzuweisung) aber durch eine Intervention die Veränderung in der Experimentalgruppe anders ist als die Veränderung in der Kontrollgruppe.
+
+Um diese Effekte zu untersuchen, können wir wieder die `ezANOVA` nutzen:
 
 ```{r}
-ezANOVA(alc, alcuse, id, age, between = coa)
+ezANOVA(alc_long, 
+  dv = alcuse, 
+  wid = id, 
+  within = age, 
+  between = coa)
 ```
 
 Obwohl `ez` den Mauchly Test für Sphärizität mitliefert, ist im Fall des Split-Plot Designs die eigentliche Annahme die Gleichheit der Varianz-Kovarianz-Matrizen der messwiederholten Variablen über alle Gruppen hinweg. Dieser Annahme kann mithilfe des Box-M-Test geprüft werden, welcher allerdings in nur wenigen Paketen implementiert ist, weil er in der Mehrheit aller empirischen Anwendungen statistisch bedeutsam ist. Wer ihn dennoch durchführen möchte, findet ihn z.B. im `heplots` Paket:
 
 ```{r}
-heplots::boxM(alc_wide[, c('alcuse.14', 'alcuse.15', 'alcuse.16')], group = alc_wide$coa)
+heplots::boxM(alc[, c('alcuse.14', 'alcuse.15', 'alcuse.16')], group = alc$coa)
 ```
 
 Nach Eid, Gollwitzer & Schmitt (2015, S. 494) ist die ANOVA gegenüber der Verletzung der Homgenitätsannahme bezüglich der Kovarianzmatrizen dann robust, wenn die Sphärizitätsannahme nicht verworfen werden muss. Sollte diese ebenfalls verworfen werden müssen, können entweder die zuvor dargestellten Korrekturen genutzt werden oder eine "echte" robuste Variante (z.B. im WRS2-Paket) genutzt werden.
 
 Bezüglich der Ergebnisse der ANOVA zeigt sich, dass das Alter und ob ein Elternteil Alkoholiker ist einen bedeutsamen Einfluss auf das Trinkverhalten von Jugendlichen haben. Dass die Interaktion nicht statistisch bedeutsam ist, deutet darauf hin, dass die Entwicklung über die Zeit zwischen beiden Gruppen von Jugendlichen parallel verläuft.
+
+
+## Aufgaben
+
+Nutzen Sie für die Aufgaben den Datensatz `RA`, der in diesem Paket enthalten. Dieser Datensatz enthält Beobachtungen von 95 Personen auf 7 Variablen.
+
+```{r}
+data(RA, package = 'PsyBSc7')
+str(RA)
+```
+
+Die Daten entstammen einer Interventionsstudie mit Jugendlichen in der 8. Klasse. Ziel der Intervention war die Reduktion von Bullying durch die Steigerung sozialer Kompetenzen. In diesem Datensatz ist das durch Peers berichtete, relational aggressive Verhalten (`ra1`, `ra2`, `ra3`) zentral. Für jede Person wurden die Peer-Berichte zu jedem der drei Messzeitpunkte gemittelt. Die Messzeitpunkte sind einmal vor der Intervention, dann direkt nach der Intervention und dann 9 Monate nach der Intervention. Die Intervention (`group`) wurde in zwei Varianten (eine intensive, langfristige Intervetion `IG Long` und eine leichter durchzuführende, kurze Intervention `IG Short`) durchgeführt. Zusätzlich wurde eine Kontrollgruppe (`CG`) erhoben.
+
+  1. Überführen Sie den Datensatz in das lange Format, welches für ANOVAs mit Messwiederholungen im `ez`-Paket notwendig ist. Wandeln Sie anschließend die Zeit-Variable in einen Faktor um.
+  2. Untersuchen Sie den Mittelwertsverlauf der relationalen Aggression mithilfe von Deskriptivstatistik und einer Abbildung. Nutzen Sie dabei die Interventions- bzw. Kontrollgruppen als Zwischensubjektfaktor.
+  3. Prüfen Sie mithilfe einer ANOVA die Veränderungen in der peer-berichteten relationalen Aggression im Vergleich der drei Gruppen! Interpretieren Sie die Ergebnisse.
+  4. Eine Annahme der Studie war es, dass die lange Intervention bessere Ergebnisse erzielen sollte als die Kurze. Untersuchen Sie diese Hypothese mit der geeigneten Analyse!
+  5. Prüfen Sie mit der geeigneten Analyse, ob die Randomisierung ausreichend gut funktioniert hat (also ob die drei Gruppen *vor* der Intervention gleiche Mittelwerte hatten).
+  6. (Bonus) Untersuchen Sie mithilfe geplanter Kontraste, ob in einer der beiden Interventionsgruppen Langzeiteffekte zu finden sind - also ob die Mittelwerte sich in diesen beiden Gruppen zwischen t1 und t3 bedeutsam verändert haben.
