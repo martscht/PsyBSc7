@@ -19,17 +19,6 @@ library(gradethis)
 knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
 
 source('startup.R')
-
-data(alc, package = 'PsyBSc7')
-
-alc_long <- reshape(data = alc,
-  varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')),
-  direction = 'long',
-  timevar = 'age',
-  times = c(14, 15, 16),
-  v.names = 'alcuse')
-
-alc_long$age <- as.factor(alc_long$age)
 ```
 
 

@@ -45,3 +45,15 @@ scale_fill_goethe <- function(palette = "main", discrete = TRUE, reverse = FALSE
     scale_fill_gradientn(colours = pal(256), ...)
   }
 }
+
+#### Data ----
+data(alc, package = 'PsyBSc7')
+
+alc_long <- reshape(data = alc,
+  varying = list(c('alcuse.14', 'alcuse.15', 'alcuse.16')),
+  direction = 'long',
+  timevar = 'age',
+  times = c(14, 15, 16),
+  v.names = 'alcuse')
+
+alc_long$age <- as.factor(alc_long$age)
