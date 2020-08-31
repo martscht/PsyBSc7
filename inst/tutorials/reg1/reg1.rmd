@@ -88,7 +88,7 @@ head(X)
 **Vorgehen bei der Berechnung der Regressionsgewichte:**
 
 1. Berechnung der Kreuzproduktsumme (X’X)
-2. Berechnung der Inversen der Kreuzproduktsumme ($X'X^{-1}$)
+2. Berechnung der Inversen der Kreuzproduktsumme ($(X'X)^{-1}$)
 3. Berechnung des Kreuzproduksummenvektors (X'y)
 4. Berechnung des Einflussgewichtsvektor
 
@@ -110,7 +110,7 @@ X.X
 
 ```
 
-**2. Berechnung der Inversen der Kreuzproduktsumme $(X'X^{-1})$**
+**2. Berechnung der Inversen der Kreuzproduktsumme $((X'X)^{-1})$**
 
 Die Inverse der Kreuzproduktsumme kann in R durch den solve-Befehl berechnet werden.
 
@@ -144,7 +144,7 @@ X.y
 
 **4. Berechnung des Einflussgewichtsvektors**
 
-Die geschätzten Regressionsgewichte nach dem Kriterium der kleinsten Quadrate werden berechnet, indem die Inverse der Kreuzproduktsumme $(X'X^{-1})$ mit dem  Kreuzproduksummenvektor (X'y) multipliziert wird. Den Vektor mit den vorhergesagten Werte von y ($\hat{y}$) können Sie durch die Multiplikation der X Matrix mit den Regressionsgewichten ($\hat{b}$) berechnen.  
+Die geschätzten Regressionsgewichte nach dem Kriterium der kleinsten Quadrate werden berechnet, indem die Inverse der Kreuzproduktsumme $((X'X)^{-1})$ mit dem  Kreuzproduksummenvektor (X'y) multipliziert wird. Den Vektor mit den vorhergesagten Werte von y ($\hat{y}$) können Sie durch die Multiplikation der X Matrix mit den Regressionsgewichten ($\hat{b}$) berechnen.  
 
 \begin{align}
 \dfrac{}{(X'X)^{-1}\begin{bmatrix}0,42 & -1,56e^{-04} & -3,39^{-03}\\-0,00 & 1,32e^{-06} & -5,06e^{-06}\\-0,00 & -5,06e^{-06} & 6,01e^{-05}\end{bmatrix}}
