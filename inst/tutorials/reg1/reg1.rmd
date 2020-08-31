@@ -40,7 +40,7 @@ $$y_i = b_0 +b_{1}x_{i1} + ... +b_{m}x_{im} + e_i$$
 
 ![Grafische Darstellung einer einfachen linearen Regression](images/Bild1.png){width="80%"}
 
-$\hat{y_i} = b_0 +b_{1}x_{i1} + e_i$
+$\hat{y_i} = b_0 +b_{1}x_{i1}$ (Regressiongerade = vorhergesagte Werte)
 
 ![Grafische Darstellung einer multiplen Regression](images/Bild2.png){width="80%"}
 
